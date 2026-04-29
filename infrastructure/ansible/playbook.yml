@@ -1,0 +1,139 @@
+# ─────────────────────────────────────────────────
+# SheShield - Ansible Playbook
+# Configures the EC2 server with PHP, Apache, and deploys the app
+# ─────────────────────────────────────────────────
+---
+- name: Configure SheShield Web Server
+  hosts: webservers
+  become: yes
+  vars:
+    app_dir: /var/www/html/sheshield
+    db_host: "{{ lookup('env', 'DB_HOST') | default('localhost', true) }}"
+    db_name: sheshield
+    db_user: root
+    db_pass: "{{ lookup('env', 'DB_PASS') | default('sheshield_secret', true) }}"
+
+  tasks:
+    # ─── System Updates ─────────────────────────────
+    - name: Update system packages
+      apt:
+        update_cache: yes
+        upgrade: dist
+
+    # ─── Install Dependencies ───────────────────────
+    - name: Install Apache, PHP 8.2 and required extensions
+      apt:
+        name:
+          - apache2
+          - php8.2
+          - php8.2-mysql
+          - php8.2-mbstring
+          - php8.2-curl
+          - php8.2-gd
+          - php8.2-zip
+          - php8.2-xml
+          - libapache2-mod-php8.2
+          - composer
+          - git
+          - curl
+          - unzip
+        state: present
+
+    # ─── Enable Apache Modules ──────────────────────
+    - name: Enable Apache rewrite module
+      apache2_module:
+        name: rewrite
+        state: present
+      notify: Restart Apache
+
+    - name: Enable Apache headers module
+      apache2_module:
+        name: headers
+        state: present
+      notify: Restart Apache
+
+    # ─── Deploy Application ─────────────────────────
+    - name: Clone SheShield repository
+      git:
+        repo: 'https://github.com/your-username/sheshield.git'
+        dest: "{{ app_dir }}"
+        version: main
+        force: yes
+
+    - name: Install Composer dependencies
+      composer:
+        command: install
+        working_dir: "{{ app_dir }}"
+        no_dev: yes
+        optimize_autoloader: yes
+
+    # ─── Create Required Directories ────────────────
+    - name: Create upload directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        mode: '0777'
+        owner: www-data
+        group: www-data
+      loop:
+        - "{{ app_dir }}/uploads"
+        - "{{ app_dir }}/uploads/evidence"
+        - "{{ app_dir }}/uploads/profile_images"
+        - "{{ app_dir }}/logs"
+
+    # ─── Set Permissions ────────────────────────────
+    - name: Set proper file ownership
+      file:
+        path: "{{ app_dir }}"
+        owner: www-data
+        group: www-data
+        recurse: yes
+
+    - name: Set directory permissions
+      file:
+        path: "{{ app_dir }}"
+        mode: '0755'
+        recurse: yes
+
+    # ─── Configure Apache VirtualHost ───────────────
+    - name: Deploy Apache virtual host config
+      template:
+        src: templates/sheshield-vhost.conf.j2
+        dest: /etc/apache2/sites-available/sheshield.conf
+      notify: Restart Apache
+
+    - name: Enable SheShield site
+      command: a2ensite sheshield.conf
+      notify: Restart Apache
+
+    - name: Disable default site
+      command: a2dissite 000-default.conf
+      notify: Restart Apache
+
+    # ─── Firewall Configuration ─────────────────────
+    - name: Allow HTTP through firewall
+      ufw:
+        rule: allow
+        port: '80'
+        proto: tcp
+
+    - name: Allow HTTPS through firewall
+      ufw:
+        rule: allow
+        port: '443'
+        proto: tcp
+
+    # ─── Initialize Database ────────────────────────
+    - name: Run database initialization
+      command: php init.php
+      args:
+        chdir: "{{ app_dir }}"
+      ignore_errors: yes
+
+  # ─── Handlers ───────────────────────────────────
+  handlers:
+    - name: Restart Apache
+      service:
+        name: apache2
+        state: restarted
+        enabled: yes

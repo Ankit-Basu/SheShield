@@ -1,0 +1,188 @@
+/* Trae AI Theme - Global Styles */
+
+:root {
+  /* Color Variables */
+  --trae-bg-primary: #1E1E2E;
+  --trae-bg-secondary: #2E2E4E;
+  --trae-accent-purple: #4A1E73;
+  --trae-accent-pink: #D76D77;
+  --trae-highlight: #FFAF7B;
+  --trae-text-light: #F0F0F0;
+  --trae-text-muted: #A0A0B0;
+  --trae-border: rgba(255, 255, 255, 0.1);
+  --trae-card-bg: rgba(46, 46, 78, 0.8);
+  --trae-card-border: rgba(255, 255, 255, 0.05);
+  --trae-input-bg: rgba(30, 30, 46, 0.8);
+  --trae-input-border: rgba(74, 30, 115, 0.5);
+  --trae-input-focus: rgba(215, 109, 119, 0.7);
+}
+
+/* Global styles */
+:root::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--trae-bg-primary);
+  z-index: -2;
+}
+
+html {
+  background: var(--trae-bg-primary);
+  background: linear-gradient(135deg, var(--trae-bg-primary) 0%, var(--trae-bg-secondary) 100%);
+  min-height: 100%;
+  color-scheme: dark;
+  overflow-y: auto;
+}
+
+body {
+  background: var(--trae-bg-primary);
+  color: var(--trae-text-light);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+  opacity: 1;
+  animation: none !important;
+  margin: 0;
+  padding: 0;
+  transition: none !important;
+  overflow-y: auto;
+}
+
+/* Prevent white flash during page transitions */
+/* * {
+  transition: background-color 0s, background 0s !important;
+} */
+
+/* Remove all animations during page load */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  color: white;
+  font-weight: 600;
+}
+
+p {
+  color: var(--trae-text-light);
+}
+
+a {
+  color: var(--trae-accent-pink);
+  transition: all 0.2s ease;
+}
+
+a:hover {
+  color: var(--trae-highlight);
+}
+
+/* Form elements */
+input, select, textarea {
+  background-color: var(--trae-input-bg);
+  border: 1px solid var(--trae-input-border);
+  color: var(--trae-text-light);
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  transition: all 0.2s ease;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--trae-input-focus);
+  box-shadow: 0 0 0 3px rgba(215, 109, 119, 0.3);
+}
+
+/* Labels */
+label {
+  color: var(--trae-text-muted);
+  font-size: 0.875rem;
+}
+
+/* Buttons */
+.btn-primary, .btn-gradient {
+  background: linear-gradient(135deg, var(--trae-accent-purple), var(--trae-accent-pink));
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.btn-primary:hover, .btn-gradient:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 7px 14px rgba(0, 0, 0, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* Card elements */
+.trae-card {
+  background-color: var(--trae-card-bg);
+  border: 1px solid var(--trae-card-border);
+  border-radius: 1rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+/* Navigation bar */
+.trae-navbar {
+  background-color: rgba(46, 46, 78, 0.9);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--trae-border);
+}
+
+/* Sidebar */
+/* .trae-sidebar {
+  background-color: var(--trae-bg-secondary);
+  border-right: 1px solid var(--trae-border);
+}
+
+.trae-sidebar-item {
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.trae-sidebar-item:hover {
+  background-color: rgba(74, 30, 115, 0.3);
+}
+
+.trae-sidebar-item.active {
+  background: linear-gradient(135deg, rgba(74, 30, 115, 0.5), rgba(215, 109, 119, 0.5));
+} */
+
+/* Gradient text */
+.text-gradient {
+  background: linear-gradient(135deg, var(--trae-accent-pink), var(--trae-highlight));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 0;
+  display: none;
+}
+
+::-webkit-scrollbar-track {
+  display: none;
+}
+
+::-webkit-scrollbar-thumb {
+  display: none;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  display: none;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--trae-accent-pink);
+}

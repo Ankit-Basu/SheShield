@@ -1,0 +1,208 @@
+# SheShield - Kubernetes Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sheshield-app
+  namespace: sheshield
+  labels:
+    app: sheshield
+    tier: frontend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: sheshield
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: sheshield
+        tier: frontend
+    spec:
+      containers:
+      - name: sheshield
+        image: sheshield:latest
+        ports:
+        - containerPort: 80
+          name: http
+        env:
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: sheshield-config
+              key: db-host
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: sheshield-config
+              key: db-name
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: sheshield-secrets
+              key: db-user
+        - name: DB_PASS
+          valueFrom:
+            secretKeyRef:
+              name: sheshield-secrets
+              key: db-password
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5
+---
+# Service - LoadBalancer
+apiVersion: v1
+kind: Service
+metadata:
+  name: sheshield-service
+  namespace: sheshield
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    name: http
+  selector:
+    app: sheshield
+---
+# ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sheshield-config
+  namespace: sheshield
+data:
+  db-host: "sheshield-mysql"
+  db-name: "sheshield"
+---
+# Secrets
+apiVersion: v1
+kind: Secret
+metadata:
+  name: sheshield-secrets
+  namespace: sheshield
+type: Opaque
+data:
+  db-user: cm9vdA==           # base64: root
+  db-password: c2hlc2hpZWxk   # base64: sheshield
+---
+# MySQL Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sheshield-mysql
+  namespace: sheshield
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sheshield-mysql
+  template:
+    metadata:
+      labels:
+        app: sheshield-mysql
+    spec:
+      containers:
+      - name: mysql
+        image: mysql:8.0
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: sheshield-secrets
+              key: db-password
+        - name: MYSQL_DATABASE
+          value: "sheshield"
+        volumeMounts:
+        - name: mysql-storage
+          mountPath: /var/lib/mysql
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+      volumes:
+      - name: mysql-storage
+        persistentVolumeClaim:
+          claimName: mysql-pvc
+---
+# MySQL Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: sheshield-mysql
+  namespace: sheshield
+spec:
+  ports:
+  - port: 3306
+    targetPort: 3306
+  selector:
+    app: sheshield-mysql
+  clusterIP: None
+---
+# PersistentVolumeClaim for MySQL
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pvc
+  namespace: sheshield
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+# Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: sheshield
+  labels:
+    app: sheshield
+---
+# HorizontalPodAutoscaler
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: sheshield-hpa
+  namespace: sheshield
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: sheshield-app
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70

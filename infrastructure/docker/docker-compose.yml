@@ -1,0 +1,73 @@
+# SheShield - Docker Compose
+# Local development environment with PHP + MySQL
+
+version: '3.8'
+
+services:
+  # PHP/Apache Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sheshield-app
+    ports:
+      - "8080:80"
+    environment:
+      - DB_HOST=db
+      - DB_NAME=sheshield
+      - DB_USER=root
+      - DB_PASS=sheshield_secret
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./uploads:/var/www/html/uploads
+      - ./logs:/var/www/html/logs
+    networks:
+      - sheshield-network
+    restart: unless-stopped
+
+  # MySQL Database
+  db:
+    image: mysql:8.0
+    container_name: sheshield-db
+    environment:
+      MYSQL_ROOT_PASSWORD: sheshield_secret
+      MYSQL_DATABASE: sheshield
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./sql/complete_database_schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+    networks:
+      - sheshield-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # phpMyAdmin (for development)
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: sheshield-phpmyadmin
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: sheshield_secret
+    ports:
+      - "8081:80"
+    depends_on:
+      - db
+    networks:
+      - sheshield-network
+    restart: unless-stopped
+
+volumes:
+  db_data:
+    driver: local
+
+networks:
+  sheshield-network:
+    driver: bridge
