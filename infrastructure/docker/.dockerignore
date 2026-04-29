@@ -1,0 +1,40 @@
+# SheShield - Docker Ignore
+# Prevents unnecessary files from being included in Docker build
+
+# Version control
+.git
+.gitignore
+
+# Development files
+node_modules
+.env
+.env.local
+*.md
+screenshots/
+
+# DevOps configs (not needed in container)
+terraform/
+ansible/
+puppet/
+k8s/
+devops/
+Jenkinsfile
+docker-compose.yml
+pom.xml
+sonar-project.properties
+
+# IDE files
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Logs (created at runtime)
+logs/*.log
+
+# Test files
+test_*.php

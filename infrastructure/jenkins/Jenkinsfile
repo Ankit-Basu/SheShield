@@ -1,0 +1,115 @@
+# SheShield - Jenkinsfile
+# CI/CD Pipeline: Build → Test → Scan → Deploy
+
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_IMAGE    = 'sheshield'
+        DOCKER_TAG      = "${BUILD_NUMBER}"
+        SONAR_HOST_URL  = 'http://sonarqube:9000'
+        NEXUS_URL       = 'http://nexus:8081'
+        KUBE_NAMESPACE  = 'sheshield'
+    }
+
+    stages {
+
+        // ─── Stage 1: Checkout ────────────────────────
+        stage('Checkout') {
+            steps {
+                echo '📥 Pulling source code...'
+                checkout scm
+            }
+        }
+
+        // ─── Stage 2: Install Dependencies ────────────
+        stage('Install Dependencies') {
+            steps {
+                echo '📦 Installing Composer & NPM dependencies...'
+                sh 'composer install --no-dev --optimize-autoloader'
+                sh 'npm ci'
+                sh 'npm run build'
+            }
+        }
+
+        // ─── Stage 3: SonarQube Analysis ──────────────
+        stage('SonarQube Analysis') {
+            steps {
+                echo '🔍 Running SonarQube code quality scan...'
+                withSonarQubeEnv('SonarQube') {
+                    sh '''
+                        sonar-scanner \
+                          -Dsonar.projectKey=sheshield \
+                          -Dsonar.projectName="SheShield - Women Safety App" \
+                          -Dsonar.sources=. \
+                          -Dsonar.exclusions=vendor/**,node_modules/**,uploads/**,logs/** \
+                          -Dsonar.language=php \
+                          -Dsonar.host.url=${SONAR_HOST_URL}
+                    '''
+                }
+            }
+        }
+
+        // ─── Stage 4: Quality Gate ────────────────────
+        stage('Quality Gate') {
+            steps {
+                echo '🚦 Checking SonarQube quality gate...'
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+
+        // ─── Stage 5: Build Docker Image ──────────────
+        stage('Build Docker Image') {
+            steps {
+                echo '🐳 Building Docker image...'
+                sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
+                sh "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:latest"
+            }
+        }
+
+        // ─── Stage 6: Push to Nexus Registry ──────────
+        stage('Push to Nexus') {
+            steps {
+                echo '📦 Pushing image to Nexus Docker registry...'
+                withCredentials([usernamePassword(
+                    credentialsId: 'nexus-credentials',
+                    usernameVariable: 'NEXUS_USER',
+                    passwordVariable: 'NEXUS_PASS'
+                )]) {
+                    sh "docker login ${NEXUS_URL} -u ${NEXUS_USER} -p ${NEXUS_PASS}"
+                    sh "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${NEXUS_URL}/repository/docker-hosted/${DOCKER_IMAGE}:${DOCKER_TAG}"
+                    sh "docker push ${NEXUS_URL}/repository/docker-hosted/${DOCKER_IMAGE}:${DOCKER_TAG}"
+                }
+            }
+        }
+
+        // ─── Stage 7: Deploy to Kubernetes ────────────
+        stage('Deploy to Kubernetes') {
+            steps {
+                echo '☸️ Deploying to Kubernetes cluster...'
+                sh """
+                    kubectl set image deployment/sheshield-app \
+                      sheshield=${NEXUS_URL}/repository/docker-hosted/${DOCKER_IMAGE}:${DOCKER_TAG} \
+                      -n ${KUBE_NAMESPACE}
+                    kubectl rollout status deployment/sheshield-app -n ${KUBE_NAMESPACE} --timeout=120s
+                """
+            }
+        }
+    }
+
+    post {
+        success {
+            echo '✅ Pipeline completed successfully!'
+            echo "🌐 App deployed: Build #${BUILD_NUMBER}"
+        }
+        failure {
+            echo '❌ Pipeline failed! Check logs above.'
+        }
+        always {
+            echo '🧹 Cleaning up workspace...'
+            cleanWs()
+        }
+    }
+}

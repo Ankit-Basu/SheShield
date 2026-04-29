@@ -14,8 +14,8 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 error_log("Starting signup process...");
 
-require_once '../../config/database.php';
-require_once '../../models/User.php';
+require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../models/User.php';
 
 try {
     // Get raw posted data

@@ -3,193 +3,191 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SheShield — Sign In</title>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <title>Login - SheShield</title>
-    <!-- <link href="/src/output.css" rel="stylesheet"> -->
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif']
-                    },
-                    colors: {
-                        primary: '#4A1E73',
-                        secondary: '#D76D77'
-                    },
-                    animation: {
-                        'fade-in': 'fadeIn 0.8s ease-out',
-                        'pulse': 'pulse 2s infinite',
-                        'gradient-flow': 'gradientFlow 3s ease infinite'
-                    },
-                    keyframes: {
-                        fadeIn: {
-                            '0%': { opacity: '0', transform: 'translateY(20px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' }
-                        },
-                        pulse: {
-                            '0%, 100%': { transform: 'scale(1)' },
-                            '50%': { transform: 'scale(1.1)' }
-                        },
-                        gradientFlow: {
-                            '0%': { backgroundPosition: '0% 50%' },
-                            '50%': { backgroundPosition: '100% 50%' },
-                            '100%': { backgroundPosition: '0% 50%' }
-                        }
-                    }
-                }
-            }
-        };
-    </script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="stylesheet" href="css/auth.css?v=2">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 </head>
-<body class="font-[Inter] bg-[#1E1E2E]">
-    <nav class="fixed w-full top-0 bg-[#1E1E2E] shadow-lg z-50 px-6 py-4">
-        <div class="max-w-7xl mx-auto flex items-center justify-between">
-            <div class="flex items-center space-x-2">
-                <svg width="40" height="40" viewBox="0 0 40 40" fill="none" class="flex-shrink-0">
-                    <circle cx="20" cy="20" r="18" stroke="#D76D77" stroke-width="4"/>
-                    <path d="M20 10L24 16H16L20 10Z" fill="#D76D77"/>
-                    <rect x="18" y="16" width="4" height="14" rx="2" fill="#D76D77"/>
-                </svg>
-                <span class="text-2xl font-bold text-[#D76D77]">SheShield</span>
+<body>
+<div class="auth-page">
+    <!-- ═══ LEFT PANEL ═══ -->
+    <div class="auth-left">
+        <div class="blob b1"></div>
+        <div class="blob b2"></div>
+        <div class="blob b3"></div>
+        <div class="dot-grid"></div>
+        <div class="auth-left-content">
+            <div>
+                <a href="landing.html" class="auth-logo-link">
+                    <img src="../assets/logo.svg" alt="SheShield" style="height:28px">
+                    <span class="auth-logo-wordmark"><span class="she">She</span><span class="shield">Shield</span></span>
+                </a>
+                <a href="landing.html" class="back-link">← Back to Home</a>
             </div>
-            <div class="hidden md:flex items-center space-x-8">
-                <a href="index.html" class="text-white hover:text-[#D76D77] transition-colors duration-300">Home</a>
-                <a href="index.html#about" class="text-white hover:text-[#D76D77] transition-colors duration-300">About Us</a>
-                <a href="index.html#features" class="text-white hover:text-[#D76D77] transition-colors duration-300">Safety Services</a>
-                <a href="index.html#how-it-works" class="text-white hover:text-[#D76D77] transition-colors duration-300">How It Works</a>
-                <a href="index.html#contact" class="text-white hover:text-[#D76D77] transition-colors duration-300">Emergency</a>
+            <div class="left-hero">
+                <h2>Your safety,<br><span class="grad">always on.</span></h2>
+                <p>Join thousands of women who trust SheShield for 24/7 protection and real-time emergency response.</p>
             </div>
-            <div class="flex items-center space-x-4">
-                <button class="bg-gradient-to-r from-[#4A1E73] to-[#D76D77] hover:from-[#5A2E83] hover:to-[#E77D87] text-white px-8 py-3 rounded-full transition-all duration-300 hover:shadow-lg transform hover:scale-[1.02] flex items-center space-x-2" onclick="window.location.href='login.html'">Log In</button>
-                <button class="bg-gradient-to-r from-[#4A1E73] to-[#D76D77] hover:from-[#5A2E83] hover:to-[#E77D87] text-white px-8 py-3 rounded-full transition-all duration-300 hover:shadow-lg transform hover:scale-[1.02] flex items-center space-x-2" onclick="window.location.href='report.html'">Report Now</button>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Login Form Section -->
-    <div class="min-h-screen flex items-center justify-center bg-[#1E1E2E]">
-        <div class="max-w-md w-full mx-4">
-            <div class="bg-[#2E2E4E] bg-opacity-90 backdrop-filter backdrop-blur-lg rounded-2xl shadow-xl p-8 space-y-6">
-                <div class="text-center space-y-2">
-                    <h2 class="text-3xl font-bold text-white">Welcome Back</h2>
-                    <p class="text-[#D76D77]">Sign in to your SheShield account</p>
+            <div class="left-cards">
+                <div class="glass-stat-card">
+                    <div class="card-icon-box">
+                        <svg viewBox="0 0 24 24"><path d="M12 2L4 6v6c0 5.5 3.4 10.7 8 12 4.6-1.3 8-6.5 8-12V6l-8-4z"/></svg>
+                    </div>
+                    <div class="card-text">
+                        <strong>SOS Alert System</strong>
+                        <span>One-tap emergency alert</span>
+                    </div>
+                    <div class="pulse-green"></div>
                 </div>
-
-                <!-- Error Alert -->
-                <div id="error-message" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-                    <span class="block sm:inline"></span>
-                </div>
-
-                <form id="loginForm" class="mt-8 space-y-6">
-                    <div>
-                        <label for="email" class="block text-sm font-medium text-[#D76D77]">Email address</label>
-                        <input id="email" name="email" type="email" required 
-                               class="mt-1 bg-[#1E1E2E] block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500">
+                <div class="glass-stat-card">
+                    <div class="card-icon-box muted">
+                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                     </div>
-                
-                    <div>
-                        <label for="password" class="block text-sm font-medium text-[#D76D77]">Password</label>
-                        <input id="password" name="password" type="password" required
-                               class="mt-1 bg-[#1E1E2E] block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500">
+                    <div class="card-text">
+                        <strong>98% Response Rate</strong>
+                        <span>Avg. 4 min response</span>
                     </div>
-
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center">
-                            <input id="remember-me" name="remember-me" type="checkbox"
-                                   class="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 rounded">
-                            <label for="remember-me" class="ml-2 block text-sm text-white">Remember me</label>
-                        </div>
-                        <!-- <div class="text-sm">
-                            <a href="#" class="font-medium text-pink-600 hover:text-pink-500">
-                                Forgot password?
-                            </a>
-                        </div> -->
-                    </div>
-                    <div id="error-message" class="hidden text-red-600 text-sm"></div>
-
-                    <div>
-                        <button type="submit"
-                                class="bg-gradient-to-r from-[#4A1E73] to-[#D76D77] hover:from-[#5A2E83] hover:to-[#E77D87] flex justify-center text-white px-8 py-3 rounded-md w-full transition-all duration-300 hover:shadow-lg transform hover:scale-[1.02] flex items-center space-x-2">
-                            Sign in
-                        </button>
-                    </div>
-                </form>
-
-                <div class="text-center">
-                    <p class="text-sm text-white">
-                        Don't have an account?
-                        <a href="signup.php" class="font-medium text-blue-600 hover:text-[#D76D77]">Sign up</a>
-                    </p>
                 </div>
             </div>
         </div>
     </div>
 
-    <script>
-        // Check session status when page loads
-        fetch('check_session.php', {headers: {'Cache-Control': 'no-cache'}})
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'redirect') {
-                    window.history.replaceState(null, null, data.url);
-window.location.href = data.url;
-                }
-            })
-            .catch(error => console.error('Session check error:', error));
+    <!-- ═══ RIGHT PANEL ═══ -->
+    <div class="auth-right">
+        <!-- Mobile logo (hidden on desktop) -->
+        <div class="mobile-logo">
+            <a href="landing.html" class="auth-logo-link">
+                <img src="../assets/logo.svg" alt="SheShield" style="height:36px">
+                <span class="auth-logo-wordmark" style="font-size:1.5rem"><span class="she">She</span><span class="shield">Shield</span></span>
+            </a>
+        </div>
 
-        // Check session on pageshow event (including when navigating back)
-        window.addEventListener('pageshow', function(event) {
-            fetch('check_session.php', {headers: {'Cache-Control': 'no-cache'}})
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'redirect') {
-                        window.history.replaceState(null, null, data.url);
-window.location.href = data.url;
-                    }
-                })
-                .catch(error => console.error('Session check error:', error));
-        });
+        <!-- Tab Switch -->
+        <div class="tab-switch">
+            <a href="login.html" class="active">Sign In</a>
+            <a href="signup.html">Sign Up</a>
+        </div>
 
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = {
-                email: document.getElementById('email').value,
-                password: document.getElementById('password').value
-            };
+        <h1>Welcome back</h1>
+        <p class="sub">Sign in to your SheShield account</p>
 
-            fetch('../api/auth/login.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    // Store user data in session storage
-                    sessionStorage.setItem('user_id', data.user.id);
-                    sessionStorage.setItem('email', data.user.email);
-                    sessionStorage.setItem('first_name', data.user.first_name);
-                    
-                    // Redirect to dashboard
-                    window.history.replaceState(null, null, '../dashboard.php');
-window.location.href = '../dashboard.php';
-                } else {
-                    alert(data.message || 'Invalid email or password');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred. Please try again.');
-            });
-        });
-    </script>
+        <form id="loginForm" onsubmit="return handleLogin(event)">
+            <!-- Email -->
+            <div class="field-group">
+                <label>Email address</label>
+                <div class="input-wrapper">
+                    <span class="input-icon"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2,4 12,13 22,4"/></svg></span>
+                    <input type="email" class="premium-input" placeholder="you@example.com" required>
+                </div>
+            </div>
+
+            <!-- Password -->
+            <div class="field-group">
+                <label>Password</label>
+                <div class="input-wrapper">
+                    <span class="input-icon"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+                    <input type="password" id="loginPass" class="premium-input" placeholder="••••••••" required style="padding-right:46px">
+                    <button type="button" class="eye-toggle" onclick="togglePass('loginPass', this)">
+                        <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Remember / Forgot -->
+            <div class="remember-row">
+                <label class="custom-check">
+                    <input type="checkbox">
+                    <span class="check-box"></span>
+                    Remember me
+                </label>
+                <a href="#" class="forgot-link">Forgot password?</a>
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" class="btn-auth" id="loginBtn">
+                <span class="btn-text">Sign In</span>
+            </button>
+        </form>
+
+        <!-- Divider -->
+        <div class="auth-divider"><span>or continue with</span></div>
+
+        <!-- Social Login -->
+        <div class="social-grid">
+            <button class="social-btn" id="googleSignIn">
+                <svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                Google
+            </button>
+            <button class="social-btn">
+                <svg viewBox="0 0 24 24" fill="white"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+                GitHub
+            </button>
+        </div>
+
+        <!-- Bottom link -->
+        <div class="auth-bottom">
+            Don't have an account? <a href="signup.html">Sign up</a>
+        </div>
+    </div>
+</div>
+
+<script>
+// Password toggle
+function togglePass(id, btn) {
+    const input = document.getElementById(id);
+    input.type = input.type === 'password' ? 'text' : 'password';
+}
+
+// Login handler
+function handleLogin(e) {
+    e.preventDefault();
+    const btn = document.getElementById('loginBtn');
+    btn.innerHTML = '<div style="width:20px;height:20px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite"></div>';
+    btn.disabled = true;
+
+    const form = document.getElementById('loginForm');
+    const email = form.querySelector('input[type="email"]').value;
+    const password = document.getElementById('loginPass').value;
+
+    fetch('../auth/login.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            window.location.href = data.redirect || '../dashboard.php';
+        } else {
+            btn.innerHTML = '<span class="btn-text">Sign In</span>';
+            btn.disabled = false;
+            alert(data.message || 'Login failed');
+        }
+    })
+    .catch(() => {
+        btn.innerHTML = '<span class="btn-text">Sign In</span>';
+        btn.disabled = false;
+        alert('Connection error');
+    });
+    return false;
+}
+
+// GSAP page load animation
+document.addEventListener('DOMContentLoaded', () => {
+    const style = document.createElement('style');
+    style.textContent = '@keyframes spin{to{transform:rotate(360deg)}}';
+    document.head.appendChild(style);
+
+    gsap.from('.auth-left', { x: -60, opacity: 0, duration: 1, ease: 'expo.out' });
+    gsap.from('.auth-right', { x: 60, opacity: 0, duration: 1, ease: 'expo.out', delay: 0.15 });
+    gsap.from('.field-group', { y: 20, opacity: 0, duration: 0.6, stagger: 0.08, ease: 'power3.out', delay: 0.4 });
+    gsap.from('.tab-switch', { y: -10, opacity: 0, duration: 0.5, delay: 0.3 });
+    gsap.from('.glass-stat-card', { x: -30, opacity: 0, duration: 0.8, stagger: 0.15, ease: 'expo.out', delay: 0.6 });
+});
+</script>
 </body>
 </html>
