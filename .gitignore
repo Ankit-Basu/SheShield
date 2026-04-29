@@ -1,30 +1,39 @@
-# Ignore email configuration file with credentials
-config/email_config.php
+# ═══ SheShield .gitignore ═══
 
-# Ignore environment files
+# Dependencies
+node_modules/
+vendor/
+composer.phar
+package-lock.json
+composer.lock
+
+# Environment & Secrets
 .env
 *.env
+app/config/email_config.php
+app/config/config.php
 
-# Ignore log files
-logs/
-*.log
-php_error.log
-php_errors.log
-
-# Ignore user uploads
-uploads/
-
-# Ignore vendor dependencies
-vendor/
-
-# Ignore IDE and editor files
-.idea/
+# IDE
 .vscode/
-*.sublime-*
+.idea/
+*.swp
+*.swo
 
-# Ignore OS generated files
+# OS
 .DS_Store
 Thumbs.db
+desktop.ini
 
-# Ignore Women_Safety_App directory (separate application)
-Women_Safety_App/
+# Logs
+logs/
+*.log
+
+# Uploads (user data)
+uploads/
+
+# Build artifacts
+dist/
+build/
+
+# Cache
+.cache/
