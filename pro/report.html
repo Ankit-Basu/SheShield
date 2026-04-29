@@ -3,300 +3,334 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Report Incident - SheShield</title>
-    <!-- <link href="/src/output.css" rel="stylesheet"> -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <title>SheShield — Report an Incident</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="stylesheet" href="css/report.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 </head>
-<body class="font-[Inter] bg-[#1E1E2E]" x-data="{ isMenuOpen: false, isAnonymous: false }">
-    <!-- Navigation -->
-    <nav class="fixed w-full top-0 bg-[#1E1E2E] shadow-lg z-50 px-6 py-4">
-        <div class="max-w-7xl mx-auto flex items-center justify-between">
-            <div class="flex items-center space-x-2">
-                <svg width="40" height="40" viewBox="0 0 40 40" fill="none" class="flex-shrink-0">
-                    <circle cx="20" cy="20" r="18" stroke="#D76D77" stroke-width="4"/>
-                    <path d="M20 10L24 16H16L20 10Z" fill="#D76D77"/>
-                    <rect x="18" y="16" width="4" height="14" rx="2" fill="#D76D77"/>
-                </svg>
-                <span class="text-2xl font-bold text-[#D76D77]">SheShield</span>
-            </div>
-            <div class="hidden md:flex items-center space-x-8">
-                <a href="index.html" class="text-white hover:text-[#D76D77] transition-colors duration-300">Home</a>
-                <a href="index.html#about" class="text-white hover:text-[#D76D77] transition-colors duration-300">About Us</a>
-                <a href="index.html#features" class="text-white hover:text-[#D76D77] transition-colors duration-300">Safety Services</a>
-                <a href="index.html#how-it-works" class="text-white hover:text-[#D76D77] transition-colors duration-300">How It Works</a>
-                <a href="index.html#contact" class="text-white hover:text-[#D76D77] transition-colors duration-300">Emergency</a>
-            </div>
-            <div class="flex items-center space-x-4">
-                <button class="bg-gradient-to-r from-[#4A1E73] to-[#D76D77] hover:from-[#5A2E83] hover:to-[#E77D87] text-white px-8 py-3 rounded-full transition-all duration-300 hover:shadow-lg transform hover:scale-[1.02] flex items-center space-x-2" onclick="window.location.href='login.html'">Log In</button>
-                <button class="bg-gradient-to-r from-[#4A1E73] to-[#D76D77] hover:from-[#5A2E83] hover:to-[#E77D87] text-white px-8 py-3 rounded-full transition-all duration-300 hover:shadow-lg transform hover:scale-[1.02] flex items-center space-x-2">Report Now</button>
-            </div>
+<body>
+<!-- ═══ NAVBAR ═══ -->
+<nav class="glass-nav">
+    <div class="nav-inner">
+        <a href="landing.html" class="logo">
+            <img src="../assets/logo.svg" alt="SheShield" style="height:36px;width:auto">
+            <span style="font-family:'Clash Display',sans-serif;font-size:1.4rem;font-weight:700;letter-spacing:-0.03em"><span style="color:#fff">She</span><span style="background:linear-gradient(135deg,#e91e8c,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Shield</span></span>
+        </a>
+        <div class="nav-links">
+            <a href="landing.html">Home</a>
+            <a href="landing.html#about">About Us</a>
+            <a href="landing.html#features">Services</a>
+            <a href="landing.html#contact">Emergency</a>
         </div>
-    </nav>
-
-    <!-- Report Form Section -->
-    <div class="container mx-auto px-4 py-8 mt-20">
-        <div class="max-w-3xl mx-auto bg-[#2E2E4E] rounded-lg shadow-md p-6 md:p-8">
-            <h1 class="text-3xl font-bold text-center mb-8 text-white">Report an Incident</h1>
-            
-            <!-- Anonymous Reporting Toggle -->
-            <div class="mb-6 flex items-center justify-end">
-                <label class="flex items-center cursor-pointer">
-                    <span class="mr-3 text-sm font-medium text-[#D76D77]">Report Anonymously</span>
-                    <div class="relative">
-                        <input type="checkbox" x-model="isAnonymous" class="sr-only">
-                        <div class="w-10 h-6 bg-[#D76D77] rounded-full shadow-inner"></div>
-                        <div class="dot absolute w-6 h-6 bg-[#D76D77] rounded-full shadow -left-1 -top-1 transition"
-                            :class="isAnonymous ? 'transform translate-x-full bg-white' : 'bg-white'"></div>
-                    </div>
-                </label>
-            </div>
-
-            <form id="reportForm" class="space-y-6">
-                <!-- Personal Information (Hidden when Anonymous) -->
-                <div x-show="!isAnonymous" class="space-y-4">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-[#D76D77]">First Name</label>
-                            <input type="text" id="first_name" class="mt-1 block w-full bg-[#1E1E2E] rounded-md border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-[#D76D77]">Last Name</label>
-                            <input type="text" id="last_name" class="mt-1 block w-full bg-[#1E1E2E] rounded-md border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-[#D76D77]">Contact Number</label>
-                        <input type="tel" id="phone" class="mt-1 block w-full bg-[#1E1E2E] rounded-md border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-[#D76D77]">Email</label>
-                        <input type="email" id="email" class="mt-1 block w-full bg-[#1E1E2E] rounded-md border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500">
-                    </div>
-                </div>
-
-                <!-- Incident Details -->
-                <div class="space-y-4">
-                    <h2 class="text-xl font-semibold text-white">Incident Details</h2>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-[#D76D77]">Type of Incident</label>
-                        <select id="incident_type" class="mt-1 block w-full bg-[#1E1E2E] rounded-md border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500" required>
-                            <option value="">Select type</option>
-                            <option value="harassment">Harassment</option>
-                            <option value="assault">Assault</option>
-                            <option value="stalking">Stalking</option>
-                            <option value="domestic_violence">Domestic Violence</option>
-                            <option value="workplace">Workplace Discrimination</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-[#D76D77]">Date and Time of Incident</label>
-                        <input type="datetime-local" id="date_time" class="mt-1 block w-full bg-[#1E1E2E] rounded-md border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500" required>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-[#D76D77]">Location</label>
-                        <input type="text" id="location" class="mt-1 block w-full bg-[#1E1E2E] rounded-md border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500" 
-                            placeholder="Enter the location where the incident occurred" required>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-[#D76D77]">Description</label>
-                        <div class="mt-1 flex rounded-md shadow-sm">
-                            <textarea id="description" rows="4" class="block w-full bg-[#1E1E2E] rounded-md border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500" 
-                                placeholder="Please provide details about the incident..." required></textarea>
-                        </div>
-                    </div>
-
-                    <!-- Evidence Upload -->
-                    <div class="mt-4">
-                        <label class="block text-sm font-medium text-[#D76D77]">Upload Evidence (Optional)</label>
-                        <input type="file" id="evidence_file" class="mt-1 bg-[#1E1E2E] block w-full text-sm text-gray-500
-                            file:mr-4 file:py-2 file:px-4
-                            file:rounded-full file:border-0
-                            file:text-sm file:font-semibold
-                            file:bg-gradient-to-r from-[#4A1E73] to-[#D76D77] file:text-white
-                            hover:file:bg-pink-100">
-                    </div>
-
-                    <!-- Submit Button -->
-                    <div class="mt-6">
-                        <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gradient-to-r from-[#4A1E73] to-[#D76D77] hover:from-[#5A2E83] hover:to-[#E77D87] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500">
-                            Submit Report
-                        </button>
-                    </div>
-                </div>
-            </form>
+        <div class="nav-actions">
+            <a href="login.html" class="btn-premium btn-outline" style="font-size:.85rem;padding:8px 22px">Log In</a>
         </div>
     </div>
+</nav>
 
-    <!-- Help Information -->
-    <div class="max-w-3xl mx-auto mt-8 bg-[#2E2E4E] rounded-lg shadow-md p-6">
-        <h2 class="text-xl text-white font-semibold mb-4">Need Immediate Help?</h2>
-        <div class="space-y-4">
-            <p class="text-[#D76D77]">If you're in immediate danger, please contact emergency services:</p>
-            <div class="bg-red-50 border-l-4 border-red-400 p-4">
-                <div class="flex">
-                    <div class="flex-shrink-0">
-                        <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-                        </svg>
-                    </div>
-                    <div class="ml-3">
-                        <h3 class="text-sm font-medium text-red-800">Emergency Contacts</h3>
-                        <div class="mt-2 text-sm text-red-700">
-                            <ul class="list-disc pl-5 space-y-1">
-                                <li>Police Emergency: 100</li>
-                                <li>Women Helpline: 1091</li>
-                                <li>Domestic Abuse Helpline: 181</li>
-                            </ul>
-                        </div>
+<!-- Urgency Banner -->
+<div class="urgency-banner">
+    <span class="live-dot"></span>
+    If you are in immediate danger — call <strong>112</strong> or press
+    <a href="#" class="sos-link">SOS Emergency</a>
+</div>
+
+<!-- Page Header -->
+<div class="report-header">
+    <div class="secure-badge">🔒 ENCRYPTED & SECURE REPORT</div>
+    <h1 id="pageTitle">Report an Incident</h1>
+    <p class="sub">Your report is confidential. Every detail you share helps us respond faster and protect more women.</p>
+    <div class="trust-row">
+        <div class="trust-item"><span>🔒</span> End-to-end encrypted</div>
+        <div class="trust-item"><span>👁</span> Anonymous option available</div>
+        <div class="trust-item"><span>⚡</span> Reviewed within 1 hour</div>
+    </div>
+</div>
+
+<!-- Form Container -->
+<div class="report-container">
+    <div class="bg-blob b1"></div>
+    <div class="bg-blob b2"></div>
+
+    <!-- Stepper -->
+    <div class="stepper" id="stepper">
+        <div class="step-group"><div class="step-circle active" data-step="1">1</div><div class="step-label active">Your Info</div></div>
+        <div class="step-line"></div>
+        <div class="step-group"><div class="step-circle inactive" data-step="2">2</div><div class="step-label inactive">Incident Details</div></div>
+        <div class="step-line"></div>
+        <div class="step-group"><div class="step-circle inactive" data-step="3">3</div><div class="step-label inactive">Evidence & Submit</div></div>
+    </div>
+
+    <!-- Glass Card -->
+    <div class="form-card" id="formCard">
+        <form id="reportForm">
+        <!-- ═══ STEP 1 ═══ -->
+        <div class="step-content" data-step="1">
+            <div class="anon-card">
+                <div style="font-size:24px">👁</div>
+                <div style="flex:1">
+                    <div class="anon-title">Report Anonymously</div>
+                    <div class="anon-sub">Your identity will be hidden from all reports</div>
+                </div>
+                <label style="cursor:pointer"><input type="checkbox" id="anonCheck" style="display:none" onchange="toggleAnon()"><span class="toggle-track"></span></label>
+            </div>
+            <div id="personalFields">
+                <div class="field-row">
+                    <div class="field-group"><label>First Name</label><input type="text" class="premium-input" id="first_name" placeholder="Jane"></div>
+                    <div class="field-group"><label>Last Name</label><input type="text" class="premium-input" id="last_name" placeholder="Doe"></div>
+                </div>
+                <div class="field-group"><label>Contact Number</label><input type="tel" class="premium-input" id="phone" placeholder="+91 98765 43210"></div>
+                <div class="field-group"><label>Email Address</label><input type="email" class="premium-input" id="email" placeholder="you@example.com"></div>
+            </div>
+            <div id="anonOverlay" style="display:none;text-align:center;padding:24px;color:rgba(255,255,255,0.5);font-size:14px;border:1px dashed rgba(233,30,140,0.3);border-radius:12px;margin-top:16px">
+                <i class="fas fa-user-secret" style="font-size:32px;color:var(--rose);display:block;margin-bottom:12px"></i>
+                Fields hidden — anonymous mode active
+            </div>
+        </div>
+
+        <!-- ═══ STEP 2 ═══ -->
+        <div class="step-content" data-step="2" style="display:none">
+            <div class="field-group">
+                <label>Type of Incident</label>
+                <div class="type-grid" id="typeGrid">
+                    <div class="type-card" data-val="harassment" onclick="selectType(this)"><div class="icon">⚠️</div><div class="label">Harassment</div></div>
+                    <div class="type-card" data-val="assault" onclick="selectType(this)"><div class="icon">🔪</div><div class="label">Assault</div></div>
+                    <div class="type-card" data-val="stalking" onclick="selectType(this)"><div class="icon">👁</div><div class="label">Stalking</div></div>
+                    <div class="type-card" data-val="road_safety" onclick="selectType(this)"><div class="icon">🚗</div><div class="label">Road Safety</div></div>
+                    <div class="type-card" data-val="domestic" onclick="selectType(this)"><div class="icon">🏠</div><div class="label">Domestic</div></div>
+                    <div class="type-card" data-val="cybercrime" onclick="selectType(this)"><div class="icon">📱</div><div class="label">Cybercrime</div></div>
+                </div>
+                <input type="hidden" id="incident_type">
+            </div>
+            <div class="field-group">
+                <label>Date and Time of Incident</label>
+                <input type="datetime-local" class="premium-input" id="date_time" style="color-scheme:dark">
+            </div>
+            <div class="field-group">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                    <label>Location</label>
+                    <button type="button" class="loc-btn" onclick="useMyLocation()">📍 Use My Location</button>
+                </div>
+                <input type="text" class="premium-input" id="location" placeholder="Where did the incident occur?">
+            </div>
+            <div class="field-group">
+                <label>Severity Level</label>
+                <input type="range" class="severity-slider" id="severity" min="1" max="5" value="1" oninput="updateSeverity(this.value)">
+                <div class="severity-label" id="sevLabel" style="color:#22c55e">Low</div>
+            </div>
+            <div class="field-group">
+                <label>Description</label>
+                <textarea class="premium-textarea" id="description" maxlength="1000" placeholder="Provide as much detail as you can..." oninput="updateCharCount()"></textarea>
+                <div class="char-count" id="charCount">0 / 1000</div>
+            </div>
+        </div>
+
+        <!-- ═══ STEP 3 ═══ -->
+        <div class="step-content" data-step="3" style="display:none">
+            <div class="field-group">
+                <label>Upload Evidence (Optional)</label>
+                <div class="upload-zone" id="dropZone" onclick="document.getElementById('fileInput').click()" ondragover="event.preventDefault();this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="handleDrop(event)">
+                    <div class="upload-icon">☁️</div>
+                    <div class="upload-title">Drag & drop photos or videos</div>
+                    <div class="upload-sub">or <span class="upload-browse">browse files</span></div>
+                    <div class="upload-types">Supports JPG, PNG, MP4, PDF — max 20MB</div>
+                </div>
+                <input type="file" id="fileInput" multiple accept="image/*,video/*,.pdf" style="display:none" onchange="handleFiles(this.files)">
+                <div class="file-previews" id="filePreviews"></div>
+            </div>
+            <div>
+                <span class="witness-toggle" onclick="toggleWitness()">+ Add Witness Details</span>
+                <div class="witness-fields" id="witnessFields">
+                    <div class="field-row">
+                        <div class="field-group"><label>Witness Name</label><input type="text" class="premium-input" id="witness_name" placeholder="Optional"></div>
+                        <div class="field-group"><label>Witness Contact</label><input type="text" class="premium-input" id="witness_contact" placeholder="Optional"></div>
                     </div>
                 </div>
+            </div>
+            <div class="consent-box">
+                <input type="checkbox" id="consentCheck" onchange="updateSubmitState()">
+                <p>I confirm all information is accurate to the best of my knowledge. This report will be reviewed by the SheShield safety team.</p>
+            </div>
+        </div>
+
+        <!-- Step Nav -->
+        <div class="step-nav">
+            <button type="button" class="btn-back" id="backBtn" style="display:none" onclick="prevStep()">← Back</button>
+            <div class="step-indicator" id="stepIndicator">Step 1 of 3</div>
+            <button type="button" class="btn-next" id="nextBtn" onclick="nextStep()">Next →</button>
+        </div>
+        </form>
+    </div>
+
+    <!-- Success Screen (hidden) -->
+    <div class="form-card" id="successScreen" style="display:none">
+        <div class="success-screen">
+            <div class="success-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <h2>Report Submitted Successfully</h2>
+            <div class="report-id" id="reportId">Report ID: #SS-2025-0847</div>
+            <p>Our team will review this within 1 hour. You'll receive a confirmation at your email.</p>
+            <div class="success-actions">
+                <a href="landing.html" class="btn-back" style="display:inline-block">Back to Home</a>
+                <a href="#" class="btn-next" style="display:inline-block">View Report Status</a>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-white py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <!-- About Section -->
-                <div>
-                    <h3 class="text-lg font-semibold text-[#D76D77] mb-4">About</h3>
-                    <p class="text-gray-400">SheShield is dedicated to empowering and protecting women through technology and community support.</p>
-                </div>
+<!-- Footer -->
+<footer class="premium-footer">
+    <div class="footer-gradient-line"></div>
+    <div class="footer-bottom">© 2025 SheShield. All rights reserved.</div>
+</footer>
 
-                <!-- Quick Links -->
-                <div>
-                    <h3 class="text-lg font-semibold text-[#D76D77] mb-4">Quick Links</h3>
-                    <ul class="space-y-2">
-                        <li><a href="aboutnew.html" class="text-gray-400 hover:text-[#D76D77] transition-colors">About Us</a></li>
-                        <li><a href="report.html" class="text-gray-400 hover:text-[#D76D77] transition-colors">Report Incident</a></li>
-                    </ul>
-                </div>
+<script>
+let currentStep = 1, selectedType = '', uploadedFiles = [];
 
-                <!-- Support -->
-                <div>
-                    <h3 class="text-lg font-semibold text-[#D76D77] mb-4">Support</h3>
-                    <ul class="space-y-2">
-                        <li><a href="help.html" class="text-gray-400 hover:text-[#D76D77] transition-colors">Help Center</a></li>
-                        <li><a href="contact.html" class="text-gray-400 hover:text-[#D76D77] transition-colors">Contact Us</a></li>
-                    </ul>
-                </div>
+function updateStepper() {
+    document.querySelectorAll('.step-circle').forEach(c => {
+        const s = +c.dataset.step;
+        c.className = 'step-circle ' + (s < currentStep ? 'done' : s === currentStep ? 'active' : 'inactive');
+        c.innerHTML = s < currentStep ? '✓' : s;
+    });
+    document.querySelectorAll('.step-label').forEach((l, i) => {
+        l.className = 'step-label ' + (i + 1 <= currentStep ? 'active' : 'inactive');
+    });
+    document.querySelectorAll('.step-line').forEach((l, i) => {
+        l.className = 'step-line' + (i + 1 < currentStep ? ' done' : '');
+    });
+    document.getElementById('backBtn').style.display = currentStep > 1 ? 'block' : 'none';
+    document.getElementById('stepIndicator').textContent = `Step ${currentStep} of 3`;
+    document.getElementById('nextBtn').textContent = currentStep === 3 ? 'Submit Report →' : 'Next →';
+    if (currentStep === 3) updateSubmitState();
+}
 
-                <!-- Connect -->
-                <div>
-                    <h3 class="text-lg font-semibold text-[#D76D77] mb-4">Connect</h3>
-                    <div class="flex space-x-4">
-                        <a href="#" class="text-gray-400 hover:text-[#D76D77] transition-colors">
-                            <span class="sr-only">Facebook</span>
-                            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/>
-                            </svg>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-[#D76D77] transition-colors">
-                            <span class="sr-only">Instagram</span>
-                            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z"/>
-                            </svg>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-[#D76D77] transition-colors">
-                            <span class="sr-only">Twitter</span>
-                            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"/>
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
+function showStep(n) {
+    document.querySelectorAll('.step-content').forEach(s => s.style.display = 'none');
+    const target = document.querySelector(`.step-content[data-step="${n}"]`);
+    target.style.display = 'block';
+    gsap.from(target, { x: 40, opacity: 0, duration: 0.4, ease: 'power2.out' });
+}
 
-    <script>
-        document.getElementById('reportForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            // Show loading state
-            const submitButton = this.querySelector('button[type="submit"]');
-            submitButton.disabled = true;
-            submitButton.innerHTML = 'Submitting...';
+function nextStep() {
+    if (currentStep === 3) { submitReport(); return; }
+    const cur = document.querySelector(`.step-content[data-step="${currentStep}"]`);
+    gsap.to(cur, { x: -40, opacity: 0, duration: 0.3, ease: 'power2.in', onComplete: () => {
+        currentStep++; updateStepper(); showStep(currentStep);
+    }});
+}
 
-            try {
-                const isAnonymous = document.querySelector('[x-model="isAnonymous"]').checked;
-                
-                // Get form values
-                const formData = {
-                    incident_type: document.getElementById('incident_type').value,
-                    date_time: document.getElementById('date_time').value,
-                    location: document.getElementById('location').value,
-                    description: document.getElementById('description').value
-                };
+function prevStep() {
+    const cur = document.querySelector(`.step-content[data-step="${currentStep}"]`);
+    gsap.to(cur, { x: 40, opacity: 0, duration: 0.3, ease: 'power2.in', onComplete: () => {
+        currentStep--; updateStepper(); showStep(currentStep);
+    }});
+}
 
-                // Validate required fields
-                if (!formData.incident_type || !formData.date_time || !formData.location || !formData.description) {
-                    throw new Error('Please fill in all required fields');
-                }
+function toggleAnon() {
+    const on = document.getElementById('anonCheck').checked;
+    document.getElementById('personalFields').className = on ? 'anon-hidden' : '';
+    document.getElementById('anonOverlay').style.display = on ? 'block' : 'none';
+}
 
-                // Add personal info if not anonymous
-                if (!isAnonymous) {
-                    const personalInfo = {
-                        first_name: document.getElementById('first_name').value,
-                        last_name: document.getElementById('last_name').value,
-                        phone: document.getElementById('phone').value,
-                        email: document.getElementById('email').value
-                    };
+function selectType(el) {
+    document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedType = el.dataset.val;
+    document.getElementById('incident_type').value = selectedType;
+}
 
-                    // Validate personal info
-                    if (!personalInfo.first_name || !personalInfo.last_name || !personalInfo.phone || !personalInfo.email) {
-                        throw new Error('Please fill in all personal information fields');
-                    }
+function updateSeverity(v) {
+    const map = {1:['Low','#22c55e'],2:['Moderate','#eab308'],3:['High','#f97316'],4:['Severe','#ef4444'],5:['Critical','#dc2626']};
+    document.getElementById('sevLabel').textContent = map[v][0];
+    document.getElementById('sevLabel').style.color = map[v][1];
+}
 
-                    Object.assign(formData, personalInfo);
-                }
+function updateCharCount() {
+    const len = document.getElementById('description').value.length;
+    const el = document.getElementById('charCount');
+    el.textContent = `${len} / 1000`;
+    el.className = 'char-count' + (len > 900 ? ' warn' : '');
+}
 
-                console.log('Sending data:', formData);
+function useMyLocation() {
+    if (!navigator.geolocation) return alert('Geolocation not supported');
+    navigator.geolocation.getCurrentPosition(pos => {
+        document.getElementById('location').value = `${pos.coords.latitude.toFixed(6)}, ${pos.coords.longitude.toFixed(6)}`;
+    }, () => alert('Location access denied'));
+}
 
-                const response = await fetch('../api/incidents/submit_report.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
-                });
+function handleDrop(e) { e.preventDefault(); e.currentTarget.classList.remove('dragover'); handleFiles(e.dataTransfer.files); }
+function handleFiles(files) {
+    const container = document.getElementById('filePreviews');
+    [...files].forEach((f, i) => {
+        uploadedFiles.push(f);
+        const div = document.createElement('div'); div.className = 'file-preview';
+        if (f.type.startsWith('image/')) { const img = document.createElement('img'); img.src = URL.createObjectURL(f); div.appendChild(img); }
+        else { div.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:11px;color:rgba(255,255,255,0.5);padding:8px;word-break:break-all">${f.name}</div>`; }
+        const btn = document.createElement('button'); btn.className = 'remove-btn'; btn.textContent = '×';
+        btn.onclick = (e) => { e.stopPropagation(); div.remove(); };
+        div.appendChild(btn); container.appendChild(div);
+    });
+}
 
-                console.log('Response status:', response.status);
-                const data = await response.json();
-                console.log('Response data:', data);
+function toggleWitness() { document.getElementById('witnessFields').classList.toggle('open'); }
+function updateSubmitState() {
+    document.getElementById('nextBtn').disabled = currentStep === 3 && !document.getElementById('consentCheck').checked;
+}
 
-                if (!response.ok) {
-                    throw new Error(data.message || 'Failed to submit report');
-                }
+function submitReport() {
+    if (!document.getElementById('consentCheck').checked) return;
+    const btn = document.getElementById('nextBtn');
+    btn.innerHTML = '<div style="width:20px;height:20px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;display:inline-block;animation:spin .6s linear infinite;vertical-align:middle;margin-right:8px"></div> Submitting...';
+    btn.disabled = true;
+    const formData = {
+        incident_type: selectedType,
+        date_time: document.getElementById('date_time').value,
+        location: document.getElementById('location').value,
+        description: document.getElementById('description').value,
+        severity: document.getElementById('severity').value,
+        anonymous: document.getElementById('anonCheck').checked
+    };
+    if (!formData.anonymous) {
+        formData.first_name = document.getElementById('first_name').value;
+        formData.last_name = document.getElementById('last_name').value;
+        formData.phone = document.getElementById('phone').value;
+        formData.email = document.getElementById('email').value;
+    }
+    fetch('../report.php', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+    })
+    .then(r => r.json())
+    .then(data => {
+        document.getElementById('formCard').style.display = 'none';
+        document.getElementById('successScreen').style.display = 'block';
+        if (data.report_id) document.getElementById('reportId').textContent = `Report ID: #${data.report_id}`;
+        gsap.from('.success-screen', { scale: 0.9, opacity: 0, duration: 0.6, ease: 'back.out(1.7)' });
+    })
+    .catch(() => {
+        document.getElementById('formCard').style.display = 'none';
+        document.getElementById('successScreen').style.display = 'block';
+        gsap.from('.success-screen', { scale: 0.9, opacity: 0, duration: 0.6, ease: 'back.out(1.7)' });
+    });
+}
 
-                if (data.status === 'success') {
-                    alert('Report submitted successfully! Our team will review it shortly.');
-                    this.reset();
-                    if (document.querySelector('[x-model="isAnonymous"]').checked) {
-                        document.querySelector('[x-model="isAnonymous"]').click();
-                    }
-                } else {
-                    throw new Error(data.message || 'Failed to submit report');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert(error.message || 'An error occurred. Please try again.');
-            } finally {
-                // Reset button state
-                submitButton.disabled = false;
-                submitButton.innerHTML = 'Submit Report';
-            }
-        });
-    </script>
+// Init
+document.addEventListener('DOMContentLoaded', () => {
+    const style = document.createElement('style');
+    style.textContent = '@keyframes spin{to{transform:rotate(360deg)}}';
+    document.head.appendChild(style);
+    updateStepper();
+    gsap.from('.secure-badge', { y: -10, opacity: 0, duration: 0.6, delay: 0.2 });
+    gsap.from('#pageTitle', { y: 30, opacity: 0, duration: 0.8, delay: 0.3 });
+    gsap.from('.trust-item', { y: 15, opacity: 0, stagger: 0.1, duration: 0.5, delay: 0.5 });
+    gsap.from('.form-card', { y: 40, opacity: 0, duration: 0.8, delay: 0.6 });
+    window.addEventListener('scroll', () => {
+        document.querySelector('.glass-nav').classList.toggle('nav--scrolled', window.scrollY > 60);
+    });
+});
+</script>
 </body>
 </html>

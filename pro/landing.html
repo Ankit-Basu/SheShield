@@ -3,741 +3,373 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SheShield - Women Safety & Support</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#4A1E73',
-                        secondary: '#D76D77'
-                    },
-                    animation: {
-                        'fade-in': 'fadeIn 0.8s ease-out',
-                        'pulse': 'pulse 2s infinite',
-                        'gradient-flow': 'gradientFlow 3s ease infinite'
-                    },
-                    keyframes: {
-                        fadeIn: {
-                            '0%': { opacity: '0', transform: 'translateY(20px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' }
-                        },
-                        pulse: {
-                            '0%, 100%': { transform: 'scale(1)' },
-                            '50%': { transform: 'scale(1.1)' }
-                        },
-                        gradientFlow: {
-                            '0%': { backgroundPosition: '0% 50%' },
-                            '50%': { backgroundPosition: '100% 50%' },
-                            '100%': { backgroundPosition: '0% 50%' }
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+    <title>SheShield — Empowering Women's Safety</title>
+    <meta name="description" content="SheShield — 24/7 Emergency support, real-time tracking, and incident reporting for women's safety.">
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="stylesheet" href="css/premium.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- GSAP + ScrollTrigger -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <!-- Lenis Smooth Scroll -->
+    <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+    <!-- VanillaTilt -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
+    <!-- Alpine.js (chatbot) -->
     <script defer src="https://unpkg.com/alpinejs@3.13.3/dist/cdn.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script> -->
 </head>
-<body class="font-[Inter] bg-[#1E1E2E]">
-    <nav class="fixed w-full top-0 bg-[#1E1E2E] shadow-lg z-50 px-6 py-4">
-        <div class="max-w-7xl mx-auto flex items-center justify-between">
-            <div class="flex items-center space-x-2">
-                <svg width="40" height="40" viewBox="0 0 40 40" fill="none" class="flex-shrink-0">
-                    <circle cx="20" cy="20" r="18" stroke="#D76D77" stroke-width="4"/>
-                    <path d="M20 10L24 16H16L20 10Z" fill="#D76D77"/>
-                    <rect x="18" y="16" width="4" height="14" rx="2" fill="#D76D77"/>
-                </svg>
-                <span class="text-2xl font-bold text-[#D76D77]">SheShield</span>
+<body>
+
+<!-- Page Loader Curtain -->
+<div id="loader">
+    <div style="position:relative;display:flex;align-items:center;justify-content:center">
+        <svg width="80" height="88" viewBox="0 0 100 110" fill="none" style="position:relative;z-index:1">
+            <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#e91e8c"/><stop offset="100%" stop-color="#7c3aed"/></linearGradient></defs>
+            <path d="M50 6 L88 22 L88 56 Q88 80 50 96 Q12 80 12 56 L12 22 Z" fill="url(#lg)"/>
+            <circle cx="50" cy="40" r="13" stroke="white" stroke-width="2.8"/>
+            <line x1="50" y1="53" x2="50" y2="74" stroke="white" stroke-width="2.8" stroke-linecap="round"/>
+            <line x1="41" y1="65" x2="59" y2="65" stroke="white" stroke-width="2.8" stroke-linecap="round"/>
+            <polyline points="46,32 50,26 54,32" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <svg width="160" height="176" viewBox="0 0 100 110" fill="none" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);animation:loaderPulse 2.5s infinite">
+            <circle cx="50" cy="55" r="58" fill="none" stroke="url(#lg)" stroke-width="1" opacity="0.3"/>
+        </svg>
+    </div>
+</div>
+<style>@keyframes loaderPulse{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:0.3}50%{transform:translate(-50%,-50%) scale(1.15);opacity:0.1}}</style>
+
+<!-- Custom Cursor -->
+<div id="cursor"></div>
+<div id="cursor-follower"></div>
+
+<!-- Scroll Progress Bar -->
+<div id="scrollProgress"></div>
+
+<!-- ═══ NAVBAR ═══ -->
+<nav class="glass-nav">
+    <div class="nav-inner">
+        <a href="landing.html" class="logo" id="navLogo">
+            <img src="../assets/logo.svg" alt="SheShield" class="nav-logo-icon" style="height:36px;width:auto;transition:height 0.3s ease">
+            <span class="auth-logo-wordmark" style="font-family:'Clash Display',sans-serif;font-size:1.4rem;font-weight:700;letter-spacing:-0.03em"><span style="color:#fff">She</span><span style="background:linear-gradient(135deg,#e91e8c,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Shield</span></span>
+        </a>
+        <div class="nav-links">
+            <a href="#hero">Home</a>
+            <a href="#about">About Us</a>
+            <a href="#features">Services</a>
+            <a href="#how-it-works">How It Works</a>
+            <a href="#contact">Emergency</a>
+        </div>
+        <div class="nav-actions">
+            <a href="login.html" class="btn-premium btn-outline btn-sm">Log In</a>
+            <a href="report.html" class="btn-premium btn-sm magnetic-btn">Report Now</a>
+        </div>
+    </div>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero" id="hero">
+    <!-- Background Layers -->
+    <div class="mesh-blob blob-1"></div>
+    <div class="mesh-blob blob-2"></div>
+    <div class="mesh-blob blob-3"></div>
+    <div class="mesh-blob blob-4"></div>
+    <div id="noise"></div>
+    <div class="hero-dots"></div>
+    <div class="hero-image-layer"></div>
+
+    <!-- LAYER 3 — Background Watermark -->
+    <div class="hero-bg-text" aria-hidden="true">SheShield</div>
+
+    <!-- LAYER 4 — Floating Stat Chips (left side) -->
+    <div class="stat-chip chip-1">🛡 <strong>1,240</strong>&nbsp;incidents reported this month</div>
+    <div class="stat-chip chip-2"><span class="chip-blink"></span> Real-time location shared</div>
+    <div class="stat-chip chip-3"><span class="chip-check">✓</span> <strong>98%</strong>&nbsp;response rate</div>
+
+    <!-- LAYER 4b — Right-side Floating Chips -->
+    <div class="stat-chip chip-r1">👥 <strong>3,200+</strong>&nbsp;walk buddies active</div>
+    <div class="stat-chip chip-r2"><span class="chip-blink"></span> Live tracking enabled</div>
+    <div class="stat-chip chip-r3"><span class="chip-check">✓</span> <strong>500+</strong>&nbsp;safe spaces verified</div>
+
+    <!-- HERO CONTENT (center) -->
+    <div class="hero-content">
+        <!-- LAYER 1 — Badge Pill -->
+        <div class="hero-badge">
+            <span class="badge-dot"></span>
+            24/7 Active Protection
+        </div>
+
+        <!-- LAYER 2 — Two-Line Headline -->
+        <h1 class="hero-headline">
+            <span class="line line-1">
+                <span class="word"><span class="word-inner">Empowering</span></span>
+            </span>
+            <span class="line line-2" data-text="Women's Safety">
+                <span class="word"><span class="word-inner">Women's</span></span>
+                <span class="word"><span class="word-inner">Safety</span></span>
+            </span>
+        </h1>
+
+        <!-- Subtitle -->
+        <p class="hero-sub">24/7 Emergency support, real-time tracking, and incident reporting system designed to keep women safe — anytime, anywhere.</p>
+
+        <!-- Buttons -->
+        <div class="hero-buttons">
+            <a href="signup.html" class="btn-premium magnetic-btn">
+                <i class="fas fa-shield-heart"></i> Get Started
+            </a>
+            <a href="#features" class="btn-premium btn-outline">
+                <i class="fas fa-play"></i> Learn More
+            </a>
+        </div>
+
+        <!-- LAYER 6 — Scroll Indicator -->
+        <div class="scroll-hint">
+            <div class="scroll-mouse"><div class="scroll-wheel"></div></div>
+            <span>Scroll to explore</span>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ STATS ═══ -->
+<section class="stats-section">
+    <div class="stats-grid">
+        <div class="stat-item">
+            <div class="stat-number count-up" data-target="10000" data-suffix="+">0</div>
+            <div class="stat-label">Women Protected</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number count-up" data-target="98" data-suffix="%">0</div>
+            <div class="stat-label">Emergency Response Rate</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number count-up" data-target="500" data-suffix="+">0</div>
+            <div class="stat-label">Verified Safe Spaces</div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ SAFETY SERVICES ═══ -->
+<section id="features" style="padding:6rem 2rem;background:var(--dark)">
+    <div style="max-width:1280px;margin:0 auto">
+        <div class="section-heading">
+            <h2 class="scramble-text" data-value="SAFETY SERVICES">SAFETY SERVICES</h2>
+            <div class="heading-line"></div>
+            <p>Comprehensive tools to protect, report, and connect.</p>
+        </div>
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="card-inner">
+                    <div class="card-icon"><i class="fas fa-file-shield"></i></div>
+                    <h3>Incident Reporting</h3>
+                    <p>Quick and secure system to report incidents with photo and location evidence. Stay anonymous or track your report.</p>
+                </div>
             </div>
-            <div class="hidden md:flex items-center space-x-8">
-                <a href="landing.html" class="text-white hover:text-[#D76D77] transition-colors duration-300">Home</a>
-                <a href="#about" class="text-white hover:text-[#D76D77] transition-colors duration-300">About Us</a>
-                <a href="#features" class="text-white hover:text-[#D76D77] transition-colors duration-300">Safety Services</a>
-                <a href="#how-it-works" class="text-white hover:text-[#D76D77] transition-colors duration-300">How It Works</a>
-                <a href="#contact" class="text-white hover:text-[#D76D77] transition-colors duration-300">Emergency</a>
+            <div class="service-card">
+                <div class="card-inner">
+                    <div class="card-icon"><i class="fas fa-map-location-dot"></i></div>
+                    <h3>Safety Heat Map</h3>
+                    <p>Real-time location tracking and area safety analysis with interactive heat mapping powered by community data.</p>
+                </div>
             </div>
-            <div class="flex items-center space-x-4">
-                <button class="bg-gradient-to-r from-[#4A1E73] to-[#D76D77] hover:from-[#5A2E83] hover:to-[#E77D87] text-white px-8 py-3 rounded-full transition-all duration-300 hover:shadow-lg transform hover:scale-[1.02] flex items-center space-x-2" onclick="window.location.href='login.html'">Log In</button>
-                <button class="bg-gradient-to-r from-[#4A1E73] to-[#D76D77] hover:from-[#5A2E83] hover:to-[#E77D87] text-white px-8 py-3 rounded-full transition-all duration-300 hover:shadow-lg transform hover:scale-[1.02] flex items-center space-x-2" onclick="window.location.href='report.html'">Report Now</button>
+            <div class="service-card">
+                <div class="card-inner">
+                    <div class="card-icon"><i class="fas fa-people-group"></i></div>
+                    <h3>Walk With Us</h3>
+                    <p>Connect with verified companions for safer travel and commuting. Never walk alone again.</p>
+                </div>
+            </div>
+            <div class="service-card">
+                <div class="card-inner">
+                    <div class="card-icon"><i class="fas fa-triangle-exclamation"></i></div>
+                    <h3>SOS Alert System</h3>
+                    <p>One-tap emergency alerts to contacts and nearby authorities with real-time GPS location sharing.</p>
+                </div>
+            </div>
+            <div class="service-card">
+                <div class="card-inner">
+                    <div class="card-icon"><i class="fas fa-chart-line"></i></div>
+                    <h3>Safety Analytics</h3>
+                    <p>Track and analyze safety patterns with detailed insights, response metrics, and community intelligence.</p>
+                </div>
+            </div>
+            <div class="service-card">
+                <div class="card-inner">
+                    <div class="card-icon"><i class="fas fa-location-crosshairs"></i></div>
+                    <h3>Safe Spaces</h3>
+                    <p>Find and connect with verified safe locations and women-friendly businesses in your area.</p>
+                </div>
             </div>
         </div>
-    </nav>
+    </div>
+</section>
 
-    <main class="pt-20">
-        <div class="relative min-h-screen bg-gradient-to-r from-primary to-secondary flex items-center justify-center px-4 bg-fixed bg-cover" style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('img1.png');">
-            <div class="text-center text-white max-w-3xl mx-auto">
-                <h1 class="text-5xl md:text-6xl font-bold mb-6 animate-fade-in font-['Playfair_Display'] bg-gradient-to-r from-white to-secondary bg-clip-text text-transparent">Empowering Women's Safety</h1>
-                <p class="text-xl md:text-2xl mb-8 opacity-90">24/7 Emergency support and incident reporting system for women's safety.</p>
-                <button class="px-8 py-3 bg-white text-primary rounded-full text-lg font-semibold hover:bg-primary hover:text-white transform hover:scale-105 transition-all duration-300 shadow-lg" onclick="window.location.href='signup.php'">Get Started</button>
+<!-- ═══ HOW IT WORKS ═══ -->
+<section id="how-it-works" style="padding:6rem 2rem;background:linear-gradient(180deg,var(--dark),#0f0f2a)">
+    <div style="max-width:1280px;margin:0 auto">
+        <div class="section-heading">
+            <h2 class="scramble-text" data-value="HOW IT WORKS">HOW IT WORKS</h2>
+            <div class="heading-line"></div>
+            <p>Get protected in 4 simple steps.</p>
+        </div>
+        <div class="services-grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:2rem">
+            <div class="service-card" style="padding-top:2.5rem">
+                <div style="position:absolute;top:-1rem;left:1.5rem;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--rose),var(--mauve));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.25rem;color:#fff;box-shadow:0 4px 20px rgba(233,30,140,0.4);z-index:2">1</div>
+                <div class="card-inner">
+                    <h3>Set Up Safety Network</h3>
+                    <p>Register and add emergency contacts, safe locations, and trusted walk buddies.</p>
+                </div>
+            </div>
+            <div class="service-card" style="padding-top:2.5rem">
+                <div style="position:absolute;top:-1rem;left:1.5rem;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--rose),var(--mauve));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.25rem;color:#fff;box-shadow:0 4px 20px rgba(233,30,140,0.4);z-index:2">2</div>
+                <div class="card-inner">
+                    <h3>Configure Safety Features</h3>
+                    <p>Set up SOS triggers, enable real-time tracking, and customize safety alerts.</p>
+                </div>
+            </div>
+            <div class="service-card" style="padding-top:2.5rem">
+                <div style="position:absolute;top:-1rem;left:1.5rem;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--rose),var(--mauve));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.25rem;color:#fff;box-shadow:0 4px 20px rgba(233,30,140,0.4);z-index:2">3</div>
+                <div class="card-inner">
+                    <h3>Use Safety Tools</h3>
+                    <p>Access heat maps, find walk buddies, and report incidents in real-time.</p>
+                </div>
+            </div>
+            <div class="service-card" style="padding-top:2.5rem">
+                <div style="position:absolute;top:-1rem;left:1.5rem;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--rose),var(--mauve));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.25rem;color:#fff;box-shadow:0 4px 20px rgba(233,30,140,0.4);z-index:2">4</div>
+                <div class="card-inner">
+                    <h3>Emergency Response</h3>
+                    <p>Get immediate help from emergency contacts, authorities, and nearby safe spaces.</p>
+                </div>
             </div>
         </div>
+    </div>
+</section>
 
-        <section id="features" class="py-24 bg-black bg-opacity-90 bg-fixed bg-cover" style="background-image: linear-gradient(to right, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.8)), url('self-defense_1024x1024.webp');">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 class="text-4xl font-bold text-center mb-16 font-['Playfair_Display'] uppercase tracking-wider bg-gradient-to-r from-primary via-secondary to-pink-300 bg-clip-text text-transparent animate-gradient-flow relative after:content-[''] after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:w-24 after:h-1 after:bg-gradient-to-r after:from-primary after:to-secondary">Safety Services</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <div class="bg-white/10 backdrop-blur-sm p-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-white/20 text-white group">
-                        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" class="mb-4">
-                            <circle cx="20" cy="20" r="16" stroke="#D76D77" stroke-width="2"/>
-                            <path d="M20 12V28M12 20H28" stroke="#D76D77" stroke-width="2"/>
-                        </svg>
-                        <h3 class="text-xl font-semibold mb-3 text-[#D76D77]">Incident Reporting</h3>
-                        <p class="text-white">Quick and secure system to report incidents with photo and location evidence.</p>
-                    </div>
-                    <div class="bg-white/10 backdrop-blur-sm p-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-white/20 text-white group">
-                        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" class="mb-4">
-                            <path d="M20 8C14 8 8 14 8 20C8 26 14 32 20 32C26 32 32 26 32 20C32 14 26 8 20 8Z" stroke="#D76D77" stroke-width="2"/>
-                            <circle cx="20" cy="20" r="4" fill="#D76D77"/>
-                        </svg>
-                        <h3 class="text-xl font-semibold mb-3 text-[#D76D77]">Safety Heat Map</h3>
-                        <p class="text-white">Real-time location tracking and area safety analysis with heat mapping.</p>
-                    </div>
-                    <div class="bg-white/10 backdrop-blur-sm p-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-white/20 text-white group">
-                        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" class="mb-4">
-                            <circle cx="16" cy="16" r="6" stroke="#D76D77" stroke-width="2"/>
-                            <circle cx="24" cy="24" r="6" stroke="#D76D77" stroke-width="2"/>
-                            <path d="M16 22L24 14" stroke="#D76D77" stroke-width="2"/>
-                        </svg>
-                        <h3 class="text-xl font-semibold mb-3 text-[#D76D77]">Walk With Us</h3>
-                        <p class="text-white">Connect with verified companions for safer travel and commuting.</p>
-                    </div>
-                    <div class="bg-white/10 backdrop-blur-sm p-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-white/20 text-white group">
-                        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" class="mb-4">
-                            <path d="M20 8L32 32H8L20 8Z" stroke="#D76D77" stroke-width="2"/>
-                            <path d="M20 16V24" stroke="#D76D77" stroke-width="2"/>
-                            <circle cx="20" cy="28" r="2" fill="#D76D77"/>
-                        </svg>
-                        <h3 class="text-xl font-semibold mb-3 text-[#D76D77]">SOS Alert System</h3>
-                        <p class="text-white">One-tap emergency alerts to contacts and nearby authorities.</p>
-                    </div>
-                    <div class="bg-white/10 backdrop-blur-sm p-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-white/20 text-white group">
-                        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" class="mb-4">
-                            <rect x="8" y="8" width="24" height="24" rx="2" stroke="#D76D77" stroke-width="2"/>
-                            <path d="M12 28L16 20L20 24L24 16L28 28" stroke="#D76D77" stroke-width="2"/>
-                        </svg>
-                        <h3 class="text-xl font-semibold mb-3 text-[#D76D77]">Safety Analytics</h3>
-                        <p class="text-white">Track and analyze safety patterns with detailed insights and response metrics.</p>
-                    </div>
-                    <div class="bg-white/10 backdrop-blur-sm p-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-white/20 text-white group">
-                        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" class="mb-4">
-                            <path d="M20 8L32 20L20 32L8 20L20 8Z" stroke="#D76D77" stroke-width="2"/>
-                            <circle cx="20" cy="20" r="6" stroke="#D76D77" stroke-width="2"/>
-                        </svg>
-                        <h3 class="text-xl font-semibold mb-3 text-[#D76D77]">Safe Spaces</h3>
-                        <p class="text-white">Find and connect with verified safe locations and women-friendly businesses.</p>
-                    </div>
-                </div>
+<!-- ═══ ABOUT ═══ -->
+<section id="about" class="about-section">
+    <!-- Marquee -->
+    <div class="marquee-wrap">
+        <div class="marquee-track">
+            <span>SAFETY · EMPOWERMENT · 24/7 SUPPORT · REPORT · PROTECT · SHIELD · SAFETY · EMPOWERMENT · 24/7 SUPPORT · REPORT · PROTECT · SHIELD ·&nbsp;</span>
+            <span>SAFETY · EMPOWERMENT · 24/7 SUPPORT · REPORT · PROTECT · SHIELD · SAFETY · EMPOWERMENT · 24/7 SUPPORT · REPORT · PROTECT · SHIELD ·&nbsp;</span>
+        </div>
+    </div>
+    <div class="about-grid">
+        <div class="about-text">
+            <h2>About SheShield</h2>
+            <p>We are dedicated to creating a safer environment for women through innovative technology solutions. Our platform provides real-time emergency response and a support network to ensure women's safety anywhere, anytime.</p>
+            <a href="aboutnew.html" class="btn-premium magnetic-btn">
+                Learn More <i class="fas fa-arrow-right" style="margin-left:6px"></i>
+            </a>
+        </div>
+        <div class="about-image-wrap">
+            <img src="images/desktop-women.jpg" alt="Women supporting each other" loading="lazy">
+            <div class="floating-badge">
+                <div class="pulse-dot"></div>
+                <span>24/7 Active</span>
             </div>
-        </section>
+        </div>
+    </div>
+</section>
 
-        <section class="py-20 bg-black bg-opacity-90 bg-fixed bg-cover" id="how-it-works" style="background-image: linear-gradient(to right, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.8)), url('img1.png');">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 class="text-4xl font-bold text-center mb-16 font-['Playfair_Display'] uppercase tracking-wider bg-gradient-to-r from-primary via-secondary to-pink-300 bg-clip-text text-transparent animate-gradient-flow relative after:content-[''] after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:w-24 after:h-1 after:bg-gradient-to-r after:from-primary after:to-secondary">How It Works</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                    <div class="relative p-6 bg-white/10 backdrop-blur-sm rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-white/20 text-white group">
-                        <div class="absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-r from-[#4A1E73] to-[#D76D77] text-white rounded-full flex items-center justify-center text-2xl font-bold">1</div>
-                        <div class="mt-4">
-                            <h3 class="text-xl font-semibold mb-3 text-[#D76D77]">Set Up Safety Network</h3>
-                            <p class="text-white">Register and add emergency contacts, safe locations, and trusted walk buddies.</p>
-                        </div>
-                    </div>
-                    <div class="relative p-6 bg-white/10 backdrop-blur-sm rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-white/20 text-white group">
-                        <div class="absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-r from-[#4A1E73] to-[#D76D77] text-white rounded-full flex items-center justify-center text-2xl font-bold">2</div>
-                        <div class="mt-4">
-                            <h3 class="text-xl font-semibold mb-3 text-[#D76D77]">Configure Safety Features</h3>
-                            <p class="text-white">Set up SOS triggers, enable real-time tracking, and customize safety alerts.</p>
-                        </div>
-                    </div>
-                    <div class="relative p-6 bg-white/10 backdrop-blur-sm rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-white/20 text-white group">
-                        <div class="absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-r from-[#4A1E73] to-[#D76D77] text-white rounded-full flex items-center justify-center text-2xl font-bold">3</div>
-                        <div class="mt-4">
-                            <h3 class="text-xl font-semibold mb-3 text-[#D76D77]">Use Safety Tools</h3>
-                            <p class="text-white">Access heat maps, find walk buddies, and report incidents in real-time.</p>
-                        </div>
-                    </div>
-                    <div class="relative p-6 bg-white/10 backdrop-blur-sm rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-white/20 text-white group">
-                        <div class="absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-r from-[#4A1E73] to-[#D76D77] text-white rounded-full flex items-center justify-center text-2xl font-bold">4</div>
-                        <div class="mt-4">
-                            <h3 class="text-xl font-semibold mb-3 text-[#D76D77]">Emergency Response</h3>
-                            <p class="text-white">Get immediate help from emergency contacts, authorities, and nearby safe spaces.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="py-20 bg-gradient-to-l from-white to-secondary" id="about">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                    <div class="space-y-6">
-                        <h2 class="text-4xl font-bold text-gray-900">About SheShield</h2>
-                        <p class="text-lg text-gray-600">We are dedicated to creating a safer environment for women through innovative technology solutions. Our platform provides real-time emergency response and support network to ensure women's safety anywhere, anytime.</p>
-                        <button onclick="window.location.href='aboutnew.html'" class="bg-gradient-to-r from-[#4A1E73] to-[#D76D77] hover:from-[#5A2E83] hover:to-[#E77D87] text-white px-8 py-3 rounded-full transition-all duration-300 hover:shadow-lg transform hover:scale-[1.02] flex items-center space-x-2">
-                            Learn More
-                            <i class="fas fa-arrow-right ml-2"></i>
-                        </button>
-                    </div>
-                    <div class="relative h-96 rounded-lg overflow-hidden shadow-xl transform hover:scale-105 transition-transform duration-300">
-                        <img src="desktop-women.jpg" class="w-full h-full object-cover">
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- <section class="contact" id="contact">
-            <div class="contact-content">
-                <h2>Emergency Contact</h2>
-                
-            </div>
-        </section> -->
-        AI Chatbot
-        <div x-data="{ 
-            isOpen: false,
-            userInput: '',
-            selectedLanguage: 'en',
-            messages: [
-                {
-                    id: 1,
-                    type: 'bot',
-                    text: 'Hello! I\'m your SheShield AI assistant. How can I help you today?',
-                    options: [
-                        'I need immediate help',
-                        'Legal information',
-                        'Emotional support',
-                        'Report an incident'
-                    ]
-                }
-            ],
-            processUserInput(input) {
-                input = input.toLowerCase();
-                let responseText = '';
-                let responseOptions = ['Emergency help', 'Legal support', 'Emotional support', 'Report incident'];
-                
-                // Check for emergency keywords
-                if (input.includes('emergency') || input.includes('help') || input.includes('danger') || input.includes('urgent')) {
-                    responseText = 'I understand you need urgent assistance. Please call the emergency helpline at 1091 immediately or use our SOS feature. Would you like me to guide you through using the SOS feature?';
-                    responseOptions = ['Yes, guide me', 'No, I\'ll call instead', 'Show me safety tips', 'Contact someone for me'];
-                }
-                // Check for legal keywords
-                else if (input.includes('legal') || input.includes('rights') || input.includes('law') || input.includes('police')) {
-                    responseText = 'Here\'s some legal information that might help you. You have the right to file an FIR at any police station. Would you like more specific legal guidance?';
-                    responseOptions = ['Rights as a woman', 'How to file FIR', 'Legal aid contacts', 'Workplace rights'];
-                }
-                // Check for emotional support keywords
-                else if (input.includes('emotional') || input.includes('support') || input.includes('talk') || input.includes('feeling')) {
-                    responseText = 'I\'m here to support you. Remember that your feelings are valid, and it\'s okay to seek help. Would you like me to connect you with a counselor?';
-                    responseOptions = ['Connect with counselor', 'Self-care tips', 'Support groups', 'Coping strategies'];
-                }
-                // Check for reporting keywords
-                else if (input.includes('report') || input.includes('incident') || input.includes('happened') || input.includes('complaint')) {
-                    responseText = 'I can help you report an incident. Would you like to file an anonymous report or provide your contact details?';
-                    responseOptions = ['Anonymous report', 'Detailed report', 'Evidence guidelines', 'Track existing report'];
-                }
-                // Default response
-                else {
-                    responseText = 'How can I assist you today? Please let me know what kind of help you need.';
-                }
-                
-                return { text: responseText, options: responseOptions };
-            }
-        }" 
-        class="fixed bottom-4 right-4 z-50 flex flex-col items-end">
-            <!-- Chat Button -->
-            <button @click="isOpen = !isOpen" 
-                    class="bg-[#D76D77] text-white rounded-full p-4 shadow-lg hover:bg-[#C65C67] transition-all duration-300 mb-2">
-                <svg x-show="!isOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
-                </svg>
-                <svg x-show="isOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-            </button>
-
-            <!-- Chat Window -->
-            <div x-show="isOpen" 
-                 x-transition:enter="transition ease-out duration-300"
-                 x-transition:enter-start="opacity-0 transform scale-90"
-                 x-transition:enter-end="opacity-100 transform scale-100"
-                 x-transition:leave="transition ease-in duration-300"
-                 x-transition:leave-start="opacity-100 transform scale-100"
-                 x-transition:leave-end="opacity-0 transform scale-90"
-                 class="bg-white rounded-lg shadow-xl w-96 max-w-full mb-4"
-                 @click.away="isOpen = false">
-                <!-- Chat Header -->
-                <div class="bg-gradient-to-r from-[#4A1E73] to-[#D76D77] text-white p-4 rounded-t-lg">
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <h3 class="font-bold">SheShield AI Assistant</h3>
-                            <p class="text-sm text-pink-100">24/7 Support & Guidance</p>
-                        </div>
-                        <select x-model="selectedLanguage" 
-                                class="text-sm bg-[#4A1E73] text-white rounded px-2 py-1 border border-[#D76D77]">
-                            <option value="en">English</option>
-                            <option value="hi">हिंदी</option>
-                            <option value="es">Español</option>
-                            <option value="fr">Français</option>
-                            <option value="zh">中文</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Chat Messages -->
-                <div class="h-96 overflow-y-auto p-4 space-y-4" id="chat-messages">
-                    <template x-for="message in messages" :key="message.id">
-                        <div :class="{'flex justify-end': message.type === 'user', 'flex justify-start': message.type === 'bot'}">
-                            <div :class="{
-                                'bg-gradient-to-r from-[#4A1E73] to-[#D76D77] text-white': message.type === 'user',
-                                'bg-gray-100 text-gray-800': message.type === 'bot'
-                            }" class="rounded-lg px-4 py-2 max-w-[80%]">
-                                <p x-text="message.text"></p>
-                                <template x-if="message.type === 'bot' && message.options">
-                                    <div class="mt-2 space-y-2">
-                                        <template x-for="option in message.options" :key="option">
-                                            <button @click="userInput = option; $nextTick(() => { messages.push({ id: Date.now(), type: 'user', text: option }); const response = processUserInput(option); messages.push({ id: Date.now() + 1, type: 'bot', text: response.text, options: response.options }); })"
-                                                    class="block w-full text-left text-sm text-[#D76D77] hover:bg-pink-50 rounded px-2 py-1 transition-colors">
-                                                <span x-text="option"></span>
-                                            </button>
-                                        </template>
-                                    </div>
+<!-- ═══ AI CHATBOT ═══ -->
+<div x-data="{
+    isOpen: false, userInput: '', selectedLanguage: 'en',
+    messages: [{ id:1, type:'bot', text:'Hello! I\'m your SheShield AI assistant. How can I help you today?', options:['I need immediate help','Legal information','Emotional support','Report an incident'] }],
+    processUserInput(input) {
+        input = input.toLowerCase();
+        let t='', o=['Emergency help','Legal support','Emotional support','Report incident'];
+        if(input.includes('emergency')||input.includes('help')||input.includes('danger')){t='I understand you need urgent assistance. Please call 1091 immediately or use our SOS feature.';o=['Yes, guide me','No, I\'ll call','Safety tips','Contact someone'];}
+        else if(input.includes('legal')||input.includes('rights')){t='You have the right to file an FIR at any police station. Want specific guidance?';o=['Rights as a woman','How to file FIR','Legal aid contacts','Workplace rights'];}
+        else if(input.includes('emotional')||input.includes('support')||input.includes('talk')){t='I\'m here to support you. Your feelings are valid. Connect with a counselor?';o=['Connect counselor','Self-care tips','Support groups','Coping strategies'];}
+        else if(input.includes('report')||input.includes('incident')){t='I can help you report an incident. Anonymous or with contact details?';o=['Anonymous report','Detailed report','Evidence guidelines','Track report'];}
+        else{t='How can I assist you today?';}
+        return{text:t,options:o};
+    }
+}" class="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+    <button @click="isOpen=!isOpen" class="chat-btn text-white rounded-full p-4 shadow-lg transition-all mb-2" style="background:linear-gradient(135deg,#e91e8c,#7c3aed);box-shadow:0 0 30px rgba(233,30,140,0.35)">
+        <svg x-show="!isOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+        <svg x-show="isOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+    </button>
+    <div x-show="isOpen" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-90"
+         class="rounded-2xl shadow-2xl w-96 max-w-[calc(100vw-2rem)] mb-4 overflow-hidden" style="background:rgba(13,13,20,0.95);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.08)" @click.away="isOpen=false">
+        <div style="background:linear-gradient(135deg,#e91e8c,#7c3aed)" class="text-white p-4">
+            <h3 style="font-family:'Clash Display',sans-serif;font-size:1.1rem">SheShield AI</h3>
+            <p style="font-size:0.8rem;opacity:0.7">24/7 Support & Guidance</p>
+        </div>
+        <div class="h-72 overflow-y-auto p-4 space-y-3" id="chat-messages" style="scrollbar-width:thin">
+            <template x-for="msg in messages" :key="msg.id">
+                <div :class="{'flex justify-end':msg.type==='user','flex justify-start':msg.type==='bot'}">
+                    <div :style="msg.type==='user'?'background:linear-gradient(135deg,#e91e8c,#7c3aed)':'background:rgba(255,255,255,0.06)'" class="rounded-xl px-4 py-2.5 max-w-[85%]" style="font-size:0.88rem;color:#e8e8e8">
+                        <p x-text="msg.text"></p>
+                        <template x-if="msg.type==='bot'&&msg.options">
+                            <div class="mt-2 space-y-1">
+                                <template x-for="opt in msg.options" :key="opt">
+                                    <button @click="userInput=opt;$nextTick(()=>{messages.push({id:Date.now(),type:'user',text:opt});const r=processUserInput(opt);messages.push({id:Date.now()+1,type:'bot',text:r.text,options:r.options})})"
+                                        class="block w-full text-left text-xs rounded-lg px-3 py-1.5 transition-all" style="color:#e91e8c;border:1px solid rgba(233,30,140,0.15)" onmouseover="this.style.background='rgba(233,30,140,0.08)'" onmouseout="this.style.background='transparent'">
+                                        <span x-text="opt"></span>
+                                    </button>
                                 </template>
                             </div>
-                        </div>
-                    </template>
-                </div>
-
-                <!-- Chat Input -->
-                <div class="border-t p-4">
-                    <div class="flex space-x-2">
-                        <input type="text" 
-                               x-model="userInput" 
-                               @keydown.enter="if(userInput.trim()) { messages.push({ id: Date.now(), type: 'user', text: userInput }); const response = processUserInput(userInput); messages.push({ id: Date.now() + 1, type: 'bot', text: response.text, options: response.options }); userInput = ''; }"
-                               placeholder="Type your message..."
-                               class="flex-1 border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#4A1E73]">
-                        <button @click="if(userInput.trim()) { messages.push({ id: Date.now(), type: 'user', text: userInput }); const response = processUserInput(userInput); messages.push({ id: Date.now() + 1, type: 'bot', text: response.text, options: response.options }); userInput = ''; }"
-                                class="bg-gradient-to-r from-[#4A1E73] to-[#D76D77] text-white rounded-lg px-4 py-2 hover:from-[#5A2E83] hover:to-[#E77D87] transition-colors">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-                            </svg>
-                        </button>
+                        </template>
                     </div>
                 </div>
+            </template>
+        </div>
+        <div class="p-3" style="border-top:1px solid rgba(255,255,255,0.06)">
+            <div class="flex gap-2">
+                <input type="text" x-model="userInput" @keydown.enter="if(userInput.trim()){messages.push({id:Date.now(),type:'user',text:userInput});const r=processUserInput(userInput);messages.push({id:Date.now()+1,type:'bot',text:r.text,options:r.options});userInput='';}" placeholder="Type your message..." class="flex-1 rounded-xl px-4 py-2 text-sm" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#e8e8e8;outline:none;font-family:'Satoshi',sans-serif">
+                <button @click="if(userInput.trim()){messages.push({id:Date.now(),type:'user',text:userInput});const r=processUserInput(userInput);messages.push({id:Date.now()+1,type:'bot',text:r.text,options:r.options});userInput='';}" class="rounded-xl px-4 py-2 text-white" style="background:linear-gradient(135deg,#e91e8c,#7c3aed)">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                </button>
             </div>
         </div>
-        <footer id="contact" class="contact bg-gray-900 text-white py-12">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                    <div class="space-y-4">
-                        <h3 class="text-xl font-semibold mb-4 text-[#D76D77]">Emergency Numbers</h3>
-                        <div class="space-y-2">
-                            <p class="flex items-center"><i class="fas fa-phone mr-3 text-[#D76D77]"></i> Women Helpline: 1091</p>
-                            <p class="flex items-center"><i class="fas fa-phone mr-3 text-[#D76D77]"></i> Police: 100</p>
-                            <p class="flex items-center"><i class="fas fa-envelope mr-3 text-[#D76D77]"></i> help@sheshield.com</p>
-                            <p class="flex items-center"><i class="fas fa-map-marker-alt mr-3 text-[#D76D77]"></i> Mumbai, India - 400104</p>
-                        </div>
-                    </div>
-                    <div class="space-y-4">
-                        <h3 class="text-xl font-semibold mb-4 text-[#D76D77]">Quick Links</h3>
-                        <div class="space-y-2">
-                            <a href="#" class="block hover:text-[#D76D77] transition-colors duration-300">Safety Tips</a>
-                            <a href="#" class="block hover:text-[#D76D77] transition-colors duration-300">Support Services</a>
-                            <a href="#" class="block hover:text-[#D76D77] transition-colors duration-300">Community</a>
-                            <a href="#" class="block hover:text-[#D76D77] transition-colors duration-300">Resources</a>
-                        </div>
-                    </div>
-                    <div class="space-y-4">
-                        <h3 class="text-xl font-semibold mb-4 text-[#D76D77]">Connect With Us</h3>
-                        <div class="flex space-x-4">
-                            <a href="#" class="text-2xl hover:text-[#D76D77] transition-colors duration-300"><i class="fab fa-facebook"></i></a>
-                            <a href="#" class="text-2xl hover:text-[#D76D77] transition-colors duration-300"><i class="fab fa-twitter"></i></a>
-                            <a href="#" class="text-2xl hover:text-[#D76D77] transition-colors duration-300"><i class="fab fa-instagram"></i></a>
-                            <a href="#" class="text-2xl hover:text-[#D76D77] transition-colors duration-300"><i class="fab fa-linkedin"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="border-t border-gray-800 mt-12 pt-8 text-center">
-                <p class="text-gray-400">Created By SheShield | All Rights Reserved</p>
-            </div>
-        </footer>
+    </div>
+</div>
 
-        
-        <script>
-            const chatbot = {
-                greetings: [
-                    "Hello! I'm SheShield's AI assistant. I'm here to help you stay safe and informed. How can I assist you today?",
-                    "Welcome to SheShield! I'm your personal safety assistant. What would you like to know?",
-                    "Hi there! I'm here to provide support and information about personal safety. How may I help you?"
-                ],
-    
-                responses: {
-                    "help": {
-                        keywords: ["help", "assistance", "support"],
-                        reply: `I understand you need help. Let me guide you through our support options:
-    
-    1. Emergency Assistance:
-       • Immediate Danger: Call 112 (All-India Emergency)
-       • Police: 100
-       • Women's Helpline: 1091
-       • Ambulance: 102
-       • Fire: 101
-    
-    2. Support Services:
-       • 24/7 Women's Helpline: 1091
-       • Domestic Violence Helpline: 181
-       • NCW WhatsApp Help: 7217735372
-    
-    3. How would you like me to help you?
-       • Need immediate emergency assistance
-       • Want to report an incident
-       • Looking for safety tips
-       • Need legal information
-       • Need emotional support
-    
-    Please select one of these options or tell me more about your situation.`
-                    },
-                    "emergency": {
-                        keywords: ["emergency", "danger", "urgent", "immediate"],
-                        reply: ` EMERGENCY PROTOCOL ACTIVATED 
-    
-    1. IMMEDIATE ACTIONS:
-       • If in immediate danger, call 112 NOW
-       • Police: 100
-       • Women's Helpline: 1091
-       • Ambulance: 102
-    
-    2. SAFETY STEPS:
-       • Get to a safe location if possible
-       • Stay on the line with emergency services
-       • Make noise to attract attention if needed
-       • Use SheShield's SOS feature if available
-    
-    3. WHILE WAITING FOR HELP:
-       • Stay on the phone with emergency services
-       • Keep your location services on
-       • Document any evidence if safe to do so
-       • Contact trusted friends/family
-    
-    Do you need me to:
-    • Guide you through contacting emergency services
-    • Help you use SheShield's SOS feature
-    • Connect you with local support services
-    • Provide specific safety instructions
-    
-    Please let me know what you need right now.`
-                    },
-                    "report": {
-                        keywords: ["report", "incident", "complaint", "file"],
-                        reply: `I'll help you report an incident. Here's what you need to know:
-    
-    1. REPORTING OPTIONS:
-       • Anonymous Report: No personal details required
-       • Detailed Report: With contact information
-       • Police Report: Direct to law enforcement
-       • NCW Report: National Commission for Women
-    
-    2. WHAT TO INCLUDE:
-       • Type of incident
-       • Date and time
-       • Location details
-       • Description of what happened
-       • Any evidence (photos, videos, messages)
-       • Witness information (if any)
-    
-    3. REPORTING PROCESS:
-       • Click "Report" in the navigation menu
-       • Choose anonymous or identified report
-       • Fill in the incident details
-       • Add any supporting evidence
-       • Submit the report
-    
-    4. AFTER REPORTING:
-       • You'll receive a unique report ID
-       • Track your report status
-       • Get updates on actions taken
-       • Access support services
-    
-    Would you like me to:
-    • Guide you through filing a report now
-    • Explain more about the reporting process
-    • Connect you with a support advocate
-    • Provide information about your rights
-    
-    What would be most helpful?`
-                    },
-                    "safety": {
-                        keywords: ["safety", "protect", "secure", "prevention", "tips"],
-                        reply: `Here are comprehensive safety guidelines:
-    
-    1. PERSONAL SAFETY:
-       • Stay aware of surroundings
-       • Trust your instincts
-       • Walk confidently and purposefully
-       • Vary your routine
-       • Keep emergency contacts on speed dial
-       • Share location with trusted contacts
-    
-    2. DIGITAL SAFETY:
-       • Use strong, unique passwords
-       • Enable two-factor authentication
-       • Be careful with personal information
-       • Check privacy settings regularly
-       • Be cautious with unknown links
-       • Monitor your digital footprint
-    
-    3. TRAVEL SAFETY:
-       • Plan routes in advance
-       • Stay in well-lit areas
-       • Use trusted transportation
-       • Share trip details with trusted contacts
-       • Keep emergency numbers handy
-       • Use SheShield's tracking feature
-    
-    4. HOME SAFETY:
-       • Secure all entries
-       • Install good lighting
-       • Know your neighbors
-       • Have an emergency plan
-       • Keep emergency supplies ready
-    
-    Would you like specific details about:
-    • Personal safety techniques
-    • Digital security measures
-    • Safe travel practices
-    • Home security tips
-    • Emergency preparedness
-    
-    What area of safety would you like to focus on?`
-                    },
-                    "legal": {
-                        keywords: ["legal", "rights", "law", "justice"],
-                        reply: `Understanding your legal rights is crucial. Here's what you need to know:
-    
-    1. FUNDAMENTAL RIGHTS:
-       • Right to file an FIR
-       • Right to zero FIR (file anywhere)
-       • Right to legal representation
-       • Right to medical examination
-       • Right to privacy and confidentiality
-    
-    2. WORKPLACE RIGHTS:
-       • Protection against harassment
-       • Safe working environment
-       • Equal opportunities
-       • Maternity benefits
-       • Sexual harassment committee
-    
-    3. DOMESTIC RIGHTS:
-       • Protection against domestic violence
-       • Right to residence
-       • Maintenance and alimony
-       • Child custody rights
-       • Protection orders
-    
-    4. LEGAL RESOURCES:
-       • Free legal aid
-       • Women's commission support
-       • NGO assistance
-       • Police assistance
-       • Court support services
-    
-    Would you like to:
-    • Learn more about specific rights
-    • Connect with legal aid
-    • Get guidance on filing complaints
-    • Understand protection orders
-    • Find legal resources near you
-    
-    How can I help you with legal matters?`
-                    },
-                    "support": {
-                        keywords: ["emotional", "counseling", "therapy", "talk"],
-                        reply: `You're not alone. Here's how we can support you:
-    
-    1. IMMEDIATE SUPPORT:
-       • 24/7 Emotional Support Helpline: 1098
-       • Crisis Counseling: Available Now
-       • Online Support Groups
-       • Professional Counselors
-    
-    2. SUPPORT SERVICES:
-       • One-on-one counseling
-       • Group therapy sessions
-       • Trauma support
-       • Family counseling
-       • Peer support groups
-    
-    3. COPING STRATEGIES:
-       • Deep breathing exercises
-       • Grounding techniques
-       • Mindfulness practices
-       • Stress management
-       • Self-care routines
-    
-    Would you like to:
-    • Talk to a counselor now
-    • Join a support group
-    • Learn coping techniques
-    • Find local support services
-    • Get self-help resources
-    
-    How can I best support you right now?`
-                    }
-                },
-    
-                findResponse(input) {
-                    input = input.toLowerCase();
-                    
-                    // Check for exact matches first
-                    for (const category in this.responses) {
-                        const keywords = this.responses[category].keywords;
-                        if (keywords.some(keyword => input.includes(keyword))) {
-                            return this.responses[category].reply;
-                        }
-                    }
-    
-                    // If no exact match, provide a helpful default response
-                    return `I'm here to help you. Please let me know what you need:
-    
-    1. EMERGENCY ASSISTANCE:
-       • If you're in immediate danger
-       • Need urgent help
-       • Medical emergency
-       • Police assistance
-    
-    2. INCIDENT REPORTING:
-       • File a complaint
-       • Document an incident
-       • Track a report
-       • Update existing report
-    
-    3. SAFETY INFORMATION:
-       • Personal safety tips
-       • Digital security
-       • Travel safety
-       • Home security
-    
-    4. SUPPORT SERVICES:
-       • Legal assistance
-       • Emotional support
-       • Counseling services
-       • Support groups
-    
-    5. RESOURCES:
-       • Helpline numbers
-       • Support organizations
-       • Legal aid
-       • Medical services
-    
-    Please tell me what type of help you need, or click one of the quick action buttons below.`;
-                }
-            };
-    
-            function handleQuickAction(action) {
-                const actionMessages = {
-                    'emergency': 'I need emergency help',
-                    'report': 'How do I report an incident?',
-                    'safety': 'Can you provide safety tips?',
-                    'rights': 'What are my legal rights?'
-                };
-                
-                const message = actionMessages[action];
-                appendMessage('user', message);
-                showTypingIndicator();
-                
-                setTimeout(() => {
-                    removeTypingIndicator();
-                    const response = chatbot.findResponse(message);
-                    appendMessage('bot', response);
-                }, 1000);
-            }
-    
-            function showTypingIndicator() {
-                const chatMessages = document.getElementById('chat-messages');
-                const typingDiv = document.createElement('div');
-                typingDiv.id = 'typing-indicator';
-                typingDiv.className = 'flex mb-3';
-                typingDiv.innerHTML = `
-                    <div class="bg-gray-200 rounded-lg py-2 px-4">
-                        <div class="flex space-x-1">
-                            <div class="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></div>
-                            <div class="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
-                            <div class="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
-                        </div>
-                    </div>
-                `;
-                chatMessages.appendChild(typingDiv);
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            }
-    
-            function removeTypingIndicator() {
-                const indicator = document.getElementById('typing-indicator');
-                if (indicator) {
-                    indicator.remove();
-                }
-            }
-    
-            function appendMessage(sender, message) {
-                const chatMessages = document.getElementById('chat-messages');
-                const messageDiv = document.createElement('div');
-                messageDiv.className = sender === 'bot' ? 
-                    'flex mb-3' : 
-                    'flex mb-3 justify-end';
-                
-                const messageBubble = document.createElement('div');
-                messageBubble.className = sender === 'bot' ? 
-                    'bg-gray-200 rounded-lg py-2 px-4 max-w-[80%]' : 
-                    'bg-pink-500 text-white rounded-lg py-2 px-4 max-w-[80%]';
-                
-                // Format message with proper styling
-                const formattedMessage = message.split('\n').map(line => {
-                    const trimmedLine = line.trim();
-                    if (trimmedLine.match(/^\d+\./)) {
-                        // Section headers
-                        return `<div class="font-bold text-lg mt-2 mb-1">${trimmedLine}</div>`;
-                    } else if (trimmedLine.startsWith('•')) {
-                        // Bullet points
-                        return `<div class="ml-4 my-1">${trimmedLine}</div>`;
-                    } else if (trimmedLine.match(/^[A-Z\s]+:/)) {
-                        // Category headers
-                        return `<div class="font-bold mt-3 mb-1">${trimmedLine}</div>`;
-                    }
-                    return `<div>${trimmedLine}</div>`;
-                }).join('');
-                
-                messageBubble.innerHTML = formattedMessage;
-                messageDiv.appendChild(messageBubble);
-                chatMessages.appendChild(messageDiv);
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            }
-    
-            function handleUserInput(event) {
-                event.preventDefault();
-                const input = document.getElementById('user-input');
-                const message = input.value.trim();
-                
-                if (message) {
-                    appendMessage('user', message);
-                    showTypingIndicator();
-                    
-                    setTimeout(() => {
-                        removeTypingIndicator();
-                        const response = chatbot.findResponse(message);
-                        appendMessage('bot', response);
-                    }, 1000 + Math.random() * 1000);
-                    
-                    input.value = '';
-                }
-            }
-    
-            // Initialize chatbot when page loads
-            window.addEventListener('load', () => {
-                const greeting = chatbot.greetings[Math.floor(Math.random() * chatbot.greetings.length)];
-                appendMessage('bot', greeting);
-            });
-        </script>
-    </body>
+<!-- ═══ FOOTER ═══ -->
+<footer id="contact" class="premium-footer">
+    <div class="footer-gradient-line"></div>
+    <div class="footer-grid">
+        <div class="footer-col">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+                <img src="../assets/logo.svg" alt="SheShield" style="height:32px">
+                <span style="font-family:'Clash Display',sans-serif;font-size:1.2rem;font-weight:700;letter-spacing:-0.03em"><span style="color:#fff">She</span><span style="background:linear-gradient(135deg,#e91e8c,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Shield</span></span>
+            </div>
+            <p style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:16px;font-family:'Satoshi',sans-serif">Empowering women's safety</p>
+            <p><i class="fas fa-phone" style="color:var(--rose);margin-right:8px"></i> Women Helpline: 1091</p>
+            <p><i class="fas fa-phone" style="color:var(--rose);margin-right:8px"></i> Police: 100</p>
+            <p><i class="fas fa-envelope" style="color:var(--rose);margin-right:8px"></i> help@sheshield.com</p>
+        </div>
+        <div class="footer-col">
+            <h3>Quick Links</h3>
+            <a href="#">Safety Tips</a>
+            <a href="#">Support Services</a>
+            <a href="#">Community</a>
+            <a href="#">Resources</a>
+        </div>
+        <div class="footer-col">
+            <h3>Platform</h3>
+            <a href="login.html">Login</a>
+            <a href="signup.html">Sign Up</a>
+            <a href="report.html">Report Incident</a>
+            <a href="#about">About Us</a>
+        </div>
+        <div class="footer-col">
+            <h3>Connect With Us</h3>
+            <div style="display:flex;gap:1rem;margin-top:0.5rem">
+                <a href="#" style="font-size:1.4rem"><i class="fab fa-facebook"></i></a>
+                <a href="#" style="font-size:1.4rem"><i class="fab fa-twitter"></i></a>
+                <a href="#" style="font-size:1.4rem"><i class="fab fa-instagram"></i></a>
+                <a href="#" style="font-size:1.4rem"><i class="fab fa-linkedin"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>© 2024 SheShield — Created for Women's Safety | All Rights Reserved</p>
+    </div>
+</footer>
+
+<!-- Premium Interactions -->
+<script src="js/premium.js"></script>
+</body>
 </html>
