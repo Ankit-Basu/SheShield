@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="screenshots/Screenshot%202026-05-06%20044841.png" alt="SheShield Landing Page" width="100%">
+  <img src="screenshots/landing.png" alt="SheShield Landing Page" width="100%">
   <br><br>
   <h1>🛡️ SheShield</h1>
   <h3>Empowering Women's Safety Through Technology</h3>
@@ -18,7 +18,7 @@
 
 ## 🌟 About SheShield
 
-**SheShield** is a comprehensive women's safety platform built with a premium, glassmorphic dark-mode UI. It combines real-time emergency response, community-driven escort services, incident reporting with heat-map visualization, and an AI-powered safety assistant — all designed to create a safer environment for women on campuses and beyond.
+**SheShield** is a comprehensive women's safety platform built with a premium, glassmorphic dark-mode UI. It combines real-time emergency response, community-driven escort services, incident reporting with heat-map visualization, and a safety chatbot assistant — all designed to create a safer environment for women on campuses and beyond.
 
 > *"Technology that protects, empowers, and transforms lives."*
 
@@ -52,34 +52,22 @@ The platform features a fully responsive design powered by custom fonts (Clash D
 
 ### 💬 Safety Chatbot Assistant
 - Floating chatbot widget on the landing page (bottom-right)
-- **6 predefined quick-reply topics** covering:
-  - Incident reporting process
-  - SOS system usage
-  - Walk With Us feature
-  - Data privacy & security
-  - Emergency contact management
-  - Safe spaces navigation
+- **6 predefined quick-reply topics** covering incident reporting, SOS usage, Walk With Us, data privacy, emergency contacts, and safe spaces
 - Animated message bubbles with typing delay simulation
 
-### 🗺️ Safety Heat Map
+### 🗺️ Safety Heat Map & Safe Spaces
 - Interactive heat map powered by community-reported incident data
-- Real-time area safety analysis
-- Color-coded danger zones for informed travel decisions
-- Integration with the incident reporting system
+- Real-time area safety analysis with color-coded danger zones
+- Verified women-friendly establishments, shelters, and police stations
+- Interactive map with directions and contact details
 
 ### 📊 Premium Dashboard
 - Glassmorphic dark-mode UI with gradient accents
-- Personalized safety statistics and recommendations
-- Incident history tracking and management
-- Emergency contact management (up to 5 contacts)
+- Personalized safety statistics and analytics
+- Incident history tracking and complaint management
+- Emergency contact management
 - Walk request history and active walk status
 - Settings panel with profile customization
-
-### 🏛️ Safe Spaces
-- Verified women-friendly establishments and shelters
-- Interactive map with directions and contact details
-- Community-verified safety ratings
-- Filtering by type (hospitals, police stations, shelters)
 
 ---
 
@@ -130,81 +118,110 @@ The platform features a fully responsive design powered by custom fonts (Clash D
 
 ## 📸 Screenshots
 
-### Landing Page — Hero Section
+### Landing Page
 Premium glassmorphic hero with animated headline, morphing text ("Built for every woman / every night / every campus"), horizontal ticker, and gradient CTAs.
 
 <div align="center">
-  <img src="screenshots/Screenshot%202026-05-06%20044841.png" alt="Landing Page Hero" width="90%">
+  <img src="screenshots/landing.png" alt="Landing Page" width="90%">
 </div>
+
+---
 
 ### Safety Services — Honeycomb Grid
 Hexagonal honeycomb layout showcasing all 6 core safety features with glowing borders and hover effects.
 
 <div align="center">
-  <img src="screenshots/Screenshot%202026-05-06%20044852.png" alt="Safety Services Honeycomb" width="90%">
+  <img src="screenshots/safety_services.png" alt="Safety Services" width="90%">
 </div>
+
+---
 
 ### How It Works — Timeline
 Vertical timeline with animated pulse nodes showing the 4-step onboarding process.
 
 <div align="center">
-  <img src="screenshots/Screenshot%202026-05-06%20044858.png" alt="How It Works Timeline" width="90%">
+  <img src="screenshots/How_it_works.png" alt="How It Works" width="90%">
 </div>
 
-### Dashboard — Overview
-Glassmorphic dashboard with safety stats, recent incidents, and quick-action cards.
+---
+
+### About SheShield
+About section with marquee banner, team description, and glassmorphic content cards.
 
 <div align="center">
-  <img src="screenshots/Screenshot%202026-05-06%20044905.png" alt="Dashboard Overview" width="90%">
+  <img src="screenshots/about_SheShield.png" alt="About SheShield" width="90%">
 </div>
+
+---
+
+### Sign In
+Secure login page with glassmorphic form, gradient accents, and session-based authentication.
+
+<div align="center">
+  <img src="screenshots/Signin.png" alt="Sign In" width="90%">
+</div>
+
+---
+
+### Dashboard
+Glassmorphic dashboard with safety stats, recent activity, and quick-action cards.
+
+<div align="center">
+  <img src="screenshots/dashboard.png" alt="Dashboard" width="90%">
+</div>
+
+---
 
 ### Incident Reporting
 Report form with location dropdown, incident type selector, photo upload, and anonymous mode.
 
 <div align="center">
-  <img src="screenshots/Screenshot%202026-05-06%20044919.png" alt="Incident Reporting" width="90%">
+  <img src="screenshots/report.png" alt="Incident Reporting" width="90%">
 </div>
 
-### Walk With Us — Request & Volunteer
+---
+
+### Safety Analytics
+Detailed analytics with safety patterns, response metrics, and community intelligence visualizations.
+
+<div align="center">
+  <img src="screenshots/analytics.png" alt="Safety Analytics" width="90%">
+</div>
+
+---
+
+### Walk With Us
 Side-by-side forms for requesting a walk (with campus location dropdowns) and volunteering as a walker.
 
 <div align="center">
-  <img src="screenshots/Screenshot%202026-05-06%20045001.png" alt="Walk With Us" width="90%">
+  <img src="screenshots/walk_with_us.png" alt="Walk With Us" width="90%">
 </div>
+
+---
 
 ### Safety Heat Map
 Interactive heat map visualization of reported incidents across the campus.
 
 <div align="center">
-  <img src="screenshots/Screenshot%202026-05-06%20045008.png" alt="Safety Heat Map" width="90%">
+  <img src="screenshots/map.png" alt="Safety Heat Map" width="90%">
 </div>
 
-### Branded Email Notifications
-Professional dark-mode email templates for walk confirmations and walker registrations.
+---
+
+### Safe Spaces
+Verified safe locations including shelters, police stations, and women-friendly businesses with interactive map.
 
 <div align="center">
-  <img src="screenshots/Screenshot%202026-05-06%20045017.png" alt="Email Notifications" width="90%">
+  <img src="screenshots/safe_space.png" alt="Safe Spaces" width="90%">
 </div>
 
-### Login & Authentication
-Secure login flow with session persistence and user profile management.
+---
+
+### Complaints & Case Management
+Track and manage reported incidents with status updates, resolution tracking, and case history.
 
 <div align="center">
-  <img src="screenshots/Screenshot%202026-05-06%20045146.png" alt="Login Page" width="90%">
-</div>
-
-### Settings & Profile
-User settings panel with profile editing, emergency contacts, and notification preferences.
-
-<div align="center">
-  <img src="screenshots/Screenshot%202026-05-06%20045153.png" alt="Settings Page" width="90%">
-</div>
-
-### Chatbot Assistant
-Floating chatbot widget with predefined safety Q&A and animated message bubbles.
-
-<div align="center">
-  <img src="screenshots/Screenshot%202026-05-06%20045323.png" alt="Chatbot Widget" width="90%">
+  <img src="screenshots/complaints.png" alt="Complaints Management" width="90%">
 </div>
 
 ---
@@ -275,13 +292,14 @@ SheShield/
 │   ├── simple_login.php    # Login with session management
 │   └── signup.php          # User registration
 ├── pro/                    # Premium landing page
-│   ├── landing.html        # Main landing page (glassmorphic UI)
-│   ├── css/premium.css     # Design system (900+ lines)
-│   └── js/premium.js       # GSAP animations, morph text, chatbot
+│   ├── landing.html        # Main landing page (glassmorphic UI + chatbot)
+│   ├── css/premium.css     # Design system (1300+ lines)
+│   └── js/premium.js       # GSAP animations, morph text, interactions
 ├── views/pages/            # Dashboard pages (PHP)
 │   ├── dashboard.php       # Main dashboard
 │   ├── report.php          # Incident reporting form
 │   ├── walkwithus.php      # Walk request + volunteer registration
+│   ├── analytics.php       # Safety analytics & insights
 │   ├── sidebar.php         # Navigation sidebar component
 │   ├── settings.php        # User settings
 │   └── toast.php           # Toast notification component
@@ -315,10 +333,12 @@ SheShield/
 - [x] Honeycomb grid for Safety Services section
 - [x] Vertical timeline for How It Works section
 - [x] Morphing hero text animation
-- [x] Hardcoded chatbot with predefined Q&A
-- [x] Walk With Us — email notifications with branded templates
+- [x] Floating chatbot with predefined safety Q&A
+- [x] Walk With Us — branded email notifications
 - [x] Walker registration with email confirmation
 - [x] Campus location dropdowns (matching report locations)
+- [x] Safety analytics dashboard
+- [x] Complaint management system
 - [ ] Native mobile app (React Native)
 - [ ] AI-powered chatbot with NLP
 - [ ] Push notifications for SOS alerts

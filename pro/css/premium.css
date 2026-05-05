@@ -68,7 +68,7 @@ img { max-width:100%; display:block; }
 #cursor {
   width: 4px; height: 4px; border-radius: 50%;
   background: #fff; position: fixed;
-  pointer-events: none; z-index: 9999;
+  pointer-events: none; z-index: 99999;
   mix-blend-mode: difference;
   transform: translate(-50%, -50%);
   transition: width 0.2s, height 0.2s;
@@ -76,7 +76,7 @@ img { max-width:100%; display:block; }
 #cursor-follower {
   width: 40px; height: 40px; border-radius: 50%;
   border: 1px solid rgba(255,255,255,0.4);
-  position: fixed; pointer-events: none; z-index: 9998;
+  position: fixed; pointer-events: none; z-index: 99998;
   transform: translate(-50%, -50%);
   transition: transform 0.15s ease, width 0.3s, height 0.3s, border-color 0.3s;
 }
