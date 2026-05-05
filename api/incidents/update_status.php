@@ -1,10 +1,16 @@
 <?php
+require_once __DIR__ . '/../../app/middleware/session_bootstrap.php';
+configure_session_storage();
 session_start();
 header("Content-Type: application/json; charset=UTF-8");
 
-include_once '../../config/database.php';
-include_once '../../models/Incident.php';
-include_once '../../utils/session.php';
+$cfgPath = __DIR__ . '/../../app/config/database.php';
+if (!file_exists($cfgPath)) $cfgPath = __DIR__ . '/../../config/database.php';
+$sessionPath = __DIR__ . '/../../app/middleware/session.php';
+if (!file_exists($sessionPath)) $sessionPath = __DIR__ . '/../../utils/session.php';
+include_once $cfgPath;
+include_once __DIR__ . '/../../models/Incident.php';
+include_once $sessionPath;
 
 // Check if user is logged in and is admin
 if (!Session::isLoggedIn() || !Session::get('is_admin')) {

@@ -1,12 +1,21 @@
 <?php
+require_once __DIR__ . '/../app/middleware/session_bootstrap.php';
+configure_session_storage();
 session_start();
 header("Content-Type: application/json; charset=UTF-8");
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-include_once __DIR__ . '/../config/database.php';
-include_once __DIR__ . '/../models/User.php';
-include_once __DIR__ . '/../utils/session.php';
+$cfgPath = __DIR__ . '/../app/config/database.php';
+if (!file_exists($cfgPath)) $cfgPath = __DIR__ . '/../config/database.php';
+if (file_exists($cfgPath)) include_once $cfgPath;
+
+$modelPath = __DIR__ . '/../models/User.php';
+if (file_exists($modelPath)) include_once $modelPath;
+
+$sessPath = __DIR__ . '/../app/middleware/session.php';
+if (!file_exists($sessPath)) $sessPath = __DIR__ . '/../utils/session.php';
+if (file_exists($sessPath)) include_once $sessPath;
 
 $database = new Database();
 $db = $database->getConnection();
@@ -25,7 +34,8 @@ if(!empty($data->email) && !empty($data->password)) {
     if($user->authenticate($data->password)) {
         // Set session variables
         // Include profile image handler
-        require_once dirname(__DIR__) . '/includes/profile_image_handler.php';
+        $pih = dirname(__DIR__) . '/includes/profile_image_handler.php';
+        if (file_exists($pih)) require_once $pih;
         
         // Set session variables
         Session::set('logged_in', true);
@@ -33,10 +43,11 @@ if(!empty($data->email) && !empty($data->password)) {
         Session::set('email', $user->email);
         Session::set('first_name', $user->first_name);
         Session::set('last_name', $user->last_name);
+        Session::set('user_name', trim($user->first_name . ' ' . $user->last_name));
         Session::set('is_admin', $user->is_admin ?? false);
         
         // Load and set profile image
-        $profileImage = getProfileImage($user->id);
+        $profileImage = function_exists('getProfileImage') ? getProfileImage($user->id) : null;
         Session::set('profile_image', $profileImage);
         
         $response["status"] = "success";

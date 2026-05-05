@@ -1,5 +1,5 @@
 <?php
-require_once 'config.php';
+require_once __DIR__ . '/../app/models/mysqli_db.php';
 
 header('Content-Type: application/json');
 
@@ -8,6 +8,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $longitude = filter_input(INPUT_POST, 'longitude', FILTER_VALIDATE_FLOAT);
     $description = filter_input(INPUT_POST, 'description', FILTER_SANITIZE_STRING);
     $timeActive = filter_input(INPUT_POST, 'timeActive', FILTER_VALIDATE_INT);
+    require_once __DIR__ . '/../app/middleware/session_bootstrap.php';
+    configure_session_storage();
     session_start();
 if (!isset($_SESSION['user_id'])) {
     echo json_encode(['success' => false, 'message' => 'User not logged in']);

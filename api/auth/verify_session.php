@@ -1,6 +1,8 @@
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
+require_once __DIR__ . '/../../app/middleware/session_bootstrap.php';
+configure_session_storage();
 session_start();
 
 header("Content-Type: application/json; charset=UTF-8");
@@ -8,8 +10,12 @@ header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
-include_once '../../config/database.php';
-include_once '../../models/User.php';
+$cfgPath = __DIR__ . '/../../app/config/database.php';
+if (!file_exists($cfgPath)) $cfgPath = __DIR__ . '/../../config/database.php';
+$modelPath = __DIR__ . '/../../models/User.php';
+
+include_once $cfgPath;
+include_once $modelPath;
 
 $response = array();
 
@@ -28,7 +34,9 @@ try {
             $response["user"] = array(
                 "id" => $_SESSION['user_id'],
                 "email" => $_SESSION['email'],
-                "first_name" => $_SESSION['first_name']
+                "first_name" => $_SESSION['first_name'] ?? '',
+                "last_name" => $_SESSION['last_name'] ?? '',
+                "profile_image" => $_SESSION['profile_image'] ?? null
             );
             http_response_code(200);
         } else {
@@ -42,13 +50,17 @@ try {
                 $_SESSION['user_id'] = $user->id;
                 $_SESSION['email'] = $user->email;
                 $_SESSION['first_name'] = $user->first_name;
+                $_SESSION['last_name'] = $user->last_name;
+                $_SESSION['user_name'] = trim($user->first_name . ' ' . $user->last_name);
                 
                 $response["status"] = "success";
                 $response["message"] = "Session renewed";
                 $response["user"] = array(
                     "id" => $user->id,
                     "email" => $user->email,
-                    "first_name" => $user->first_name
+                    "first_name" => $user->first_name,
+                    "last_name" => $user->last_name,
+                    "profile_image" => $_SESSION['profile_image'] ?? null
                 );
                 http_response_code(200);
             } else {

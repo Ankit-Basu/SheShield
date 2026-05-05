@@ -12,7 +12,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         if ($result['success']) {
             $_SESSION['profile_image'] = $result['image_path'];
-            $response = ['success' => true, 'message' => 'Profile image updated successfully'];
+            $response = [
+                'success' => true,
+                'message' => 'Profile image updated successfully',
+                'image_path' => $result['image_path']
+            ];
         } else {
             $response = ['success' => false, 'message' => $result['message']];
         }

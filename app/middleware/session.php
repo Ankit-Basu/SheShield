@@ -1,8 +1,11 @@
 <?php
+require_once __DIR__ . '/session_bootstrap.php';
+
 class Session {
     // Start session
     public static function start() {
         if (session_status() === PHP_SESSION_NONE) {
+            configure_session_storage();
             session_start();
         }
     }
@@ -22,7 +25,13 @@ class Session {
     // Get current user name
     public static function getUserName() {
         self::start();
-        return isset($_SESSION['user_name']) ? $_SESSION['user_name'] : null;
+        if (isset($_SESSION['user_name']) && $_SESSION['user_name'] !== '') {
+            return $_SESSION['user_name'];
+        }
+        $first = isset($_SESSION['first_name']) ? trim((string)$_SESSION['first_name']) : '';
+        $last = isset($_SESSION['last_name']) ? trim((string)$_SESSION['last_name']) : '';
+        $name = trim($first . ' ' . $last);
+        return $name !== '' ? $name : null;
     }
 
     // Set session data
@@ -48,6 +57,11 @@ class Session {
     // Destroy session
     public static function destroy() {
         self::start();
+        $_SESSION = [];
+        if (ini_get('session.use_cookies')) {
+            $params = session_get_cookie_params();
+            setcookie(session_name(), '', time() - 42000, $params['path'], $params['domain'], $params['secure'], $params['httponly']);
+        }
         session_destroy();
     }
 

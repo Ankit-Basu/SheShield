@@ -54,6 +54,13 @@ const lpuLocations = [
         lng: 75.7055,
         type: "recreational",
         description: "Sports facilities and grounds"
+    },
+    {
+        name: "Parking Zone",
+        lat: 31.2525,
+        lng: 75.7058,
+        type: "commercial",
+        description: "Campus parking and transit area"
     }
 ];
 

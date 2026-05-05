@@ -1,8 +1,10 @@
 <?php
-require_once 'config.php';
+require_once __DIR__ . '/../models/mysqli_db.php';
 
 header('Content-Type: application/json');
 
+require_once __DIR__ . '/../middleware/session_bootstrap.php';
+configure_session_storage();
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
@@ -12,7 +14,7 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = $_SESSION['user_id'];
 
 // Get active safe spaces (not expired based on time_active) for the logged-in user
-$sql = "SELECT ss.*, u.name as user_name 
+$sql = "SELECT ss.*, TRIM(CONCAT(COALESCE(u.first_name, ''), ' ', COALESCE(u.last_name, ''))) as user_name 
 FROM safe_spaces ss 
 LEFT JOIN users u ON ss.user_id = u.id 
 WHERE TIMESTAMPADD(HOUR, time_active, timestamp) > NOW() AND ss.user_id = ?";

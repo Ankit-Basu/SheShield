@@ -1,5 +1,5 @@
 <?php
-require_once '../../mysqli_db.php';
+require_once __DIR__ . '/../../app/models/mysqli_db.php';
 require_once '../../PHPMailer/Exception.php';
 require_once '../../PHPMailer/PHPMailer.php';
 require_once '../../PHPMailer/SMTP.php';
@@ -69,8 +69,20 @@ try {
         throw new Exception('Failed to save walk request');
     }
 
-    // Send email - using the configured email settings
-    require_once '../../config/email_config.php';
+    // Send email only when SMTP settings are configured locally.
+    $emailConfig = __DIR__ . '/../../app/config/email_config.php';
+    if (!file_exists($emailConfig)) {
+        echo json_encode([
+            'success' => true,
+            'message' => 'Walk request submitted successfully',
+            'walkId' => $walkId,
+            'emailSent' => false,
+            'emailError' => 'Email configuration is not set'
+        ]);
+        exit;
+    }
+
+    require_once $emailConfig;
     $mail = new PHPMailer(true);
     try {
         // Disable debug output for API

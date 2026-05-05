@@ -1,5 +1,5 @@
 <?php
-require_once 'mysqli_db.php';
+require_once __DIR__ . '/../models/mysqli_db.php';
 
 try {
     // Create database if not exists
@@ -7,7 +7,7 @@ try {
     $conn->select_db("sheshield");
     
     // Read and execute the SQL file
-    $sql = file_get_contents(__DIR__ . '/sql/create_escorts_table.sql');
+    $sql = file_get_contents(__DIR__ . '/../../database/migrations/create_escorts_table.sql');
     if (!$conn->multi_query($sql)) {
         throw new Exception("Error creating tables: " . $conn->error);
     }

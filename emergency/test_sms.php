@@ -1,6 +1,9 @@
 <?php
-require_once 'config.php';
 require_once 'send_sms.php';
+
+if (!defined('FAST2SMS_API_KEY')) {
+    define('FAST2SMS_API_KEY', getenv('FAST2SMS_API_KEY') ?: '');
+}
 
 // Test message
 $numbers = ['8544758216'];  // Make sure this is the correct number

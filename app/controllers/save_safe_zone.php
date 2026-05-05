@@ -1,8 +1,10 @@
 <?php
-require_once 'config.php';
+require_once __DIR__ . '/../models/mysqli_db.php';
 
 header('Content-Type: application/json');
 
+require_once __DIR__ . '/../middleware/session_bootstrap.php';
+configure_session_storage();
 session_start();
 
 if (!isset($_SESSION['user_id'])) {

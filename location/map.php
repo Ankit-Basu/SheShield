@@ -90,7 +90,7 @@
                         </h2>
                         <div class="space-y-3">
                             <?php
-require_once 'mysqli_db.php';
+require_once __DIR__ . '/../app/models/mysqli_db.php';
 
 $sql = "SELECT * FROM incidents WHERE status='pending' ORDER BY created_at DESC";
 $result = $conn->query($sql);

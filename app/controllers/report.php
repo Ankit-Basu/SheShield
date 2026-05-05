@@ -1,6 +1,7 @@
 <?php
-require_once 'mysqli_db.php';
-
+require_once __DIR__ . '/../models/mysqli_db.php';
+require_once __DIR__ . '/../middleware/session_bootstrap.php';
+configure_session_storage();
 session_start();
 
 if (!isset($_SESSION['user_id'])) {

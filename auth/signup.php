@@ -1,10 +1,7 @@
 <?php
+require_once __DIR__ . '/../app/middleware/session_bootstrap.php';
+configure_session_storage();
 session_start();
-// Redirect if already logged in
-if (isset($_SESSION['user_id'])) {
-    header('Location: /dashboard.php');
-    exit();
-}
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST");
@@ -14,8 +11,14 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 error_log("Starting signup process...");
 
-require_once __DIR__ . '/../config/database.php';
-require_once __DIR__ . '/../models/User.php';
+$cfgPath = __DIR__ . '/../app/config/database.php';
+if (!file_exists($cfgPath)) $cfgPath = __DIR__ . '/../config/database.php';
+$modelPath = __DIR__ . '/../models/User.php';
+$sessionPath = __DIR__ . '/../app/middleware/session.php';
+
+require_once $cfgPath;
+require_once $modelPath;
+if (file_exists($sessionPath)) require_once $sessionPath;
 
 try {
     // Get raw posted data
@@ -26,7 +29,7 @@ try {
 
     // Validate required fields
     if(empty($data->first_name) || empty($data->last_name) || empty($data->email) || 
-       empty($data->password) || empty($data->phone)) {
+       empty($data->password)) {
         throw new Exception("Missing required fields");
     }
 
@@ -55,10 +58,12 @@ try {
     $user->first_name = htmlspecialchars(strip_tags($data->first_name));
     $user->last_name = htmlspecialchars(strip_tags($data->last_name));
     $user->email = filter_var($data->email, FILTER_SANITIZE_EMAIL);
-    $user->phone = htmlspecialchars(strip_tags($data->phone));
+    $user->phone = !empty($data->phone) ? htmlspecialchars(strip_tags($data->phone)) : '';
     $user->password = password_hash($data->password, PASSWORD_DEFAULT);
-    $user->emergency_contact_name = !empty($data->emergency_contact_name) ? htmlspecialchars(strip_tags($data->emergency_contact_name)) : null;
-    $user->emergency_contact_phone = !empty($data->emergency_contact_phone) ? htmlspecialchars(strip_tags($data->emergency_contact_phone)) : null;
+    $emergencyName = $data->emergency_contact_name ?? $data->emergency_name ?? null;
+    $emergencyPhone = $data->emergency_contact_phone ?? $data->emergency_phone ?? null;
+    $user->emergency_contact_name = !empty($emergencyName) ? htmlspecialchars(strip_tags($emergencyName)) : null;
+    $user->emergency_contact_phone = !empty($emergencyPhone) ? htmlspecialchars(strip_tags($emergencyPhone)) : null;
 
     // Check if email exists
     if($user->emailExists()) {
@@ -70,16 +75,34 @@ try {
         error_log("User created successfully with ID: " . $user->id);
         
         // Set session variables
-        $_SESSION['user_id'] = $user->id;
-        $_SESSION['email'] = $user->email;
-        $_SESSION['first_name'] = $user->first_name;
+        if (class_exists('Session')) {
+            Session::set('logged_in', true);
+            Session::set('user_id', $user->id);
+            Session::set('email', $user->email);
+            Session::set('first_name', $user->first_name);
+            Session::set('last_name', $user->last_name);
+            Session::set('user_name', trim($user->first_name . ' ' . $user->last_name));
+            Session::set('profile_image', null);
+            Session::set('is_admin', false);
+        } else {
+            $_SESSION['logged_in'] = true;
+            $_SESSION['user_id'] = $user->id;
+            $_SESSION['email'] = $user->email;
+            $_SESSION['first_name'] = $user->first_name;
+            $_SESSION['last_name'] = $user->last_name;
+            $_SESSION['user_name'] = trim($user->first_name . ' ' . $user->last_name);
+            $_SESSION['profile_image'] = null;
+            $_SESSION['is_admin'] = false;
+        }
         
         $response["status"] = "success";
         $response["message"] = "User created successfully";
         $response["user"] = array(
             "id" => $user->id,
             "email" => $user->email,
-            "first_name" => $user->first_name
+            "first_name" => $user->first_name,
+            "last_name" => $user->last_name,
+            "profile_image" => null
         );
         http_response_code(201);
     } else {

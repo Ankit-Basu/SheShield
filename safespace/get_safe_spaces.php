@@ -1,10 +1,10 @@
 <?php
-require_once 'config.php';
+require_once __DIR__ . '/../app/models/mysqli_db.php';
 
 header('Content-Type: application/json');
 
 // Get active safe spaces (not expired based on time_active)
-$sql = "SELECT ss.*, u.name as user_name 
+$sql = "SELECT ss.*, TRIM(CONCAT(COALESCE(u.first_name, ''), ' ', COALESCE(u.last_name, ''))) as user_name 
 FROM safe_spaces ss 
 LEFT JOIN users u ON ss.user_id = u.id 
 WHERE TIMESTAMPADD(HOUR, time_active, timestamp) > NOW()";

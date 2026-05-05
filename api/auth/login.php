@@ -1,12 +1,19 @@
 <?php
+require_once __DIR__ . '/../../app/middleware/session_bootstrap.php';
+configure_session_storage();
 session_start();
 header("Content-Type: application/json; charset=UTF-8");
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-include_once '../../config/database.php';
-include_once '../../models/User.php';
-include_once '../../utils/session.php';
+$cfgPath = __DIR__ . '/../../app/config/database.php';
+if (!file_exists($cfgPath)) $cfgPath = __DIR__ . '/../../config/database.php';
+$modelPath = __DIR__ . '/../../models/User.php';
+$sessionPath = __DIR__ . '/../../app/middleware/session.php';
+
+include_once $cfgPath;
+include_once $modelPath;
+if (file_exists($sessionPath)) include_once $sessionPath;
 
 $database = new Database();
 $db = $database->getConnection();
@@ -28,7 +35,10 @@ if(!empty($data->email) && !empty($data->password)) {
         Session::set('user_id', $user->id);
         Session::set('email', $user->email);
         Session::set('first_name', $user->first_name);
+        Session::set('last_name', $user->last_name);
+        Session::set('user_name', trim($user->first_name . ' ' . $user->last_name));
         Session::set('is_admin', $user->is_admin ?? false);
+        Session::set('profile_image', null);
         
         $response["status"] = "success";
         $response["message"] = "Login successful";
@@ -36,7 +46,9 @@ if(!empty($data->email) && !empty($data->password)) {
             "id" => $user->id,
             "email" => $user->email,
             "first_name" => $user->first_name,
-            "is_admin" => $user->is_admin ?? false
+            "last_name" => $user->last_name,
+            "is_admin" => $user->is_admin ?? false,
+            "profile_image" => null
         );
         http_response_code(200);
     } else {

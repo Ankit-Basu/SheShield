@@ -1,9 +1,13 @@
 <?php
+require_once __DIR__ . '/../app/middleware/session_bootstrap.php';
+configure_session_storage();
 session_start();
 header("Content-Type: application/json; charset=UTF-8");
 
-include_once '../../config/database.php';
-include_once '../../models/Incident.php';
+$cfgPath = __DIR__ . '/../app/config/database.php';
+if (!file_exists($cfgPath)) $cfgPath = __DIR__ . '/../config/database.php';
+include_once $cfgPath;
+include_once __DIR__ . '/../models/Incident.php';
 
 // Check if user is logged in
 if(!isset($_SESSION['logged_in'])) {

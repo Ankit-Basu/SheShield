@@ -1,5 +1,5 @@
 <?php
-require_once 'mysqli_db.php';
+require_once __DIR__ . '/../app/models/mysqli_db.php';
 require_once 'send_escort_email.php';
 
 // Simple test page

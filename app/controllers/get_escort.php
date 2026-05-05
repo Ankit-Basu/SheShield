@@ -1,5 +1,5 @@
 <?php
-require_once 'mysqli_db.php';
+require_once __DIR__ . '/../models/mysqli_db.php';
 require_once 'PHPMailer/Exception.php';
 require_once 'PHPMailer/PHPMailer.php';
 require_once 'PHPMailer/SMTP.php';
@@ -51,8 +51,12 @@ try {
             $mail->SMTPDebug = 0; // Disable debug output
             $mail->isSMTP();
             
-            // Include email configuration
-            require_once 'config/email_config.php';
+            // Include email configuration only when SMTP is configured locally.
+            $emailConfig = __DIR__ . '/../config/email_config.php';
+            if (!file_exists($emailConfig)) {
+                throw new Exception('Email configuration is not set');
+            }
+            require_once $emailConfig;
             
             $mail->Host = SMTP_HOST;
             $mail->SMTPAuth = true;

@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json');
-require_once 'mysqli_db.php';
+require_once __DIR__ . '/../app/models/mysqli_db.php';
 
 $sql = "SELECT * FROM incidents WHERE status='pending' ORDER BY created_at DESC";
 $result = $conn->query($sql);

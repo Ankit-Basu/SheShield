@@ -1,5 +1,5 @@
 <?php
-require_once 'mysql_db.php';
+require_once __DIR__ . '/../app/models/mysqli_db.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Generate unique escort ID (ESC-YYYY-XXX format)

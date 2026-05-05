@@ -1,5 +1,7 @@
 <?php
-require_once 'config.php';
+if (!defined('FAST2SMS_API_KEY')) {
+    define('FAST2SMS_API_KEY', getenv('FAST2SMS_API_KEY') ?: '');
+}
 
 // Define cURL constants if not already defined
 if (!defined('CURLOPT_URL')) define('CURLOPT_URL', 10002);

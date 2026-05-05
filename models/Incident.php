@@ -27,12 +27,11 @@ class Incident {
             $query = "INSERT INTO " . $this->table_name . "
                     SET
                         user_id = :user_id,
-                        type = :type,
+                        incident_type = :type,
                         description = :description,
                         location = :location,
-                        incident_date = :incident_date,
-                        is_anonymous = :is_anonymous,
-                        evidence_files = :evidence_files,
+                        date_time = :incident_date,
+                        evidence_file = :evidence_files,
                         status = :status,
                         created_at = :created_at";
 
@@ -42,15 +41,15 @@ class Incident {
             $this->sanitizeInput();
 
             // Bind values
+            $createdAt = date('Y-m-d H:i:s');
             $stmt->bindParam(":user_id", $this->user_id);
             $stmt->bindParam(":type", $this->type);
             $stmt->bindParam(":description", $this->description);
             $stmt->bindParam(":location", $this->location);
             $stmt->bindParam(":incident_date", $this->incident_date);
-            $stmt->bindParam(":is_anonymous", $this->is_anonymous);
             $stmt->bindParam(":evidence_files", $this->evidence_files);
             $stmt->bindParam(":status", $this->status);
-            $stmt->bindParam(":created_at", date('Y-m-d H:i:s'));
+            $stmt->bindParam(":created_at", $createdAt);
 
             if($stmt->execute()) {
                 $this->id = $this->conn->lastInsertId();
@@ -67,7 +66,10 @@ class Incident {
     public function getUserIncidents($user_id, $page = 1, $limit = 10) {
         try {
             $offset = ($page - 1) * $limit;
-            $query = "SELECT * FROM " . $this->table_name . " 
+            $query = "SELECT id, user_id, incident_type AS type, description, location,
+                        date_time AS incident_date, 0 AS is_anonymous,
+                        COALESCE(evidence_file, '') AS evidence_files, status, created_at
+                    FROM " . $this->table_name . " 
                     WHERE user_id = ? 
                     ORDER BY created_at DESC 
                     LIMIT :limit OFFSET :offset";
@@ -99,15 +101,15 @@ class Incident {
                     $params[':status'] = $filters['status'];
                 }
                 if (!empty($filters['type'])) {
-                    $conditions[] = "i.type = :type";
+                    $conditions[] = "i.incident_type = :type";
                     $params[':type'] = $filters['type'];
                 }
                 if (!empty($filters['date_from'])) {
-                    $conditions[] = "i.incident_date >= :date_from";
+                    $conditions[] = "i.date_time >= :date_from";
                     $params[':date_from'] = $filters['date_from'];
                 }
                 if (!empty($filters['date_to'])) {
-                    $conditions[] = "i.incident_date <= :date_to";
+                    $conditions[] = "i.date_time <= :date_to";
                     $params[':date_to'] = $filters['date_to'];
                 }
                 if (!empty($conditions)) {
@@ -116,10 +118,14 @@ class Incident {
             }
 
             $query = "SELECT 
-                        i.*, 
+                        i.*,
+                        i.incident_type AS type,
+                        i.date_time AS incident_date,
+                        0 AS is_anonymous,
+                        COALESCE(i.evidence_file, '') AS evidence_files,
                         CASE 
-                            WHEN i.is_anonymous = 1 THEN 'Anonymous'
-                            ELSE CONCAT(u.first_name, ' ', u.last_name)
+                            WHEN i.user_id IS NULL THEN 'Anonymous'
+                            ELSE TRIM(CONCAT(COALESCE(u.first_name, ''), ' ', COALESCE(u.last_name, '')))
                         END as reporter_name
                     FROM " . $this->table_name . " i
                     LEFT JOIN users u ON i.user_id = u.id
@@ -240,10 +246,14 @@ class Incident {
     // Get incident details with additional security
     public function getById($id) {
         try {
-            $query = "SELECT i.*, 
+            $query = "SELECT i.*,
+                        i.incident_type AS type,
+                        i.date_time AS incident_date,
+                        0 AS is_anonymous,
+                        COALESCE(i.evidence_file, '') AS evidence_files,
                         CASE 
-                            WHEN i.is_anonymous = 1 THEN 'Anonymous'
-                            ELSE CONCAT(u.first_name, ' ', u.last_name)
+                            WHEN i.user_id IS NULL THEN 'Anonymous'
+                            ELSE TRIM(CONCAT(COALESCE(u.first_name, ''), ' ', COALESCE(u.last_name, '')))
                         END as reporter_name
                     FROM " . $this->table_name . " i
                     LEFT JOIN users u ON i.user_id = u.id

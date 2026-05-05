@@ -1,6 +1,7 @@
 <?php
-require_once 'database/mysqli_db.php';
-$conn = get_mysqli_connection();
+require_once __DIR__ . '/../models/mysqli_db.php';
+require_once __DIR__ . '/../middleware/session_bootstrap.php';
+configure_session_storage();
 session_start();
 
 // Get current user ID from session

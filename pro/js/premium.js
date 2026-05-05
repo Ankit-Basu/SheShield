@@ -116,6 +116,39 @@
     // Scroll hint fade in
     gsap.from('.scroll-hint', { opacity: 0, y: 10, duration: 0.6, delay: 1.8 });
   }
+  /* ─── 6.5 Hero Morph Text Animation ──────────────────────── */
+  const morphViewport = document.getElementById('morphWords');
+  if (morphViewport) {
+    const words = ['every woman.', 'every night.', 'every campus.', 'every journey.'];
+    let currentIndex = 0;
+    
+    setInterval(() => {
+      const oldCurrent = morphViewport.querySelector('.morph-current:not(.is-exiting)');
+      if (oldCurrent) {
+        oldCurrent.classList.add('is-exiting');
+        oldCurrent.style.position = 'absolute';
+      }
+      
+      currentIndex = (currentIndex + 1) % words.length;
+      
+      const newSpan = document.createElement('span');
+      newSpan.className = 'morph-current is-entering';
+      newSpan.textContent = words[currentIndex];
+      morphViewport.appendChild(newSpan);
+      
+      // Force reflow for CSS transition to trigger
+      void newSpan.offsetWidth;
+      newSpan.classList.remove('is-entering');
+      
+      // Clean up old element after transition (550ms)
+      setTimeout(() => {
+        if (oldCurrent && oldCurrent.parentNode) {
+          oldCurrent.parentNode.removeChild(oldCurrent);
+        }
+      }, 550);
+      
+    }, 2500); // Change word every 2.5s
+  }
 
   /* ─── 7. Parallax (Hero) ────────────────────────────────── */
   if (!isMobile) {

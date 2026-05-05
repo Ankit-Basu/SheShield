@@ -1,5 +1,5 @@
 <?php
-require_once 'mysqli_db.php';
+require_once __DIR__ . '/../models/mysqli_db.php';
 
 if (!isset($_GET['id'])) {
     die('No location ID provided');

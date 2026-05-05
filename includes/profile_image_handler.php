@@ -37,13 +37,23 @@ function uploadProfileImage($userId, $file) {
         
         $relativePath = "/uploads/profile_images/" . $userId . "/" . $newFileName;
         $stmt = $conn->prepare("INSERT INTO profile_images (user_id, image_path, status, created_at) VALUES (?, ?, 'active', NOW())");
+        if (!$stmt) {
+            unlink($targetFile);
+            return ["success" => false, "message" => "Profile image table is not ready."];
+        }
+
         // Deactivate previous profile images for this user
-        $deactivateStmt = $conn->prepare("UPDATE profile_images SET status = 'inactive' WHERE user_id = ? AND status = 'active'");
-        $deactivateStmt->bind_param("i", $userId);
-        $deactivateStmt->execute();
+        $deactivateStmt = $conn->prepare("UPDATE profile_images SET status = 'deleted' WHERE user_id = ? AND status = 'active'");
+        if ($deactivateStmt) {
+            $deactivateStmt->bind_param("i", $userId);
+            $deactivateStmt->execute();
+            $deactivateStmt->close();
+        }
+
         $stmt->bind_param("is", $userId, $relativePath);
         
         if($stmt->execute()) {
+            $stmt->close();
             return ["success" => true, "image_path" => $relativePath];
         } else {
             unlink($targetFile); // Delete the uploaded file
@@ -63,24 +73,37 @@ function getProfileImage($userId) {
 
         $conn = get_mysqli_connection();
         $stmt = $conn->prepare("SELECT image_path FROM profile_images WHERE user_id = ? AND status = 'active' ORDER BY created_at DESC LIMIT 1");
+        if (!$stmt) {
+            error_log("getProfileImage: profile_images table is unavailable");
+            return null;
+        }
+
         $stmt->bind_param("i", $userId);
         $stmt->execute();
         $result = $stmt->get_result();
         
         if($row = $result->fetch_assoc()) {
             $imagePath = $row['image_path'];
+            if (preg_match('/^https?:\/\//i', $imagePath)) {
+                return $imagePath;
+            }
+
             if ($imagePath && file_exists(dirname(__DIR__) . $imagePath)) {
                 return $imagePath;
             } else {
                 error_log("getProfileImage: Image file not found for user " . $userId);
                 // Deactivate the invalid image entry
-                $deactivateStmt = $conn->prepare("UPDATE profile_images SET status = 'inactive' WHERE user_id = ? AND image_path = ?");
-                $deactivateStmt->bind_param("is", $userId, $imagePath);
-                $deactivateStmt->execute();
+                $deactivateStmt = $conn->prepare("UPDATE profile_images SET status = 'deleted' WHERE user_id = ? AND image_path = ?");
+                if ($deactivateStmt) {
+                    $deactivateStmt->bind_param("is", $userId, $imagePath);
+                    $deactivateStmt->execute();
+                    $deactivateStmt->close();
+                }
             }
         }
+        $stmt->close();
         return null;
-    } catch (Exception $e) {
+    } catch (Throwable $e) {
         error_log("Error in getProfileImage: " . $e->getMessage());
         return null;
     }

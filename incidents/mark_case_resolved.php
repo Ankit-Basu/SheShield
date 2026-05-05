@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json');
-require 'mysql_db.php';
+require_once __DIR__ . '/../app/models/mysqli_db.php';
 
 $data = json_decode(file_get_contents('php://input'), true);
 
@@ -18,5 +18,4 @@ if ($stmt && $stmt->bind_param("i", $response_id) && $stmt->execute()) {
     echo json_encode(['success' => false, 'message' => 'Database error: ' . $conn->error]);
 }
 $stmt->close();
-$conn->close();
 $conn->close();

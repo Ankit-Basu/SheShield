@@ -69,9 +69,12 @@ body {
 .auth-left-content {
   position: relative; z-index: 10; display: flex; flex-direction: column; flex: 1;
 }
+.auth-left-content > div:first-child {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 12px;
+}
 .auth-logo-link {
   display: inline-flex; align-items: center; gap: 10px;
-  text-decoration: none; margin-bottom: 8px;
+  text-decoration: none; margin-bottom: 0;
 }
 .auth-logo-link img, .auth-logo-link svg { height: 28px; width: auto; }
 .auth-logo-wordmark {
@@ -85,6 +88,7 @@ body {
   -webkit-text-fill-color: transparent;
 }
 .back-link {
+  order: -1; display: inline-flex; align-items: center; gap: 6px;
   font-size: 13px; color: rgba(255,255,255,0.4);
   text-decoration: none; transition: color 0.3s;
 }

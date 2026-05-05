@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SheShield — Empowering Women's Safety</title>
-    <meta name="description" content="SheShield — 24/7 Emergency support, real-time tracking, and incident reporting for women's safety.">
+    <title>SheShield - Empowering Women's Safety</title>
+    <meta name="description" content="SheShield - 24/7 emergency support, real-time tracking, and incident reporting for women's safety.">
     <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
-    <link rel="stylesheet" href="css/premium.css">
+    <link rel="stylesheet" href="css/premium.css?v=5">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <!-- GSAP + ScrollTrigger -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
@@ -45,8 +45,8 @@
 <!-- Scroll Progress Bar -->
 <div id="scrollProgress"></div>
 
-<!-- ═══ NAVBAR ═══ -->
-<nav class="glass-nav">
+<!-- â•â•â• NAVBAR â•â•â• -->
+<nav class="glass-nav"><div class="nav-scroll-progress" id="navProgress"></div>
     <div class="nav-inner">
         <a href="landing.html" class="logo" id="navLogo">
             <img src="../assets/logo.svg" alt="SheShield" class="nav-logo-icon" style="height:36px;width:auto;transition:height 0.3s ease">
@@ -66,8 +66,8 @@
     </div>
 </nav>
 
-<!-- ═══ HERO ═══ -->
-<section class="hero" id="hero">
+<!-- â•â•â• HERO â•â•â• -->
+<section class="hero hero-section" id="hero">
     <!-- Background Layers -->
     <div class="mesh-blob blob-1"></div>
     <div class="mesh-blob blob-2"></div>
@@ -75,46 +75,95 @@
     <div class="mesh-blob blob-4"></div>
     <div id="noise"></div>
     <div class="hero-dots"></div>
-    <div class="hero-image-layer"></div>
+    <div class="hero-image-shell">
+        <div class="hero-image-layer hero-illustration"></div>
+    </div>
 
-    <!-- LAYER 3 — Background Watermark -->
+    <!-- LAYER 3 â€” Background Watermark -->
     <div class="hero-bg-text" aria-hidden="true">SheShield</div>
 
-    <!-- LAYER 4 — Floating Stat Chips (left side) -->
-    <div class="stat-chip chip-1">🛡 <strong>1,240</strong>&nbsp;incidents reported this month</div>
+    <!-- LAYER 4 â€” Floating Stat Chips (left side) -->
+    <div class="stat-chip chip-1"><i class="fas fa-shield-heart"></i> <strong>1,240</strong>&nbsp;incidents reported this month</div>
     <div class="stat-chip chip-2"><span class="chip-blink"></span> Real-time location shared</div>
-    <div class="stat-chip chip-3"><span class="chip-check">✓</span> <strong>98%</strong>&nbsp;response rate</div>
+    <div class="stat-chip chip-3"><span class="chip-check">&#10003;</span> <strong>98%</strong>&nbsp;response rate</div>
 
-    <!-- LAYER 4b — Right-side Floating Chips -->
-    <div class="stat-chip chip-r1">👥 <strong>3,200+</strong>&nbsp;walk buddies active</div>
+    <!-- LAYER 4b â€” Right-side Floating Chips -->
+    <div class="stat-chip chip-r1"><i class="fas fa-people-group"></i> <strong>3,200+</strong>&nbsp;walk buddies active</div>
     <div class="stat-chip chip-r2"><span class="chip-blink"></span> Live tracking enabled</div>
-    <div class="stat-chip chip-r3"><span class="chip-check">✓</span> <strong>500+</strong>&nbsp;safe spaces verified</div>
+    <div class="stat-chip chip-r3"><span class="chip-check">&#10003;</span> <strong>500+</strong>&nbsp;safe spaces verified</div>
 
     <!-- HERO CONTENT (center) -->
     <div class="hero-content">
-        <!-- LAYER 1 — Badge Pill -->
+        <div class="hero-text-block">
+        <!-- LAYER 1 â€” Badge Pill -->
         <div class="hero-badge">
             <span class="badge-dot"></span>
             24/7 Active Protection
         </div>
 
-        <!-- LAYER 2 — Two-Line Headline -->
-        <h1 class="hero-headline">
-            <span class="line line-1">
-                <span class="word"><span class="word-inner">Empowering</span></span>
+        <!-- LAYER 2 â€” Two-Line Headline -->
+        <h1 class="hero-headline" aria-label="Empowering Women's Safety">
+            <span class="headline-line headline-line-1">
+                <span class="word-wrap"><span class="word-inner">Empowering</span></span>
             </span>
-            <span class="line line-2" data-text="Women's Safety">
-                <span class="word"><span class="word-inner">Women's</span></span>
-                <span class="word"><span class="word-inner">Safety</span></span>
+            <span class="headline-line headline-line-2">
+                <span class="word-wrap"><span class="word-inner outline-text">Women's</span></span>
+                <span class="word-wrap"><span class="word-inner gradient-fill">Safety</span></span>
             </span>
         </h1>
 
+        <div class="hero-morph-line">
+            <span class="morph-prefix">Built for</span>
+            <span class="morph-viewport" id="morphWords">
+                <span class="morph-current">every woman.</span>
+            </span>
+        </div>
+
+        <div class="hero-glow-line"></div>
+
+        <div class="hero-ticker-wrap">
+            <div class="ticker-fade-left"></div>
+            <div class="ticker-track">
+                <div class="ticker-inner" id="ticker">
+                    <div class="ticker-group">
+                        <span class="tick-item"><span class="tick-dot"></span>Empowering Women</span>
+                        <span class="tick-sep">&#10022;</span>
+                        <span class="tick-item"><span class="tick-dot"></span>24/7 Protection</span>
+                        <span class="tick-sep">&#10022;</span>
+                        <span class="tick-item"><span class="tick-dot"></span>Real-time Safety</span>
+                        <span class="tick-sep">&#10022;</span>
+                        <span class="tick-item"><span class="tick-dot"></span>SOS Alerts</span>
+                        <span class="tick-sep">&#10022;</span>
+                        <span class="tick-item"><span class="tick-dot"></span>Safe Spaces</span>
+                        <span class="tick-sep">&#10022;</span>
+                        <span class="tick-item"><span class="tick-dot"></span>Walk With Us</span>
+                        <span class="tick-sep">&#10022;</span>
+                    </div>
+                    <div class="ticker-group" aria-hidden="true">
+                        <span class="tick-item"><span class="tick-dot"></span>Empowering Women</span>
+                        <span class="tick-sep">&#10022;</span>
+                        <span class="tick-item"><span class="tick-dot"></span>24/7 Protection</span>
+                        <span class="tick-sep">&#10022;</span>
+                        <span class="tick-item"><span class="tick-dot"></span>Real-time Safety</span>
+                        <span class="tick-sep">&#10022;</span>
+                        <span class="tick-item"><span class="tick-dot"></span>SOS Alerts</span>
+                        <span class="tick-sep">&#10022;</span>
+                        <span class="tick-item"><span class="tick-dot"></span>Safe Spaces</span>
+                        <span class="tick-sep">&#10022;</span>
+                        <span class="tick-item"><span class="tick-dot"></span>Walk With Us</span>
+                        <span class="tick-sep">&#10022;</span>
+                    </div>
+                </div>
+            </div>
+            <div class="ticker-fade-right"></div>
+        </div>
+
         <!-- Subtitle -->
-        <p class="hero-sub">24/7 Emergency support, real-time tracking, and incident reporting system designed to keep women safe — anytime, anywhere.</p>
+        <p class="hero-sub">24/7 emergency support, real-time tracking, and incident reporting designed to keep women safer anytime and anywhere.</p>
 
         <!-- Buttons -->
         <div class="hero-buttons">
-            <a href="signup.html" class="btn-premium magnetic-btn">
+            <a href="signup.html" class="btn-premium magnetic-btn btn-get-started">
                 <i class="fas fa-shield-heart"></i> Get Started
             </a>
             <a href="#features" class="btn-premium btn-outline">
@@ -122,15 +171,16 @@
             </a>
         </div>
 
-        <!-- LAYER 6 — Scroll Indicator -->
+        <!-- LAYER 6 â€” Scroll Indicator -->
         <div class="scroll-hint">
             <div class="scroll-mouse"><div class="scroll-wheel"></div></div>
             <span>Scroll to explore</span>
         </div>
+        </div>
     </div>
 </section>
 
-<!-- ═══ STATS ═══ -->
+<!-- â•â•â• STATS â•â•â• -->
 <section class="stats-section">
     <div class="stats-grid">
         <div class="stat-item">
@@ -148,109 +198,98 @@
     </div>
 </section>
 
-<!-- ═══ SAFETY SERVICES ═══ -->
-<section id="features" style="padding:6rem 2rem;background:var(--dark)">
-    <div style="max-width:1280px;margin:0 auto">
+<!-- ════ SAFETY SERVICES ════ -->
+<section id="features" style="padding:6rem 2rem;background:var(--dark);position:relative;overflow:hidden">
+    <div class="features-bg-glow"></div>
+    <div style="max-width:1280px;margin:0 auto;position:relative;z-index:1">
         <div class="section-heading">
             <h2 class="scramble-text" data-value="SAFETY SERVICES">SAFETY SERVICES</h2>
             <div class="heading-line"></div>
             <p>Comprehensive tools to protect, report, and connect.</p>
         </div>
-        <div class="services-grid">
-            <div class="service-card">
-                <div class="card-inner">
-                    <div class="card-icon"><i class="fas fa-file-shield"></i></div>
+        <div class="honeycomb-grid">
+            <div class="hex-wrap">
+                <div class="hex-inner">
+                    <div class="hex-icon"><i class="fas fa-file-shield"></i></div>
                     <h3>Incident Reporting</h3>
-                    <p>Quick and secure system to report incidents with photo and location evidence. Stay anonymous or track your report.</p>
+                    <p>Quick and secure system to report incidents with photo and location evidence.</p>
                 </div>
             </div>
-            <div class="service-card">
-                <div class="card-inner">
-                    <div class="card-icon"><i class="fas fa-map-location-dot"></i></div>
+            <div class="hex-wrap">
+                <div class="hex-inner">
+                    <div class="hex-icon"><i class="fas fa-map-location-dot"></i></div>
                     <h3>Safety Heat Map</h3>
-                    <p>Real-time location tracking and area safety analysis with interactive heat mapping powered by community data.</p>
+                    <p>Real-time area safety analysis with interactive heat mapping powered by community data.</p>
                 </div>
             </div>
-            <div class="service-card">
-                <div class="card-inner">
-                    <div class="card-icon"><i class="fas fa-people-group"></i></div>
+            <div class="hex-wrap">
+                <div class="hex-inner">
+                    <div class="hex-icon"><i class="fas fa-people-group"></i></div>
                     <h3>Walk With Us</h3>
-                    <p>Connect with verified companions for safer travel and commuting. Never walk alone again.</p>
+                    <p>Connect with verified companions for safer travel. Never walk alone again.</p>
                 </div>
             </div>
-            <div class="service-card">
-                <div class="card-inner">
-                    <div class="card-icon"><i class="fas fa-triangle-exclamation"></i></div>
+            <div class="hex-wrap">
+                <div class="hex-inner">
+                    <div class="hex-icon"><i class="fas fa-triangle-exclamation"></i></div>
                     <h3>SOS Alert System</h3>
-                    <p>One-tap emergency alerts to contacts and nearby authorities with real-time GPS location sharing.</p>
+                    <p>One-tap emergency alerts to contacts and authorities with live GPS sharing.</p>
                 </div>
             </div>
-            <div class="service-card">
-                <div class="card-inner">
-                    <div class="card-icon"><i class="fas fa-chart-line"></i></div>
+            <div class="hex-wrap">
+                <div class="hex-inner">
+                    <div class="hex-icon"><i class="fas fa-chart-line"></i></div>
                     <h3>Safety Analytics</h3>
-                    <p>Track and analyze safety patterns with detailed insights, response metrics, and community intelligence.</p>
+                    <p>Track and analyze safety patterns with detailed insights and community intelligence dashboards.</p>
                 </div>
             </div>
-            <div class="service-card">
-                <div class="card-inner">
-                    <div class="card-icon"><i class="fas fa-location-crosshairs"></i></div>
+            <div class="hex-wrap">
+                <div class="hex-inner">
+                    <div class="hex-icon"><i class="fas fa-location-crosshairs"></i></div>
                     <h3>Safe Spaces</h3>
-                    <p>Find and connect with verified safe locations and women-friendly businesses in your area.</p>
+                    <p>Find verified safe locations and women-friendly businesses nearby.</p>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- ═══ HOW IT WORKS ═══ -->
-<section id="how-it-works" style="padding:6rem 2rem;background:linear-gradient(180deg,var(--dark),#0f0f2a)">
-    <div style="max-width:1280px;margin:0 auto">
+<section id="how-it-works" style="padding:6rem 2rem;background:linear-gradient(180deg,var(--dark),#0a0a18);position:relative;overflow:hidden">
+    <div style="max-width:1100px;margin:0 auto;position:relative;z-index:1">
         <div class="section-heading">
             <h2 class="scramble-text" data-value="HOW IT WORKS">HOW IT WORKS</h2>
             <div class="heading-line"></div>
             <p>Get protected in 4 simple steps.</p>
         </div>
-        <div class="services-grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:2rem">
-            <div class="service-card" style="padding-top:2.5rem">
-                <div style="position:absolute;top:-1rem;left:1.5rem;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--rose),var(--mauve));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.25rem;color:#fff;box-shadow:0 4px 20px rgba(233,30,140,0.4);z-index:2">1</div>
-                <div class="card-inner">
-                    <h3>Set Up Safety Network</h3>
-                    <p>Register and add emergency contacts, safe locations, and trusted walk buddies.</p>
-                </div>
+        <div class="timeline-wrap">
+            <div class="timeline-line"></div>
+            <div class="timeline-step">
+                <div class="timeline-node"><span class="timeline-num">01</span><div class="timeline-pulse"></div></div>
+                <div class="timeline-content"><h3>Set Up Safety Network</h3><p>Register and add emergency contacts, safe locations, and trusted walk buddies to your profile.</p></div>
             </div>
-            <div class="service-card" style="padding-top:2.5rem">
-                <div style="position:absolute;top:-1rem;left:1.5rem;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--rose),var(--mauve));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.25rem;color:#fff;box-shadow:0 4px 20px rgba(233,30,140,0.4);z-index:2">2</div>
-                <div class="card-inner">
-                    <h3>Configure Safety Features</h3>
-                    <p>Set up SOS triggers, enable real-time tracking, and customize safety alerts.</p>
-                </div>
+            <div class="timeline-step">
+                <div class="timeline-node"><span class="timeline-num">02</span><div class="timeline-pulse"></div></div>
+                <div class="timeline-content"><h3>Configure Safety Features</h3><p>Set up SOS triggers, enable real-time tracking, and customize your safety alert preferences.</p></div>
             </div>
-            <div class="service-card" style="padding-top:2.5rem">
-                <div style="position:absolute;top:-1rem;left:1.5rem;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--rose),var(--mauve));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.25rem;color:#fff;box-shadow:0 4px 20px rgba(233,30,140,0.4);z-index:2">3</div>
-                <div class="card-inner">
-                    <h3>Use Safety Tools</h3>
-                    <p>Access heat maps, find walk buddies, and report incidents in real-time.</p>
-                </div>
+            <div class="timeline-step">
+                <div class="timeline-node"><span class="timeline-num">03</span><div class="timeline-pulse"></div></div>
+                <div class="timeline-content"><h3>Use Safety Tools</h3><p>Access heat maps, find walk buddies, and report incidents in real-time from anywhere.</p></div>
             </div>
-            <div class="service-card" style="padding-top:2.5rem">
-                <div style="position:absolute;top:-1rem;left:1.5rem;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--rose),var(--mauve));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.25rem;color:#fff;box-shadow:0 4px 20px rgba(233,30,140,0.4);z-index:2">4</div>
-                <div class="card-inner">
-                    <h3>Emergency Response</h3>
-                    <p>Get immediate help from emergency contacts, authorities, and nearby safe spaces.</p>
-                </div>
+            <div class="timeline-step">
+                <div class="timeline-node"><span class="timeline-num">04</span><div class="timeline-pulse"></div></div>
+                <div class="timeline-content"><h3>Emergency Response</h3><p>Get immediate help from emergency contacts, authorities, and nearby verified safe spaces.</p></div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- ═══ ABOUT ═══ -->
+<!-- â•â•â• ABOUT â•â•â• -->
 <section id="about" class="about-section">
     <!-- Marquee -->
     <div class="marquee-wrap">
         <div class="marquee-track">
-            <span>SAFETY · EMPOWERMENT · 24/7 SUPPORT · REPORT · PROTECT · SHIELD · SAFETY · EMPOWERMENT · 24/7 SUPPORT · REPORT · PROTECT · SHIELD ·&nbsp;</span>
-            <span>SAFETY · EMPOWERMENT · 24/7 SUPPORT · REPORT · PROTECT · SHIELD · SAFETY · EMPOWERMENT · 24/7 SUPPORT · REPORT · PROTECT · SHIELD ·&nbsp;</span>
+            <span>SAFETY &middot; EMPOWERMENT &middot; 24/7 SUPPORT &middot; REPORT &middot; PROTECT &middot; SHIELD &middot; SAFETY &middot; EMPOWERMENT &middot; 24/7 SUPPORT &middot; REPORT &middot; PROTECT &middot; SHIELD &middot;&nbsp;</span>
+            <span>SAFETY &middot; EMPOWERMENT &middot; 24/7 SUPPORT &middot; REPORT &middot; PROTECT &middot; SHIELD &middot; SAFETY &middot; EMPOWERMENT &middot; 24/7 SUPPORT &middot; REPORT &middot; PROTECT &middot; SHIELD &middot;&nbsp;</span>
         </div>
     </div>
     <div class="about-grid">
@@ -271,7 +310,7 @@
     </div>
 </section>
 
-<!-- ═══ AI CHATBOT ═══ -->
+<!-- â•â•â• AI CHATBOT â•â•â• -->
 <div x-data="{
     isOpen: false, userInput: '', selectedLanguage: 'en',
     messages: [{ id:1, type:'bot', text:'Hello! I\'m your SheShield AI assistant. How can I help you today?', options:['I need immediate help','Legal information','Emotional support','Report an incident'] }],
@@ -326,7 +365,7 @@
     </div>
 </div>
 
-<!-- ═══ FOOTER ═══ -->
+<!-- â•â•â• FOOTER â•â•â• -->
 <footer id="contact" class="premium-footer">
     <div class="footer-gradient-line"></div>
     <div class="footer-grid">
@@ -363,13 +402,75 @@
                 <a href="#" style="font-size:1.4rem"><i class="fab fa-linkedin"></i></a>
             </div>
         </div>
-    </div>
-    <div class="footer-bottom">
-        <p>© 2024 SheShield — Created for Women's Safety | All Rights Reserved</p>
+        <div class="footer-bottom">
+        <p>&copy; 2024 SheShield - Created for Women's Safety | All Rights Reserved</p>
     </div>
 </footer>
+<!-- Chatbot Widget -->
+<div id="chatbot-toggle" onclick="toggleChat()" style="position:fixed;bottom:28px;right:28px;width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#e91e8c,#7c3aed);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 6px 28px rgba(233,30,140,0.35);z-index:9999;transition:transform 0.3s,box-shadow 0.3s" onmouseenter="this.style.transform='scale(1.1)'" onmouseleave="this.style.transform='scale(1)'">
+    <i class="fas fa-comment-dots" style="color:#fff;font-size:24px" id="chatIcon"></i>
+</div>
+<div id="chatbot-window" style="display:none;position:fixed;bottom:100px;right:28px;width:380px;max-height:520px;background:#13131f;border:1px solid rgba(255,255,255,0.08);border-radius:20px;z-index:9999;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.5);flex-direction:column">
+    <!-- Header -->
+    <div style="background:linear-gradient(135deg,#e91e8c,#7c3aed);padding:18px 20px;display:flex;align-items:center;gap:12px">
+        <div style="width:40px;height:40px;background:rgba(255,255,255,0.2);border-radius:12px;display:flex;align-items:center;justify-content:center"><i class="fas fa-shield-heart" style="color:#fff;font-size:18px"></i></div>
+        <div><div style="font-weight:700;color:#fff;font-size:15px">SheShield Assistant</div><div style="font-size:11px;color:rgba(255,255,255,0.7)"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#22c55e;margin-right:4px"></span>Online</div></div>
+        <div style="margin-left:auto;cursor:pointer;color:rgba(255,255,255,0.7);font-size:18px" onclick="toggleChat()"><i class="fas fa-xmark"></i></div>
+    </div>
+    <!-- Messages -->
+    <div id="chatMessages" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;max-height:320px;min-height:280px">
+        <div class="chat-msg bot-msg">Hi there! I'm your SheShield safety assistant. How can I help you today?</div>
+    </div>
+    <!-- Quick Replies -->
+    <div id="chatQuickReplies" style="padding:8px 16px 14px;display:flex;flex-wrap:wrap;gap:6px;border-top:1px solid rgba(255,255,255,0.06)">
+        <button class="chat-qr" onclick="askQuestion(this)">How do I report an incident?</button>
+        <button class="chat-qr" onclick="askQuestion(this)">How does SOS work?</button>
+        <button class="chat-qr" onclick="askQuestion(this)">What is Walk With Us?</button>
+        <button class="chat-qr" onclick="askQuestion(this)">Is my data safe?</button>
+        <button class="chat-qr" onclick="askQuestion(this)">Emergency contacts</button>
+        <button class="chat-qr" onclick="askQuestion(this)">Safe spaces nearby</button>
+    </div>
+</div>
+<style>
+#chatbot-window{font-family:'Satoshi',Segoe UI,sans-serif}
+.chat-msg{padding:12px 16px;border-radius:16px;font-size:13px;line-height:1.65;max-width:88%;animation:chatFadeIn 0.3s ease}
+.bot-msg{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.8);border-bottom-left-radius:4px;align-self:flex-start}
+.user-msg{background:linear-gradient(135deg,#e91e8c,#7c3aed);color:#fff;border-bottom-right-radius:4px;align-self:flex-end}
+.chat-qr{background:rgba(233,30,140,0.08);border:1px solid rgba(233,30,140,0.2);color:#f472b6;padding:6px 12px;border-radius:20px;font-size:11px;cursor:pointer;transition:all 0.2s;font-family:inherit}
+.chat-qr:hover{background:rgba(233,30,140,0.18);border-color:rgba(233,30,140,0.4)}
+@keyframes chatFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+#chatMessages::-webkit-scrollbar{width:4px}
+#chatMessages::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:4px}
+</style>
+<script>
+function toggleChat(){
+    const w=document.getElementById('chatbot-window');
+    const icon=document.getElementById('chatIcon');
+    if(w.style.display==='none'||!w.style.display){w.style.display='flex';icon.className='fas fa-xmark'}
+    else{w.style.display='none';icon.className='fas fa-comment-dots'}
+}
+const chatAnswers={
+    "How do I report an incident?":"You can report an incident by clicking 'Report Incident' from your dashboard. Fill in the location, incident type, and description. You can attach photos as evidence. All reports can be submitted anonymously if you prefer.",
+    "How does SOS work?":"Our SOS system sends an immediate emergency alert to your registered contacts and nearby authorities with your live GPS location. Just press the SOS button on your dashboard — it works with a single tap, even in silent mode.",
+    "What is Walk With Us?":"Walk With Us connects you with verified volunteer walkers who can accompany you on campus. Simply select your pickup and destination, choose a time, and a background-verified walker will be assigned to escort you safely.",
+    "Is my data safe?":"Absolutely. All your data is encrypted and stored securely. We never share personal information with third parties. Incident reports can be filed anonymously, and location data is only shared during active emergencies with your consent.",
+    "Emergency contacts":"You can manage your emergency contacts from the Settings page in your dashboard. Add up to 5 trusted contacts who will be notified instantly when you trigger an SOS alert. They'll receive your live location via SMS and email.",
+    "Safe spaces nearby":"Our Safe Spaces feature helps you locate verified women-friendly establishments, shelters, police stations, and hospitals near you. Open the Safe Spaces page from your dashboard to view an interactive map with directions and contact details."
+};
+function askQuestion(btn){
+    const q=btn.textContent;
+    const msgs=document.getElementById('chatMessages');
+    msgs.innerHTML+='<div class="chat-msg user-msg">'+q+'</div>';
+    msgs.scrollTop=msgs.scrollHeight;
+    setTimeout(()=>{
+        const a=chatAnswers[q]||"I'm sorry, I don't have information on that yet. Please contact our support team for help.";
+        msgs.innerHTML+='<div class="chat-msg bot-msg">'+a+'</div>';
+        msgs.scrollTop=msgs.scrollHeight;
+    },600);
+}
+</script>
 
 <!-- Premium Interactions -->
-<script src="js/premium.js"></script>
+<script src="js/premium.js?v=5"></script>
 </body>
 </html>
