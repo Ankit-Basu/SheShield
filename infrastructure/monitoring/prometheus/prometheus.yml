@@ -1,0 +1,19 @@
+global:
+  scrape_interval: 5s
+  evaluation_interval: 5s
+
+scrape_configs:
+  # Prometheus scrapes its own metrics
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          instance: 'prometheus-server'
+
+  # Docker Desktop exposes metrics on host.docker.internal:9323
+  # Enable in Docker Desktop -> Settings -> Docker Engine -> add "metrics-addr":"0.0.0.0:9323"
+  - job_name: 'docker'
+    static_configs:
+      - targets: ['host.docker.internal:9323']
+        labels:
+          instance: 'docker-engine'
