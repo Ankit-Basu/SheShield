@@ -1,4 +1,11 @@
 # SheShield - Kubernetes Deployment
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: sheshield
+  labels:
+    app: sheshield
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -177,15 +184,6 @@ spec:
   resources:
     requests:
       storage: 5Gi
----
-# Namespace
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: sheshield
-  labels:
-    app: sheshield
----
 # HorizontalPodAutoscaler
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler

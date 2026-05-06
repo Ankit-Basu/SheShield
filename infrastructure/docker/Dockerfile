@@ -49,7 +49,7 @@ RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 777 /var/www/html/uploads /var/www/html/logs
 
 # Configure Apache
-COPY devops/apache.conf /etc/apache2/sites-available/000-default.conf
+COPY infrastructure/apache.conf /etc/apache2/sites-available/000-default.conf
 
 # Expose port 80
 EXPOSE 80
