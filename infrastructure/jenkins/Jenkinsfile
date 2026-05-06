@@ -65,8 +65,8 @@ if errorlevel 1 (
         stage('Deploy to Kubernetes') {
             steps {
                 echo 'Deploying to Kubernetes cluster...'
-                bat "kubectl apply -f infrastructure/kubernetes/deployment.yaml"
-                bat "kubectl get pods -n %KUBE_NAMESPACE%"
+                bat "kubectl --kubeconfig=%USERPROFILE%\\.kube\\config apply --validate=false -f infrastructure/kubernetes/deployment.yaml"
+                bat "kubectl --kubeconfig=%USERPROFILE%\\.kube\\config get pods -n %KUBE_NAMESPACE%"
             }
         }
     }
