@@ -1,0 +1,60 @@
+name: SheShield CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: pdo_mysql, mysqli, gd, zip
+        coverage: none
+
+    - name: Validate composer.json and composer.lock
+      run: composer validate --strict || true
+
+    - name: Install Dependencies
+      run: composer install --prefer-dist --no-progress --no-suggest || true
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '22'
+
+    - name: Install NPM Packages
+      run: npm ci || echo "No package-lock.json found"
+
+    - name: Run Security Scan (Trivy)
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        format: 'table'
+        exit-code: '0'
+        ignore-unfixed: true
+        vuln-type: 'os,library'
+
+    - name: Build Docker Image
+      run: docker build -t sheshield-app:latest -f infrastructure/docker/Dockerfile .
+
+  deploy:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Simulate Deployment (Placeholder)
+      run: echo "Deploying to Kubernetes/EC2..."

@@ -1,5 +1,5 @@
-# SheShield - Jenkinsfile
-# CI/CD Pipeline: Build → Test → Scan → Deploy
+// SheShield - Jenkinsfile
+// CI/CD Pipeline: Build → Test → Scan → Deploy
 
 pipeline {
     agent any
