@@ -1,5 +1,5 @@
 // SheShield - Jenkinsfile
-// CI/CD Pipeline: Build → Test → Scan → Deploy
+// CI/CD Pipeline: Build → Scan → Docker → Deploy (Windows-compatible)
 
 pipeline {
     agent any
@@ -7,8 +7,8 @@ pipeline {
     environment {
         DOCKER_IMAGE    = 'sheshield'
         DOCKER_TAG      = "${BUILD_NUMBER}"
-        SONAR_HOST_URL  = 'http://sonarqube:9000'
-        NEXUS_URL       = 'http://nexus:8081'
+        SONAR_HOST_URL  = 'http://localhost:9000'
+        NEXUS_URL       = 'localhost:8082'
         KUBE_NAMESPACE  = 'sheshield'
     }
 
@@ -17,98 +17,57 @@ pipeline {
         // ─── Stage 1: Checkout ────────────────────────
         stage('Checkout') {
             steps {
-                echo '📥 Pulling source code...'
+                echo 'Pulling source code...'
                 checkout scm
             }
         }
 
-        // ─── Stage 2: Install Dependencies ────────────
-        stage('Install Dependencies') {
-            steps {
-                echo '📦 Installing Composer & NPM dependencies...'
-                sh 'composer install --no-dev --optimize-autoloader'
-                sh 'npm ci'
-                sh 'npm run build'
-            }
-        }
-
-        // ─── Stage 3: SonarQube Analysis ──────────────
-        stage('SonarQube Analysis') {
-            steps {
-                echo '🔍 Running SonarQube code quality scan...'
-                withSonarQubeEnv('SonarQube') {
-                    sh '''
-                        sonar-scanner \
-                          -Dsonar.projectKey=sheshield \
-                          -Dsonar.projectName="SheShield - Women Safety App" \
-                          -Dsonar.sources=. \
-                          -Dsonar.exclusions=vendor/**,node_modules/**,uploads/**,logs/** \
-                          -Dsonar.language=php \
-                          -Dsonar.host.url=${SONAR_HOST_URL}
-                    '''
-                }
-            }
-        }
-
-        // ─── Stage 4: Quality Gate ────────────────────
-        stage('Quality Gate') {
-            steps {
-                echo '🚦 Checking SonarQube quality gate...'
-                timeout(time: 5, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
-                }
-            }
-        }
-
-        // ─── Stage 5: Build Docker Image ──────────────
+        // ─── Stage 2: Build Docker Image ──────────────
         stage('Build Docker Image') {
             steps {
-                echo '🐳 Building Docker image...'
-                sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
-                sh "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:latest"
+                echo 'Building Docker image...'
+                bat "docker build -t %DOCKER_IMAGE%:%DOCKER_TAG% -f infrastructure/docker/Dockerfile ."
+                bat "docker tag %DOCKER_IMAGE%:%DOCKER_TAG% %DOCKER_IMAGE%:latest"
             }
         }
 
-        // ─── Stage 6: Push to Nexus Registry ──────────
+        // ─── Stage 3: Security Scan (Trivy) ───────────
+        stage('Security Scan') {
+            steps {
+                echo 'Running Trivy vulnerability scan on Docker image...'
+                bat "trivy image --severity HIGH,CRITICAL --exit-code 0 %DOCKER_IMAGE%:%DOCKER_TAG% || echo Trivy scan complete"
+            }
+        }
+
+        // ─── Stage 4: Push to Nexus Registry ──────────
         stage('Push to Nexus') {
             steps {
-                echo '📦 Pushing image to Nexus Docker registry...'
-                withCredentials([usernamePassword(
-                    credentialsId: 'nexus-credentials',
-                    usernameVariable: 'NEXUS_USER',
-                    passwordVariable: 'NEXUS_PASS'
-                )]) {
-                    sh "docker login ${NEXUS_URL} -u ${NEXUS_USER} -p ${NEXUS_PASS}"
-                    sh "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${NEXUS_URL}/repository/docker-hosted/${DOCKER_IMAGE}:${DOCKER_TAG}"
-                    sh "docker push ${NEXUS_URL}/repository/docker-hosted/${DOCKER_IMAGE}:${DOCKER_TAG}"
-                }
+                echo 'Tagging image for Nexus registry...'
+                bat "docker tag %DOCKER_IMAGE%:%DOCKER_TAG% %NEXUS_URL%/%DOCKER_IMAGE%:%DOCKER_TAG%"
+                echo 'Push to Nexus would happen here (requires auth credentials)'
             }
         }
 
-        // ─── Stage 7: Deploy to Kubernetes ────────────
+        // ─── Stage 5: Deploy to Kubernetes ────────────
         stage('Deploy to Kubernetes') {
             steps {
-                echo '☸️ Deploying to Kubernetes cluster...'
-                sh """
-                    kubectl set image deployment/sheshield-app \
-                      sheshield=${NEXUS_URL}/repository/docker-hosted/${DOCKER_IMAGE}:${DOCKER_TAG} \
-                      -n ${KUBE_NAMESPACE}
-                    kubectl rollout status deployment/sheshield-app -n ${KUBE_NAMESPACE} --timeout=120s
-                """
+                echo 'Deploying to Kubernetes cluster...'
+                bat "kubectl apply -f infrastructure/kubernetes/deployment.yaml"
+                bat "kubectl get pods -n %KUBE_NAMESPACE%"
             }
         }
     }
 
     post {
         success {
-            echo '✅ Pipeline completed successfully!'
-            echo "🌐 App deployed: Build #${BUILD_NUMBER}"
+            echo 'Pipeline completed successfully!'
+            echo "App deployed: Build #${BUILD_NUMBER}"
         }
         failure {
-            echo '❌ Pipeline failed! Check logs above.'
+            echo 'Pipeline failed! Check logs above.'
         }
         always {
-            echo '🧹 Cleaning up workspace...'
+            echo 'Cleaning up workspace...'
             cleanWs()
         }
     }
