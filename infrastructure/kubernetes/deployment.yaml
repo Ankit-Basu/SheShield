@@ -33,6 +33,7 @@ spec:
       containers:
       - name: sheshield
         image: sheshield:latest
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80
           name: http

@@ -35,7 +35,20 @@ pipeline {
         stage('Security Scan') {
             steps {
                 echo 'Running Trivy vulnerability scan on Docker image...'
-                bat "trivy image --severity HIGH,CRITICAL --exit-code 0 %DOCKER_IMAGE%:%DOCKER_TAG% || echo Trivy scan complete"
+                bat '''
+@echo off
+where trivy >nul 2>nul
+if errorlevel 1 (
+    echo Trivy is not installed on this Jenkins agent. Skipping non-blocking scan.
+    exit /b 0
+)
+
+trivy image --severity HIGH,CRITICAL --exit-code 0 %DOCKER_IMAGE%:%DOCKER_TAG%
+if errorlevel 1 (
+    echo Trivy scan completed with a non-blocking error.
+    exit /b 0
+)
+'''
             }
         }
 
