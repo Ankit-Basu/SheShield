@@ -52,13 +52,21 @@ if errorlevel 1 (
             }
         }
 
+        // ─── Stage 3: Code Quality Scan (SonarQube) ───
+        stage('SonarQube Analysis') {
+            steps {
+                echo 'Running SonarQube code quality scan...'
+                bat "docker run --rm -v \"%WORKSPACE%:/usr/src\" sonarsource/sonar-scanner-cli -Dsonar.projectKey=sheshield -Dsonar.sources=. -Dsonar.host.url=http://host.docker.internal:9000 -Dsonar.login=admin -Dsonar.password=Ank@27062003"
+            }
+        }
+
         // ─── Stage 4: Push to Nexus Registry ──────────
         stage('Push to Nexus') {
             steps {
                 echo 'Tagging and pushing image to Nexus registry...'
-                bat "docker tag %DOCKER_IMAGE%:%DOCKER_TAG% localhost:8082/%DOCKER_IMAGE%:%DOCKER_TAG%"
-                bat "docker login localhost:8082 -u admin -p admin || echo 'Warning: Nexus Auth Failed'"
-                bat "docker push localhost:8082/%DOCKER_IMAGE%:%DOCKER_TAG% || echo 'Warning: Push failed'"
+                bat "docker tag %DOCKER_IMAGE%:%DOCKER_TAG% 127.0.0.1:8082/%DOCKER_IMAGE%:%DOCKER_TAG%"
+                bat "docker login 127.0.0.1:8082 -u admin -p admin || echo 'Warning: Nexus Auth Failed'"
+                bat "docker push 127.0.0.1:8082/%DOCKER_IMAGE%:%DOCKER_TAG% || echo 'Warning: Push failed'"
             }
         }
 
