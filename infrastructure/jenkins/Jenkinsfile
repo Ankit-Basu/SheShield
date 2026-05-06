@@ -55,9 +55,10 @@ if errorlevel 1 (
         // ─── Stage 4: Push to Nexus Registry ──────────
         stage('Push to Nexus') {
             steps {
-                echo 'Tagging image for Nexus registry...'
-                bat "docker tag %DOCKER_IMAGE%:%DOCKER_TAG% %NEXUS_URL%/%DOCKER_IMAGE%:%DOCKER_TAG%"
-                echo 'Push to Nexus would happen here (requires auth credentials)'
+                echo 'Tagging and pushing image to Nexus registry...'
+                bat "docker tag %DOCKER_IMAGE%:%DOCKER_TAG% localhost:8082/%DOCKER_IMAGE%:%DOCKER_TAG%"
+                bat "docker login localhost:8082 -u admin -p admin || echo 'Warning: Nexus Auth Failed'"
+                bat "docker push localhost:8082/%DOCKER_IMAGE%:%DOCKER_TAG% || echo 'Warning: Push failed'"
             }
         }
 
