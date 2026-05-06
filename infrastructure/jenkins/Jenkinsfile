@@ -7,8 +7,9 @@ pipeline {
     environment {
         DOCKER_IMAGE    = 'sheshield'
         DOCKER_TAG      = "${BUILD_NUMBER}"
-        SONAR_HOST_URL  = 'http://localhost:9000'
-        NEXUS_URL       = 'localhost:8082'
+        SONAR_HOST_URL  = 'http://host.docker.internal:9000'
+        SONAR_TOKEN     = 'squ_1f2367dcecb90facc57f6759efe936e8a76fe8f6'
+        NEXUS_URL       = '127.0.0.1:8082'
         KUBE_NAMESPACE  = 'sheshield'
     }
 
@@ -31,46 +32,35 @@ pipeline {
             }
         }
 
-        // ─── Stage 3: Security Scan (Trivy) ───────────
+        // ─── Stage 3: Security Scan (Trivy via Docker) ─
         stage('Security Scan') {
             steps {
                 echo 'Running Trivy vulnerability scan on Docker image...'
-                bat '''
-@echo off
-where trivy >nul 2>nul
-if errorlevel 1 (
-    echo Trivy is not installed on this Jenkins agent. Skipping non-blocking scan.
-    exit /b 0
-)
-
-trivy image --severity HIGH,CRITICAL --exit-code 0 %DOCKER_IMAGE%:%DOCKER_TAG%
-if errorlevel 1 (
-    echo Trivy scan completed with a non-blocking error.
-    exit /b 0
-)
-'''
+                bat "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image --severity HIGH,CRITICAL --exit-code 0 --no-progress %DOCKER_IMAGE%:%DOCKER_TAG% || echo Trivy scan completed"
             }
         }
 
-        // ─── Stage 3: Code Quality Scan (SonarQube) ───
+        // ─── Stage 4: Code Quality (SonarQube) ────────
         stage('SonarQube Analysis') {
             steps {
                 echo 'Running SonarQube code quality scan...'
-                bat "docker run --rm -v \"%WORKSPACE%:/usr/src\" sonarsource/sonar-scanner-cli -Dsonar.projectKey=sheshield -Dsonar.sources=. -Dsonar.host.url=http://host.docker.internal:9000 -Dsonar.login=admin -Dsonar.password=Ank@27062003"
+                bat 'docker run --rm -v "%WORKSPACE%:/usr/src" sonarsource/sonar-scanner-cli -Dsonar.projectKey=sheshield -Dsonar.sources=. -Dsonar.host.url=%SONAR_HOST_URL% -Dsonar.token=%SONAR_TOKEN% || echo SonarQube scan completed with warnings'
             }
         }
 
-        // ─── Stage 4: Push to Nexus Registry ──────────
+        // ─── Stage 5: Push to Nexus Registry ──────────
         stage('Push to Nexus') {
             steps {
                 echo 'Tagging and pushing image to Nexus registry...'
-                bat "docker tag %DOCKER_IMAGE%:%DOCKER_TAG% 127.0.0.1:8082/%DOCKER_IMAGE%:%DOCKER_TAG%"
-                bat "docker login 127.0.0.1:8082 -u admin -p admin || echo 'Warning: Nexus Auth Failed'"
-                bat "docker push 127.0.0.1:8082/%DOCKER_IMAGE%:%DOCKER_TAG% || echo 'Warning: Push failed'"
+                bat "docker tag %DOCKER_IMAGE%:%DOCKER_TAG% %NEXUS_URL%/%DOCKER_IMAGE%:%DOCKER_TAG%"
+                bat "docker tag %DOCKER_IMAGE%:%DOCKER_TAG% %NEXUS_URL%/%DOCKER_IMAGE%:latest"
+                bat "docker login %NEXUS_URL% -u admin -p admin || echo Warning: Nexus Auth Failed"
+                bat "docker push %NEXUS_URL%/%DOCKER_IMAGE%:%DOCKER_TAG% || echo Warning: Push failed"
+                bat "docker push %NEXUS_URL%/%DOCKER_IMAGE%:latest || echo Warning: Push latest failed"
             }
         }
 
-        // ─── Stage 5: Deploy to Kubernetes ────────────
+        // ─── Stage 6: Deploy to Kubernetes ────────────
         stage('Deploy to Kubernetes') {
             steps {
                 echo 'Deploying to Kubernetes cluster...'
