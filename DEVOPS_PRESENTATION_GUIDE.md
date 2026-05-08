@@ -175,6 +175,98 @@ Checkout → Build Docker → Security Scan (Trivy) → SonarQube → Push to Ne
 
 ---
 
+### STEP 7.5: Live Demo — Prometheus Queries (1.5 min) ⭐ LIVE CODING WOW
+
+> **What to say:**  
+> *"Grafana is the visualization layer, but the real power is in Prometheus — our metrics engine. Let me show you live queries."*
+
+**Action:** Switch to **Prometheus** tab (`http://localhost:9090`). Click the **Graph** tab. Type each query in the expression box and click **Execute**. Switch between **Table** and **Graph** views for effect.
+
+#### 🔥 Demo Query 1: "Is everything alive?"
+
+```promql
+up
+```
+> *"This is the simplest but most powerful query. It tells us which services Prometheus is monitoring. A value of 1 means UP, 0 means DOWN. Right now all our targets are healthy."*
+
+**View:** Table — shows `up{instance="...", job="prometheus"} → 1`
+
+---
+
+#### 🔥 Demo Query 2: "How much memory is our server using?"
+
+```promql
+process_resident_memory_bytes / 1024 / 1024
+```
+> *"This shows resident memory in megabytes. You can see Prometheus itself is using about 65 MB — very lightweight for a metrics server monitoring 319 metrics."*
+
+**View:** Table — shows value in MB
+
+---
+
+#### 🔥 Demo Query 3: "CPU usage over time" ⭐ Best for Graph view
+
+```promql
+rate(process_cpu_seconds_total[5m])
+```
+> *"This uses the `rate()` function — one of the most important PromQL concepts. It calculates the per-second CPU usage averaged over the last 5 minutes. Click Graph to see the trend."*
+
+**View:** Switch to **Graph** — shows a live CPU usage line chart
+
+---
+
+#### 🔥 Demo Query 4: "How many HTTP requests has our monitoring received?"
+
+```promql
+prometheus_http_requests_total
+```
+> *"This shows every HTTP request Prometheus has served, broken down by handler and status code. You can see /metrics, /api/v1/query, /graph — these are all the endpoints being hit."*
+
+**View:** Table — shows multiple rows with different handlers
+
+---
+
+#### 🔥 Demo Query 5: "Request rate per second" ⭐ Impressive
+
+```promql
+rate(prometheus_http_requests_total[5m])
+```
+> *"By wrapping the counter with `rate()`, we convert it to requests-per-second. This is exactly what production monitoring looks like — you watch for spikes that indicate unusual traffic."*
+
+**View:** Switch to **Graph** — shows request rate over time
+
+---
+
+#### 🔥 Demo Query 6: "How many concurrent threads are running?"
+
+```promql
+go_goroutines
+```
+> *"Goroutines are Go's lightweight threads. Prometheus is running about 40 concurrent goroutines — each handling scraping, storage, API requests, etc. If this number spikes, it could indicate a resource leak."*
+
+**View:** Graph — shows goroutine count over time
+
+---
+
+#### 🎁 Bonus Queries (if judges ask for more)
+
+| Query | What it shows | What to say |
+|-------|---------------|-------------|
+| `prometheus_tsdb_head_series` | Total active time series | *"We're tracking 871+ unique time series"* |
+| `process_open_fds` | Open file descriptors | *"Shows how many files/sockets the server has open"* |
+| `go_gc_duration_seconds` | Garbage collection pauses | *"GC pause durations — tells us if memory management is healthy"* |
+| `prometheus_tsdb_head_samples_appended_total` | Total samples ingested | *"Total data points stored — proves the system is actively collecting"* |
+| `rate(prometheus_tsdb_head_samples_appended_total[5m])` | Ingestion rate | *"Samples per second being ingested — our data pipeline throughput"* |
+| `process_virtual_memory_bytes / 1024 / 1024 / 1024` | Virtual memory in GB | *"Total virtual memory allocation in gigabytes"* |
+
+> **Key phrase for judges:**  
+> *"Prometheus uses its own query language called PromQL. Every metric you see on our Grafana dashboard is powered by a PromQL query behind the scenes. Grafana is just the visualization — Prometheus is the brain."*
+
+> **Pro tip:** After showing Prometheus queries, switch back to Grafana and say:  
+> *"Now you understand — every panel in this Grafana dashboard is running a PromQL query like the ones I just showed you, but visualized beautifully with auto-refresh every 5 seconds."*
+
+---
+
 ### STEP 8: Wrap-Up — The DevOps Philosophy (1 min)
 
 > **What to say:**  
@@ -205,6 +297,8 @@ Use these when judges ask questions:
 | *"Why SonarQube?"* | *"SonarQube catches bugs, security vulnerabilities, and code smells that manual code review might miss. It analyzed 16,000+ lines of code in 9 languages automatically."* |
 | *"Why Nexus?"* | *"Nexus is our private Docker registry. It gives us version control for Docker images, rollback capability, and ensures we're not dependent on external registries."* |
 | *"Why Grafana?"* | *"Grafana gives us real-time visibility into our infrastructure. If CPU spikes or memory leaks occur, we see it immediately — not after users complain."* |
+| *"Why Prometheus?"* | *"Prometheus is the industry standard for metrics collection. It uses a pull-based model — scraping targets every 15 seconds — and its query language PromQL lets us slice and dice data in ways simple logging can't. It's what powers our Grafana dashboards."* |
+| *"What is PromQL?"* | *"PromQL is Prometheus Query Language — a functional language for selecting and aggregating time series data. Functions like `rate()` convert raw counters into meaningful per-second rates. It's the same language used at Google, Netflix, and Uber for production monitoring."* |
 | *"What about Ansible?"* | *"We chose Docker Compose and Kubernetes for our infrastructure provisioning because our stack is fully containerized. Ansible is better suited for configuring bare-metal servers, which isn't our use case."* |
 | *"Is this all running locally?"* | *"Yes — the entire pipeline runs on a single machine using Docker Desktop with Kubernetes. In production, each service would be on separate nodes, but the architecture is identical."* |
 
@@ -250,10 +344,12 @@ If judges want to see the actual code/configuration:
 | 5. SonarQube Results | 1.5 min | High |
 | 6. Nexus Registry | 1 min | Medium |
 | 7. Grafana Monitoring | 1.5 min | **Critical** |
+| 7.5. Prometheus Live Queries | 1.5 min | **Critical** |
 | 8. Wrap-Up | 1 min | High |
-| **Total** | **~10.5 min** | |
+| **Total** | **~12 min** | |
 
-> **If you only have 5 minutes:** Skip sections 1, 3, and 6. Focus on Jenkins (4), SonarQube (5), and Grafana (7).
+> **If you only have 5 minutes:** Skip sections 1, 3, and 6. Focus on Jenkins (4), SonarQube (5), Prometheus queries (7.5), and Grafana (7).  
+> **If you only have 8 minutes:** Skip sections 1 and 3. Do everything else.
 
 ---
 
