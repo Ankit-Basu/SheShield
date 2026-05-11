@@ -12,12 +12,11 @@ Before you start presenting, make sure **all services are running**:
 ```powershell
 # 1. Open Docker Desktop (must be running first)
 
-# 2. Start all containers
-docker start nexus sonarqube
-docker-compose -f d:\Desktop\SheShield\infrastructure\monitoring\docker-compose.yml up -d
+# 2. Start all unified DevOps containers
+docker compose -f d:\Desktop\SheShield\infrastructure\docker-compose.yml up -d
 
 # 3. Verify everything is UP
-docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+docker compose -f d:\Desktop\SheShield\infrastructure\docker-compose.yml ps
 ```
 
 **Expected output — all 4 should be running:**
@@ -57,22 +56,23 @@ docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 ### STEP 2: The Big Picture — Architecture Overview (1.5 min)
 
 > **What to say:**  
-> *"Our pipeline follows a complete DevOps lifecycle. Every single code push goes through 7 automated stages."*
+> *"Our pipeline follows a complete DevOps lifecycle. Every single code push goes through 8 automated stages."*
 
 **Action:** Show the README on GitHub — scroll to the **Pipeline Architecture** ASCII diagram:
 
 ```
-Checkout → Build Docker → Security Scan (Trivy) → SonarQube → Push to Nexus → Deploy to K8s → Monitor (Grafana)
+Checkout → Build Docker → Helm Lint → Terraform Validate → Security Scan (Trivy) → SonarQube → Push to Nexus → Deploy to K8s
 ```
 
 **Explain each box briefly:**
 1. **Checkout** — Code pulled from GitHub
-2. **Build** — Docker image built from a multi-stage Dockerfile (PHP 8.2 + Apache)
-3. **Security Scan** — Aqua Trivy scans for CVEs (HIGH/CRITICAL vulnerabilities)
-4. **Code Quality** — SonarQube analyzes 16,000+ lines across 9 languages
-5. **Artifact Storage** — Docker image pushed to private Nexus registry
-6. **Deployment** — Kubernetes deploys 3 replicas with rolling update
-7. **Monitoring** — Prometheus scrapes metrics, Grafana visualizes them
+2. **Build** — Docker image built from a multi-stage Dockerfile
+3. **Helm Lint** — Validates Kubernetes Helm charts for syntax errors
+4. **Terraform Validate** — Checks AWS Infrastructure-as-Code configs
+5. **Security Scan** — Aqua Trivy scans for CVEs (HIGH/CRITICAL vulnerabilities)
+6. **Code Quality** — SonarQube analyzes code quality and security hotspots
+7. **Artifact Storage** — Docker image pushed to private Nexus registry
+8. **Deployment** — Kubernetes deploys 3 replicas with rolling update
 
 > **Key phrase to impress judges:**  
 > *"This is not a theoretical pipeline — every stage you see here is live and running on my machine right now. Let me prove it."*
@@ -96,7 +96,7 @@ Checkout → Build Docker → Security Scan (Trivy) → SonarQube → Push to Ne
 ### STEP 4: Live Demo — Jenkins Pipeline (2 min) ⭐ MOST IMPORTANT
 
 > **What to say:**  
-> *"Our main pipeline runs on Jenkins with 7 stages. Let me show you a successful build."*
+> *"Our main pipeline runs on Jenkins with 8 stages. Let me show you a successful build."*
 
 **Action:** Switch to **Jenkins** → SheShield-Pipeline → Show Build #11 (all green).
 
@@ -104,11 +104,12 @@ Checkout → Build Docker → Security Scan (Trivy) → SonarQube → Push to Ne
 
 1. ✅ **Checkout SCM** — *"Pulls the latest code from GitHub"*
 2. ✅ **Build Docker Image** — *"Builds a production-ready Docker image using our multi-stage Dockerfile"*
-3. ✅ **Security Scan** — *"Aqua Trivy runs inside Docker to scan for vulnerabilities — no local install needed"*
-4. ✅ **SonarQube Analysis** — *"Performs static code analysis — I'll show you the results in a moment"*
-5. ✅ **Push to Nexus** — *"The image gets versioned and pushed to our private Docker registry"*
-6. ✅ **Deploy to Kubernetes** — *"Kubernetes performs a rolling deployment with 3 replicas"*
-7. ✅ **Post Actions** — *"Workspace cleanup and build notifications"*
+3. ✅ **Helm Lint** — *"Validates our Kubernetes packaging configurations"*
+4. ✅ **Terraform Validate** — *"Ensures our AWS IaC templates are syntactically perfect before deployment"*
+5. ✅ **Security Scan** — *"Aqua Trivy runs inside Docker to scan for vulnerabilities — no local install needed"*
+6. ✅ **SonarQube Analysis** — *"Performs static code analysis — I'll show you the results in a moment"*
+7. ✅ **Push to Nexus** — *"The image gets versioned and pushed to our private Docker registry"*
+8. ✅ **Deploy to Kubernetes** — *"Kubernetes performs a rolling deployment with 3 replicas"*
 
 > **If a judge asks "Can you trigger a build live?":**
 > Click **Build Now** — it will start running through all stages in real time (~3-4 min). You can show it progressing while continuing to present.
@@ -299,8 +300,8 @@ Use these when judges ask questions:
 | *"Why Grafana?"* | *"Grafana gives us real-time visibility into our infrastructure. If CPU spikes or memory leaks occur, we see it immediately — not after users complain."* |
 | *"Why Prometheus?"* | *"Prometheus is the industry standard for metrics collection. It uses a pull-based model — scraping targets every 15 seconds — and its query language PromQL lets us slice and dice data in ways simple logging can't. It's what powers our Grafana dashboards."* |
 | *"What is PromQL?"* | *"PromQL is Prometheus Query Language — a functional language for selecting and aggregating time series data. Functions like `rate()` convert raw counters into meaningful per-second rates. It's the same language used at Google, Netflix, and Uber for production monitoring."* |
-| *"What about Ansible?"* | *"We chose Docker Compose and Kubernetes for our infrastructure provisioning because our stack is fully containerized. Ansible is better suited for configuring bare-metal servers, which isn't our use case."* |
-| *"Is this all running locally?"* | *"Yes — the entire pipeline runs on a single machine using Docker Desktop with Kubernetes. In production, each service would be on separate nodes, but the architecture is identical."* |
+| *"What about Cloud/AWS?"* | *"We use Terraform for Infrastructure as Code (IaC) to provision AWS EC2, RDS, and ECR. Then we use Ansible for configuration management. It's fully automated and cost-optimized for the AWS Free Tier."* |
+| *"Is this all running locally?"* | *"Yes — the CI/CD pipeline and monitoring stack run locally using Docker and Kubernetes. However, our Terraform and Ansible scripts are ready to provision the production environment on AWS EC2 with a single command."* |
 
 ---
 
@@ -323,11 +324,11 @@ If judges want to see the actual code/configuration:
 
 | File | What it shows |
 |------|--------------|
-| `infrastructure/jenkins/Jenkinsfile` | The 7-stage pipeline definition |
+| `infrastructure/jenkins/Jenkinsfile` | The 8-stage pipeline definition |
 | `.github/workflows/main.yml` | GitHub Actions workflow |
 | `infrastructure/docker/Dockerfile` | Multi-stage Docker build |
 | `infrastructure/kubernetes/deployment.yaml` | K8s deployment (3 replicas + MySQL) |
-| `infrastructure/monitoring/docker-compose.yml` | Prometheus + Grafana stack |
+| `infrastructure/docker-compose.yml` | Unified DevOps Stack (Nexus, Sonar, Grafana, Prometheus) |
 | `infrastructure/monitoring/grafana/dashboards/sheshield-overview.json` | Grafana dashboard (IaC) |
 | `infrastructure/monitoring/prometheus/prometheus.yml` | Prometheus scrape config |
 
@@ -368,7 +369,10 @@ If judges want to see the actual code/configuration:
 | **Prometheus** | Metrics collection & alerting | 9090 |
 | **Grafana** | Monitoring dashboards & visualization | 3000 |
 
-> **Note:** Ansible is **NOT** used in this project. The infrastructure is fully containerized using Docker and orchestrated with Kubernetes. Ansible is typically used for bare-metal server provisioning, which is not needed in a containerized architecture.
+| **Terraform** | AWS Infrastructure provisioning | — |
+| **Ansible** | Server configuration management | — |
+
+> **Note:** The entire DevOps stack is containerized for easy local development and presentation. The Terraform and Ansible files (`infrastructure/terraform/` and `infrastructure/ansible/`) are pre-configured to deploy the application to AWS EC2/RDS whenever a cloud deployment is required.
 
 ---
 
