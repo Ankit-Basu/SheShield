@@ -33,7 +33,7 @@ docker compose -f d:\Desktop\SheShield\infrastructure\docker-compose.yml ps
 3. **SonarQube** → `http://localhost:9000/dashboard?id=sheshield`
 4. **Nexus** → `http://localhost:8081/#browse/browse:sheshield-repo`
 5. **Grafana** → `http://localhost:3000` (SheShield Infrastructure Monitor dashboard)
-6. **SheShield App** → `http://localhost/sheshield/pro/landing.html`
+6. **SheShield App** → `http://localhost:8088/sheshield/pro/landing.html`
 
 ---
 

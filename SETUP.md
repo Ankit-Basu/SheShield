@@ -35,7 +35,7 @@ You should see all 4 services listed as `Up`.
 
 | Tool | URL | Default Credentials (User/Pass) | Purpose |
 |------|-----|---------------------------------|---------|
-| **SheShield App** | [http://localhost/sheshield/pro/landing.html](http://localhost/sheshield/pro/landing.html) | N/A | The main application interface. *(Requires Apache/XAMPP running on port 80)* |
+| **SheShield App** | [http://localhost:8088/sheshield/pro/landing.html](http://localhost:8088/sheshield/pro/landing.html) | N/A | The main application interface. *(Requires Apache/XAMPP running on port 8088)* |
 | **Jenkins** | [http://localhost:8080](http://localhost:8080) | `admin` / `admin` | CI/CD Pipeline Orchestrator. |
 | **SonarQube** | [http://localhost:9000](http://localhost:9000) | `admin` / `admin` | Static Code Analysis & Quality Gates. |
 | **Nexus** | [http://localhost:8081](http://localhost:8081) | `admin` / `admin123` | Private Docker Artifact Registry. |
