@@ -70,7 +70,7 @@ pipeline {
                 echo 'Tagging and pushing image to Nexus registry...'
                 bat "docker tag %DOCKER_IMAGE%:%DOCKER_TAG% %NEXUS_URL%/%DOCKER_IMAGE%:%DOCKER_TAG%"
                 bat "docker tag %DOCKER_IMAGE%:%DOCKER_TAG% %NEXUS_URL%/%DOCKER_IMAGE%:latest"
-                bat "docker login %NEXUS_URL% -u admin -p admin || echo Warning: Nexus Auth Failed"
+                bat "docker login %NEXUS_URL% -u admin -p admin123 || echo Warning: Nexus Auth Failed"
                 bat "docker push %NEXUS_URL%/%DOCKER_IMAGE%:%DOCKER_TAG% || echo Warning: Push failed"
                 bat "docker push %NEXUS_URL%/%DOCKER_IMAGE%:latest || echo Warning: Push latest failed"
             }
