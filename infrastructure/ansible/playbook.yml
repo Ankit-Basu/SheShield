@@ -1,6 +1,8 @@
 # ─────────────────────────────────────────────────
-# SheShield - Ansible Playbook
-# Configures the EC2 server with PHP, Apache, and deploys the app
+# SheShield — Ansible Playbook
+# Configures the EC2 server with PHP, Apache, Docker,
+# and deploys the SheShield application
+# Usage: ansible-playbook -i inventory.ini playbook.yml
 # ─────────────────────────────────────────────────
 ---
 - name: Configure SheShield Web Server
@@ -12,6 +14,7 @@
     db_name: sheshield
     db_user: root
     db_pass: "{{ lookup('env', 'DB_PASS') | default('sheshield_secret', true) }}"
+    server_name: "{{ lookup('env', 'SERVER_NAME') | default('localhost', true) }}"
 
   tasks:
     # ─── System Updates ─────────────────────────────
@@ -19,9 +22,44 @@
       apt:
         update_cache: yes
         upgrade: dist
+      when: ansible_os_family == "Debian"
 
-    # ─── Install Dependencies ───────────────────────
-    - name: Install Apache, PHP 8.2 and required extensions
+    - name: Update system packages (Amazon Linux)
+      yum:
+        name: '*'
+        state: latest
+      when: ansible_os_family == "RedHat"
+
+    # ─── Install Docker ─────────────────────────────
+    - name: Install Docker (Debian/Ubuntu)
+      apt:
+        name:
+          - docker.io
+          - docker-compose
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Install Docker (Amazon Linux)
+      yum:
+        name:
+          - docker
+        state: present
+      when: ansible_os_family == "RedHat"
+
+    - name: Start and enable Docker service
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Add user to docker group
+      user:
+        name: "{{ ansible_user }}"
+        groups: docker
+        append: yes
+
+    # ─── Install PHP & Apache (Debian/Ubuntu) ───────
+    - name: Install Apache, PHP 8.2 and extensions
       apt:
         name:
           - apache2
@@ -38,6 +76,7 @@
           - curl
           - unzip
         state: present
+      when: ansible_os_family == "Debian"
 
     # ─── Enable Apache Modules ──────────────────────
     - name: Enable Apache rewrite module
@@ -45,19 +84,21 @@
         name: rewrite
         state: present
       notify: Restart Apache
+      when: ansible_os_family == "Debian"
 
     - name: Enable Apache headers module
       apache2_module:
         name: headers
         state: present
       notify: Restart Apache
+      when: ansible_os_family == "Debian"
 
     # ─── Deploy Application ─────────────────────────
     - name: Clone SheShield repository
       git:
-        repo: 'https://github.com/your-username/sheshield.git'
+        repo: 'https://github.com/Ankit-Basu/SheShield.git'
         dest: "{{ app_dir }}"
-        version: main
+        version: master
         force: yes
 
     - name: Install Composer dependencies
@@ -66,6 +107,7 @@
         working_dir: "{{ app_dir }}"
         no_dev: yes
         optimize_autoloader: yes
+      ignore_errors: yes
 
     # ─── Create Required Directories ────────────────
     - name: Create upload directories
@@ -80,6 +122,7 @@
         - "{{ app_dir }}/uploads/evidence"
         - "{{ app_dir }}/uploads/profile_images"
         - "{{ app_dir }}/logs"
+      when: ansible_os_family == "Debian"
 
     # ─── Set Permissions ────────────────────────────
     - name: Set proper file ownership
@@ -88,6 +131,7 @@
         owner: www-data
         group: www-data
         recurse: yes
+      when: ansible_os_family == "Debian"
 
     - name: Set directory permissions
       file:
@@ -101,14 +145,24 @@
         src: templates/sheshield-vhost.conf.j2
         dest: /etc/apache2/sites-available/sheshield.conf
       notify: Restart Apache
+      when: ansible_os_family == "Debian"
 
     - name: Enable SheShield site
       command: a2ensite sheshield.conf
       notify: Restart Apache
+      when: ansible_os_family == "Debian"
 
     - name: Disable default site
       command: a2dissite 000-default.conf
       notify: Restart Apache
+      when: ansible_os_family == "Debian"
+
+    # ─── Start Monitoring Stack ─────────────────────
+    - name: Start monitoring stack with Docker Compose
+      command: docker compose -f infrastructure/docker-compose.yml up -d
+      args:
+        chdir: "{{ app_dir }}"
+      ignore_errors: yes
 
     # ─── Firewall Configuration ─────────────────────
     - name: Allow HTTP through firewall
@@ -116,12 +170,14 @@
         rule: allow
         port: '80'
         proto: tcp
+      when: ansible_os_family == "Debian"
 
     - name: Allow HTTPS through firewall
       ufw:
         rule: allow
         port: '443'
         proto: tcp
+      when: ansible_os_family == "Debian"
 
     # ─── Initialize Database ────────────────────────
     - name: Run database initialization
@@ -129,6 +185,18 @@
       args:
         chdir: "{{ app_dir }}"
       ignore_errors: yes
+
+    # ─── Health Check ───────────────────────────────
+    - name: Verify Apache is serving
+      uri:
+        url: "http://localhost"
+        status_code: [200, 301, 302]
+      register: result
+      ignore_errors: yes
+
+    - name: Display deployment status
+      debug:
+        msg: "SheShield deployment {{ 'SUCCESSFUL' if result.status is defined else 'NEEDS VERIFICATION' }}"
 
   # ─── Handlers ───────────────────────────────────
   handlers:

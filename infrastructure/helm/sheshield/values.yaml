@@ -1,0 +1,81 @@
+# ─────────────────────────────────────────────────
+# SheShield Helm Chart — Configurable Values
+# Override these for different environments:
+#   helm install sheshield ./infrastructure/helm/sheshield -f custom-values.yaml
+# ─────────────────────────────────────────────────
+
+# ─── Application ──────────────────────────────────
+replicaCount: 3
+
+image:
+  repository: sheshield
+  tag: latest
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: ""
+
+# ─── Service ──────────────────────────────────────
+service:
+  type: LoadBalancer
+  port: 80
+  targetPort: 80
+
+# ─── Resources ────────────────────────────────────
+resources:
+  requests:
+    memory: "128Mi"
+    cpu: "250m"
+  limits:
+    memory: "256Mi"
+    cpu: "500m"
+
+# ─── Autoscaling ──────────────────────────────────
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+
+# ─── Health Checks ────────────────────────────────
+livenessProbe:
+  httpGet:
+    path: /
+    port: 80
+  initialDelaySeconds: 30
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /
+    port: 80
+  initialDelaySeconds: 5
+  periodSeconds: 5
+
+# ─── Database (MySQL) ─────────────────────────────
+mysql:
+  enabled: true
+  image: mysql:8.0
+  rootPassword: sheshield
+  database: sheshield
+  storage: 5Gi
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "250m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+
+# ─── Config ───────────────────────────────────────
+config:
+  dbHost: "sheshield-mysql"
+  dbName: "sheshield"
+
+# ─── Secrets (base64 encoded) ─────────────────────
+secrets:
+  dbUser: cm9vdA==           # root
+  dbPassword: c2hlc2hpZWxk   # sheshield
+
+# ─── Namespace ────────────────────────────────────
+namespace: sheshield

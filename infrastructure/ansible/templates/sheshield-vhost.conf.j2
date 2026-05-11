@@ -1,0 +1,27 @@
+<VirtualHost *:80>
+    ServerName {{ server_name | default('localhost') }}
+    DocumentRoot {{ app_dir }}
+
+    <Directory {{ app_dir }}>
+        Options -Indexes +FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    # Security Headers
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+    # Logging
+    ErrorLog ${APACHE_LOG_DIR}/sheshield-error.log
+    CustomLog ${APACHE_LOG_DIR}/sheshield-access.log combined
+
+    # PHP settings
+    <FilesMatch \.php$>
+        SetHandler application/x-httpd-php
+    </FilesMatch>
+
+    DirectoryIndex landing.html index.php index.html
+</VirtualHost>

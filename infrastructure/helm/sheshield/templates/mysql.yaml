@@ -1,0 +1,61 @@
+{{- if .Values.mysql.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "sheshield.fullname" . }}-mysql
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "sheshield.fullname" . }}-mysql
+  template:
+    metadata:
+      labels:
+        app: {{ include "sheshield.fullname" . }}-mysql
+    spec:
+      containers:
+      - name: mysql
+        image: {{ .Values.mysql.image }}
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: {{ .Values.mysql.rootPassword | quote }}
+        - name: MYSQL_DATABASE
+          value: {{ .Values.mysql.database | quote }}
+        volumeMounts:
+        - name: mysql-storage
+          mountPath: /var/lib/mysql
+        resources:
+          {{- toYaml .Values.mysql.resources | nindent 10 }}
+      volumes:
+      - name: mysql-storage
+        persistentVolumeClaim:
+          claimName: {{ include "sheshield.fullname" . }}-mysql-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "sheshield.fullname" . }}-mysql
+  namespace: {{ .Values.namespace }}
+spec:
+  ports:
+  - port: 3306
+    targetPort: 3306
+  selector:
+    app: {{ include "sheshield.fullname" . }}-mysql
+  clusterIP: None
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "sheshield.fullname" . }}-mysql-pvc
+  namespace: {{ .Values.namespace }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.mysql.storage }}
+{{- end }}

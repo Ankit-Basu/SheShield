@@ -1,0 +1,88 @@
+# ─────────────────────────────────────────────────
+# SheShield — Unified DevOps Stack
+# Start:  docker compose up -d
+# Stop:   docker compose down
+# Status: docker compose ps
+# ─────────────────────────────────────────────────
+
+services:
+
+  # ─── Prometheus (Metrics Collection) ────────────
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.enable-lifecycle'
+    restart: unless-stopped
+    networks:
+      - sheshield-network
+
+  # ─── Grafana (Monitoring Dashboards) ────────────
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
+      - grafana-data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/var/lib/grafana/dashboards/sheshield-overview.json
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+    networks:
+      - sheshield-network
+
+  # ─── SonarQube (Code Quality Analysis) ──────────
+  sonarqube:
+    image: sonarqube:lts-community
+    container_name: sonarqube
+    ports:
+      - "9000:9000"
+    volumes:
+      - sonarqube-data:/opt/sonarqube/data
+      - sonarqube-logs:/opt/sonarqube/logs
+      - sonarqube-extensions:/opt/sonarqube/extensions
+    environment:
+      - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
+    restart: unless-stopped
+    networks:
+      - sheshield-network
+
+  # ─── Nexus (Docker Artifact Registry) ───────────
+  nexus:
+    image: sonatype/nexus3:latest
+    container_name: nexus
+    ports:
+      - "8081:8081"
+      - "8082:8082"
+    volumes:
+      - nexus-data:/nexus-data
+    restart: unless-stopped
+    networks:
+      - sheshield-network
+
+# ─── Persistent Volumes ──────────────────────────
+volumes:
+  prometheus-data:
+  grafana-data:
+  sonarqube-data:
+  sonarqube-logs:
+  sonarqube-extensions:
+  nexus-data:
+
+# ─── Shared Network ──────────────────────────────
+networks:
+  sheshield-network:
+    driver: bridge

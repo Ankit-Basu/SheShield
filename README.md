@@ -113,7 +113,10 @@ The platform features a fully responsive design powered by custom fonts (Clash D
         • Aqua Trivy (Security Scan)<br>
         • Sonatype Nexus (Artifact Registry)<br>
         • Prometheus & Grafana (Monitoring)<br>
-        • Kubernetes (Orchestration)<br>
+        • Kubernetes & Helm (Orchestration)<br>
+        • Terraform & AWS (Cloud IaC)<br>
+        • Ansible (Config Management)<br>
+        • Husky & Commitlint (Git Hooks)<br>
       </td>
     </tr>
   </table>
@@ -231,9 +234,87 @@ A fully automated monitoring stack deployed via Docker Compose with **Infrastruc
 | Component | Configuration |
 |-----------|--------------|
 | **Dockerfile** | Multi-stage PHP 8.2-Apache build with Composer, GD, PDO, and security hardening |
-| **Docker Compose** | Monitoring stack (Prometheus + Grafana) with volume-based dashboard provisioning |
-| **Kubernetes** | 3-replica Deployment + ClusterIP Service + MySQL StatefulSet in `sheshield` namespace |
+| **Docker Compose** | Unified stack: Prometheus + Grafana + SonarQube + Nexus (one command start/stop) |
+| **Kubernetes** | 3-replica Deployment + LoadBalancer Service + MySQL + HPA in `sheshield` namespace |
 | **Nexus Registry** | Docker-hosted repo at `127.0.0.1:8082` with HTTP connector |
+
+```bash
+# Start ALL DevOps tools with one command
+docker compose -f infrastructure/docker-compose.yml up -d
+
+# Stop everything
+docker compose -f infrastructure/docker-compose.yml down
+```
+
+---
+
+### ⎈ Helm Chart
+
+Kubernetes deployments are packaged as a **Helm chart** for environment-specific configuration:
+
+```bash
+# Preview what Helm will deploy
+helm template sheshield infrastructure/helm/sheshield
+
+# Install to cluster
+helm install sheshield infrastructure/helm/sheshield --namespace sheshield --create-namespace
+
+# Override values for production
+helm install sheshield infrastructure/helm/sheshield -f production-values.yaml
+```
+
+Configurable via `values.yaml`: replica count, resource limits, autoscaling thresholds, MySQL credentials, and image tags.
+
+---
+
+### 🌍 Terraform & AWS (Infrastructure-as-Code)
+
+Terraform provisions the complete AWS infrastructure with **100% Free Tier** resources:
+
+| Resource | Type | Monthly Cost |
+|----------|------|-------------|
+| **EC2** | t2.micro (1 vCPU, 1GB RAM) | $0.00 (Free Tier) |
+| **RDS MySQL** | db.t3.micro | $0.00 (Free Tier) |
+| **S3** | 5GB storage | $0.00 (Free Tier) |
+| **ECR** | Private Docker registry | $0.00 (500MB free) |
+| **VPC** | VPC + IGW + Subnets | $0.00 (Always free) |
+| | **Total** | **$0.00/mo** |
+
+```bash
+cd infrastructure/terraform
+terraform init
+terraform plan        # Preview what will be created (no cost)
+terraform apply       # Deploy to AWS
+```
+
+---
+
+### 🔧 Ansible (Configuration Management)
+
+Ansible automates EC2 server provisioning — installs PHP, Apache, Docker, deploys the app, and starts the monitoring stack:
+
+```bash
+# Run playbook against your EC2 server
+cd infrastructure/ansible
+ansible-playbook -i inventory.ini playbook.yml
+```
+
+---
+
+### 🐶 Husky & Commitlint (Git Hooks)
+
+Every commit is automatically validated against [Conventional Commits](https://www.conventionalcommits.org/) format:
+
+```bash
+# ✅ Valid commits
+git commit -m "feat(auth): add password reset flow"
+git commit -m "fix: resolve SOS button race condition"
+git commit -m "docs: update README with DevOps pipeline"
+
+# ❌ Rejected commits
+git commit -m "fixed stuff"          # No type prefix
+git commit -m "FEAT: ADD FEATURE"    # Uppercase not allowed
+```
 
 ---
 
@@ -444,14 +525,28 @@ SheShield/
 │   ├── simple_login.php            # Login with session management
 │   └── signup.php                  # User registration
 ├── infrastructure/
+│   ├── docker-compose.yml          # Unified DevOps stack (Prometheus+Grafana+SonarQube+Nexus)
 │   ├── docker/
 │   │   └── Dockerfile              # Multi-stage PHP 8.2-Apache build
 │   ├── jenkins/
 │   │   └── Jenkinsfile             # 7-stage CI/CD pipeline
 │   ├── kubernetes/
 │   │   └── deployment.yaml         # K8s deployment (3 replicas) + MySQL
+│   ├── helm/sheshield/             # Helm chart
+│   │   ├── Chart.yaml              # Chart metadata
+│   │   ├── values.yaml             # Configurable values
+│   │   └── templates/              # K8s manifest templates
+│   ├── terraform/                  # AWS Infrastructure-as-Code
+│   │   ├── main.tf                 # VPC, EC2, RDS, S3
+│   │   ├── ecr.tf                  # Docker registry (ECR)
+│   │   ├── variables.tf            # Input variables
+│   │   ├── outputs.tf              # Output values
+│   │   └── terraform.tfvars.example
+│   ├── ansible/                    # Configuration management
+│   │   ├── playbook.yml            # Server provisioning playbook
+│   │   ├── inventory.ini           # Host inventory
+│   │   └── templates/              # Jinja2 templates
 │   └── monitoring/
-│       ├── docker-compose.yml      # Prometheus + Grafana stack
 │       ├── prometheus/
 │       │   └── prometheus.yml      # Scrape configuration
 │       └── grafana/
@@ -519,6 +614,12 @@ SheShield/
 - [x] Sonatype Nexus artifact registry
 - [x] Kubernetes deployment (3 replicas)
 - [x] Prometheus + Grafana monitoring stack
+- [x] Helm chart for K8s packaging
+- [x] Terraform AWS infrastructure (Free Tier — $0/mo)
+- [x] AWS ECR private Docker registry
+- [x] Ansible server provisioning playbook
+- [x] Husky + Commitlint git hooks
+- [x] Unified Docker Compose (all DevOps tools)
 - [ ] Native mobile app (React Native)
 - [ ] AI-powered chatbot with NLP
 - [ ] Push notifications for SOS alerts

@@ -1,0 +1,11 @@
+# ─────────────────────────────────────────────────
+# SheShield — Example Terraform Variables
+# Copy to terraform.tfvars and fill in your values:
+#   cp terraform.tfvars.example terraform.tfvars
+# ─────────────────────────────────────────────────
+
+aws_region      = "ap-south-1"
+key_pair_name   = "sheshield-key"
+db_password     = "CHANGE_ME_strong_password_123!"
+instance_type   = "t2.micro"       # Free Tier
+db_instance_class = "db.t3.micro"  # Free Tier
