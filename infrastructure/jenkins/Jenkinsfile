@@ -44,8 +44,7 @@ pipeline {
         stage('Terraform Validate') {
             steps {
                 echo 'Validating Terraform configuration...'
-                bat "docker run --rm -v \"%WORKSPACE%/infrastructure/terraform:/workspace\" -w /workspace hashicorp/terraform:latest init -backend=false -lockfile=readonly -no-color || echo Terraform init skipped"
-                bat "docker run --rm -v \"%WORKSPACE%/infrastructure/terraform:/workspace\" -w /workspace hashicorp/terraform:latest validate -no-color || echo Terraform validate completed with warnings"
+                bat "docker run --rm -v \"%WORKSPACE%/infrastructure/terraform:/src:ro\" --entrypoint sh hashicorp/terraform:latest -c \"cp -r /src /tmp/tf && cd /tmp/tf && terraform init -backend=false -no-color && terraform validate -no-color\" || echo Terraform validate completed with warnings"
             }
         }
 
