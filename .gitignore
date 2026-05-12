@@ -43,3 +43,7 @@ build/
 *.tfstate.backup
 terraform.tfvars
 *.terraform.lock.hcl
+
+# AWS Secrets (NEVER commit these)
+aws-credentials.txt
+*.pem
