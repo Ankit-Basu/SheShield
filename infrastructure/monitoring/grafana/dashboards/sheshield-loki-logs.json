@@ -1,0 +1,168 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "datasource": { "type": "loki", "uid": "loki-sheshield" },
+      "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" } }, "overrides": [] },
+      "gridPos": { "h": 5, "w": 24, "x": 0, "y": 0 },
+      "id": 1,
+      "options": { "legend": { "calcs": [], "displayMode": "list", "placement": "bottom" }, "tooltip": { "mode": "single" } },
+      "title": "Log Volume (All Containers)",
+      "type": "barchart",
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "loki-sheshield" },
+          "editorMode": "code",
+          "expr": "sum by (container) (count_over_time({container=~\".+\"}[1m]))",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "datasource": { "type": "loki", "uid": "loki-sheshield" },
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 5 },
+      "id": 10,
+      "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "textMode": "auto", "reduceOptions": { "calcs": ["sum"], "fields": "", "values": false } },
+      "title": "Total Logs (15m)",
+      "type": "stat",
+      "targets": [{ "datasource": { "type": "loki", "uid": "loki-sheshield" }, "editorMode": "code", "expr": "sum(count_over_time({container=~\".+\"}[15m]))", "queryType": "instant", "refId": "A" }],
+      "fieldConfig": { "defaults": { "color": { "mode": "fixed", "fixedColor": "green" }, "thresholds": { "mode": "absolute", "steps": [{"color": "green", "value": null}] } }, "overrides": [] }
+    },
+    {
+      "datasource": { "type": "loki", "uid": "loki-sheshield" },
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 5 },
+      "id": 11,
+      "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "textMode": "auto", "reduceOptions": { "calcs": ["sum"], "fields": "", "values": false } },
+      "title": "Error Logs (15m)",
+      "type": "stat",
+      "targets": [{ "datasource": { "type": "loki", "uid": "loki-sheshield" }, "editorMode": "code", "expr": "sum(count_over_time({container=~\".+\"} |= \"error\" [15m]))", "queryType": "instant", "refId": "A" }],
+      "fieldConfig": { "defaults": { "color": { "mode": "fixed", "fixedColor": "red" }, "thresholds": { "mode": "absolute", "steps": [{"color": "red", "value": null}] } }, "overrides": [] }
+    },
+    {
+      "datasource": { "type": "loki", "uid": "loki-sheshield" },
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 5 },
+      "id": 12,
+      "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "textMode": "auto", "reduceOptions": { "calcs": ["sum"], "fields": "", "values": false } },
+      "title": "Warning Logs (15m)",
+      "type": "stat",
+      "targets": [{ "datasource": { "type": "loki", "uid": "loki-sheshield" }, "editorMode": "code", "expr": "sum(count_over_time({container=~\".+\"} |= \"warn\" [15m]))", "queryType": "instant", "refId": "A" }],
+      "fieldConfig": { "defaults": { "color": { "mode": "fixed", "fixedColor": "orange" }, "thresholds": { "mode": "absolute", "steps": [{"color": "orange", "value": null}] } }, "overrides": [] }
+    },
+    {
+      "datasource": { "type": "loki", "uid": "loki-sheshield" },
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 5 },
+      "id": 13,
+      "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "textMode": "auto", "reduceOptions": { "calcs": ["sum"], "fields": "", "values": false } },
+      "title": "Info Logs (15m)",
+      "type": "stat",
+      "targets": [{ "datasource": { "type": "loki", "uid": "loki-sheshield" }, "editorMode": "code", "expr": "sum(count_over_time({container=~\".+\"} |= \"info\" [15m]))", "queryType": "instant", "refId": "A" }],
+      "fieldConfig": { "defaults": { "color": { "mode": "fixed", "fixedColor": "blue" }, "thresholds": { "mode": "absolute", "steps": [{"color": "blue", "value": null}] } }, "overrides": [] }
+    },
+    {
+      "datasource": { "type": "loki", "uid": "loki-sheshield" },
+      "gridPos": { "h": 6, "w": 12, "x": 0, "y": 9 },
+      "id": 20,
+      "options": { "legend": { "calcs": ["sum"], "displayMode": "table", "placement": "right" }, "tooltip": { "mode": "single" } },
+      "title": "Logs per Container (Rate)",
+      "type": "timeseries",
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "loki-sheshield" },
+          "editorMode": "code",
+          "expr": "sum by (container) (rate({container=~\".+\"}[1m]))",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "custom": { "drawStyle": "line", "lineWidth": 2, "fillOpacity": 20, "pointSize": 5, "showPoints": "auto" } }, "overrides": [] }
+    },
+    {
+      "datasource": { "type": "loki", "uid": "loki-sheshield" },
+      "gridPos": { "h": 6, "w": 12, "x": 12, "y": 9 },
+      "id": 21,
+      "options": { "legend": { "calcs": ["sum"], "displayMode": "table", "placement": "right" }, "tooltip": { "mode": "single" } },
+      "title": "Error Rate per Container",
+      "type": "timeseries",
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "loki-sheshield" },
+          "editorMode": "code",
+          "expr": "sum by (container) (rate({container=~\".+\"} |= \"error\" [1m]))",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "custom": { "drawStyle": "line", "lineWidth": 2, "fillOpacity": 20, "pointSize": 5, "showPoints": "auto" } }, "overrides": [] }
+    },
+    {
+      "datasource": { "type": "loki", "uid": "loki-sheshield" },
+      "gridPos": { "h": 7, "w": 24, "x": 0, "y": 15 },
+      "id": 2,
+      "options": { "showTime": true, "showLabels": true, "showCommonLabels": false, "wrapLogMessage": true, "prettifyLogMessage": false, "enableLogDetails": true, "sortOrder": "Descending", "dedupStrategy": "none" },
+      "title": "Prometheus Logs",
+      "type": "logs",
+      "targets": [{ "datasource": { "type": "loki", "uid": "loki-sheshield" }, "editorMode": "code", "expr": "{container=\"prometheus\"}", "refId": "A" }]
+    },
+    {
+      "datasource": { "type": "loki", "uid": "loki-sheshield" },
+      "gridPos": { "h": 7, "w": 24, "x": 0, "y": 22 },
+      "id": 3,
+      "options": { "showTime": true, "showLabels": true, "showCommonLabels": false, "wrapLogMessage": true, "prettifyLogMessage": false, "enableLogDetails": true, "sortOrder": "Descending", "dedupStrategy": "none" },
+      "title": "Grafana Logs",
+      "type": "logs",
+      "targets": [{ "datasource": { "type": "loki", "uid": "loki-sheshield" }, "editorMode": "code", "expr": "{container=\"grafana\"}", "refId": "A" }]
+    },
+    {
+      "datasource": { "type": "loki", "uid": "loki-sheshield" },
+      "gridPos": { "h": 7, "w": 24, "x": 0, "y": 29 },
+      "id": 4,
+      "options": { "showTime": true, "showLabels": true, "showCommonLabels": false, "wrapLogMessage": true, "prettifyLogMessage": false, "enableLogDetails": true, "sortOrder": "Descending", "dedupStrategy": "none" },
+      "title": "SonarQube Logs",
+      "type": "logs",
+      "targets": [{ "datasource": { "type": "loki", "uid": "loki-sheshield" }, "editorMode": "code", "expr": "{container=\"sonarqube\"}", "refId": "A" }]
+    },
+    {
+      "datasource": { "type": "loki", "uid": "loki-sheshield" },
+      "gridPos": { "h": 7, "w": 24, "x": 0, "y": 36 },
+      "id": 5,
+      "options": { "showTime": true, "showLabels": true, "showCommonLabels": false, "wrapLogMessage": true, "prettifyLogMessage": false, "enableLogDetails": true, "sortOrder": "Descending", "dedupStrategy": "none" },
+      "title": "Nexus Logs",
+      "type": "logs",
+      "targets": [{ "datasource": { "type": "loki", "uid": "loki-sheshield" }, "editorMode": "code", "expr": "{container=\"nexus\"}", "refId": "A" }]
+    },
+    {
+      "datasource": { "type": "loki", "uid": "loki-sheshield" },
+      "gridPos": { "h": 7, "w": 24, "x": 0, "y": 43 },
+      "id": 6,
+      "options": { "showTime": true, "showLabels": true, "showCommonLabels": false, "wrapLogMessage": true, "prettifyLogMessage": false, "enableLogDetails": true, "sortOrder": "Descending", "dedupStrategy": "none" },
+      "title": "Loki Logs",
+      "type": "logs",
+      "targets": [{ "datasource": { "type": "loki", "uid": "loki-sheshield" }, "editorMode": "code", "expr": "{container=\"loki\"}", "refId": "A" }]
+    },
+    {
+      "datasource": { "type": "loki", "uid": "loki-sheshield" },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 50 },
+      "id": 7,
+      "options": { "showTime": true, "showLabels": true, "showCommonLabels": false, "wrapLogMessage": true, "prettifyLogMessage": false, "enableLogDetails": true, "sortOrder": "Descending", "dedupStrategy": "none" },
+      "title": "ALL Container Logs (Live Stream)",
+      "type": "logs",
+      "targets": [{ "datasource": { "type": "loki", "uid": "loki-sheshield" }, "editorMode": "code", "expr": "{container=~\".+\"}", "refId": "A" }]
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 39,
+  "tags": ["loki", "logs", "sheshield"],
+  "templating": { "list": [] },
+  "time": { "from": "now-15m", "to": "now" },
+  "timepicker": {},
+  "timezone": "",
+  "title": "SheShield Logs (Loki)",
+  "uid": "sheshield-loki-logs",
+  "version": 2
+}

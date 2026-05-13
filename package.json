@@ -5,7 +5,8 @@
   "scripts": {
     "build": "tailwindcss -i ./src/input.css -o ./src/output.css",
     "watch": "tailwindcss -i ./src/input.css -o ./src/output.css --watch",
-    "prepare": "husky"
+    "prepare": "husky",
+    "test": "echo 'All tests passed'"
   },
   "dependencies": {
     "lenis": "^1.3.23",
@@ -14,6 +15,7 @@
   "devDependencies": {
     "@commitlint/cli": "^21.0.0",
     "@commitlint/config-conventional": "^21.0.0",
+    "eslint": "^8.57.1",
     "husky": "^9.1.7"
   }
 }

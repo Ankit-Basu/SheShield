@@ -10,10 +10,27 @@ scrape_configs:
         labels:
           instance: 'prometheus-server'
 
-  # Docker Desktop exposes metrics on host.docker.internal:9323
-  # Enable in Docker Desktop -> Settings -> Docker Engine -> add "metrics-addr":"0.0.0.0:9323"
-  - job_name: 'docker'
+  # Loki metrics (log aggregation engine)
+  - job_name: 'loki'
     static_configs:
-      - targets: ['host.docker.internal:9323']
+      - targets: ['loki:3100']
         labels:
-          instance: 'docker-engine'
+          instance: 'loki-server'
+
+  # Promtail metrics (log shipper)
+  - job_name: 'promtail'
+    static_configs:
+      - targets: ['promtail:9080']
+        labels:
+          instance: 'promtail-agent'
+
+  # Docker Desktop metrics (OPTIONAL — requires Docker Desktop restart)
+  # To enable: Docker Desktop → Settings → Docker Engine → add:
+  #   "metrics-addr": "0.0.0.0:9323"
+  # Then RESTART Docker Desktop completely
+  # Uncomment below after restart:
+  # - job_name: 'docker'
+  #   static_configs:
+  #     - targets: ['host.docker.internal:9323']
+  #       labels:
+  #         instance: 'docker-engine'

@@ -1,0 +1,72 @@
+# ─────────────────────────────────────────────────
+# SheShield — ArgoCD GitOps Deployment
+# Installs ArgoCD + configures SheShield app
+# Usage: kubectl apply -f argocd.yaml
+# UI:    https://localhost:8443
+# ─────────────────────────────────────────────────
+
+# ─── ArgoCD Namespace ─────────────────────────────
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: argocd
+  labels:
+    app: argocd
+---
+# ─── ArgoCD Application for SheShield ─────────────
+# This tells ArgoCD to watch the GitHub repo and
+# auto-sync Kubernetes manifests from infrastructure/kubernetes/
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sheshield
+  namespace: argocd
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/Ankit-Basu/SheShield.git
+    targetRevision: master
+    path: infrastructure/kubernetes
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: sheshield
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: false
+    syncOptions:
+      - CreateNamespace=true
+      - Validate=false
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m0s
+---
+# ─── ArgoCD NodePort Service (for local access) ──
+# Exposes ArgoCD UI on port 8443
+apiVersion: v1
+kind: Service
+metadata:
+  name: argocd-server-nodeport
+  namespace: argocd
+spec:
+  type: NodePort
+  ports:
+    - port: 443
+      targetPort: 8080
+      nodePort: 30443
+      protocol: TCP
+      name: https
+    - port: 80
+      targetPort: 8080
+      nodePort: 30880
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: argocd-server

@@ -47,3 +47,7 @@ terraform.tfvars
 # AWS Secrets (NEVER commit these)
 aws-credentials.txt
 *.pem
+
+# Python cache
+__pycache__/
+*.pyc

@@ -24,6 +24,35 @@ services:
     networks:
       - sheshield-network
 
+  # ─── Loki (Log Aggregation Engine) ──────────────
+  loki:
+    image: grafana/loki:latest
+    container_name: loki
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./monitoring/loki/loki-config.yml:/etc/loki/local-config.yaml
+      - loki-data:/loki
+    command: -config.file=/etc/loki/local-config.yaml
+    restart: unless-stopped
+    networks:
+      - sheshield-network
+
+  # ─── Promtail (Log Shipper → Loki) ─────────────
+  promtail:
+    image: grafana/promtail:latest
+    container_name: promtail
+    volumes:
+      - ./monitoring/promtail/promtail-config.yml:/etc/promtail/config.yml
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - promtail-positions:/tmp/positions
+    command: -config.file=/etc/promtail/config.yml
+    depends_on:
+      - loki
+    restart: unless-stopped
+    networks:
+      - sheshield-network
+
   # ─── Grafana (Monitoring Dashboards) ────────────
   grafana:
     image: grafana/grafana:latest
@@ -40,6 +69,7 @@ services:
       - GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/var/lib/grafana/dashboards/sheshield-overview.json
     depends_on:
       - prometheus
+      - loki
     restart: unless-stopped
     networks:
       - sheshield-network
@@ -76,6 +106,8 @@ services:
 # ─── Persistent Volumes ──────────────────────────
 volumes:
   prometheus-data:
+  loki-data:
+  promtail-positions:
   grafana-data:
   sonarqube-data:
   sonarqube-logs:
