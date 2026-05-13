@@ -1,307 +1,423 @@
-# 🎤 SheShield — DevOps Pipeline Presentation Guide
+# 🎤 SheShield — Complete DevOps Presentation Guide
 
-> **Purpose**: Step-by-step guide to deliver a confident, impressive hackathon demo of the SheShield CI/CD and DevOps infrastructure.  
-> **Duration**: ~8–12 minutes (adjust based on time slot)
+> **Duration**: 12–15 minutes  
+> **Total Tools**: 16 DevOps tools integrated  
+> **All dashboards and demos are LIVE — nothing is mocked**
 
 ---
 
-## 📋 Pre-Presentation Checklist
-
-Before you start presenting, make sure **all services are running**:
+## 📋 Pre-Presentation Setup (5 min before)
 
 ```powershell
-# 1. Open Docker Desktop (must be running first)
-
-# 2. Start all unified DevOps containers
+# 1. Start Docker Desktop (must be running)
+# 2. Start the unified DevOps stack
 docker compose -f d:\Desktop\SheShield\infrastructure\docker-compose.yml up -d
 
-# 3. Verify everything is UP
-docker compose -f d:\Desktop\SheShield\infrastructure\docker-compose.yml ps
+# 3. Verify K8s pods are running
+kubectl get pods -n sheshield
+
+# 4. Start XAMPP (Apache on 8088 + MySQL on 3306)
 ```
 
-**Expected output — all 4 should be running:**
-| Container | Port | URL |
-|-----------|------|-----|
-| `nexus` | 8081, 8082 | http://localhost:8081 |
-| `sonarqube` | 9000 | http://localhost:9000 |
-| `grafana` | 3000 | http://localhost:3000 |
-| `prometheus` | 9090 | http://localhost:9090 |
+### Browser Tabs to Open (in this order)
 
-**Also open these browser tabs beforehand:**
-1. **GitHub** → `https://github.com/Ankit-Basu/SheShield/actions` (Actions tab)
-2. **Jenkins** → `http://localhost:8080` (SheShield-Pipeline)
-3. **SonarQube** → `http://localhost:9000/dashboard?id=sheshield`
-4. **Nexus** → `http://localhost:8081/#browse/browse:sheshield-repo`
-5. **Grafana** → `http://localhost:3000` (SheShield Infrastructure Monitor dashboard)
-6. **SheShield App** → `http://localhost:8088/sheshield/pro/landing.html`
+| # | Tab Name | URL |
+|---|----------|-----|
+| 1 | **SheShield App** | http://localhost:8088/sheshield/pro/landing.html |
+| 2 | **Jenkins Pipeline** | http://localhost:8080/job/SheShield-Pipeline/16/ |
+| 3 | **SonarQube Dashboard** | http://localhost:9000/dashboard?id=sheshield |
+| 4 | **Nexus Registry** | http://localhost:8081/#browse/browse:sheshield-repo |
+| 5 | **Grafana Dashboard** | http://localhost:3000 |
+| 6 | **Prometheus Queries** | http://localhost:9090/graph |
+| 7 | **Prometheus Targets** | http://localhost:9090/targets |
+| 8 | **GitHub Repo** | https://github.com/Ankit-Basu/SheShield |
+| 9 | **GitHub Actions** | https://github.com/Ankit-Basu/SheShield/actions |
+| 10 | **AWS Console** | https://891924441743.signin.aws.amazon.com/console |
 
----
+### Terminal Windows to Open
 
-## 🎬 Presentation Flow (Step by Step)
-
----
-
-### STEP 1: The Hook — Show the App First (1 min)
-
-> **What to say:**  
-> *"SheShield is a women's safety platform. Before I show the DevOps pipeline, let me quickly show you what we're deploying..."*
-
-**Action:** Show the landing page (`landing.html`) — scroll briefly through the hero, honeycomb services, and the dashboard.
-
-> **Transition:**  
-> *"Now, the question is — how do we ensure this application is built securely, tested for code quality, stored safely, deployed automatically, and monitored 24/7? That's where our DevOps pipeline comes in."*
+| # | Terminal | Command to Show |
+|---|----------|----------------|
+| 1 | **Docker** | `docker ps` |
+| 2 | **Kubernetes** | `kubectl get pods -n sheshield` |
+| 3 | **Terraform** | `terraform plan` (in `infrastructure/terraform/`) |
+| 4 | **Helm** | `helm lint infrastructure/helm/sheshield` |
 
 ---
 
-### STEP 2: The Big Picture — Architecture Overview (1.5 min)
+## 🎬 PRESENTATION FLOW
 
-> **What to say:**  
-> *"Our pipeline follows a complete DevOps lifecycle. Every single code push goes through 8 automated stages."*
+---
 
-**Action:** Show the README on GitHub — scroll to the **Pipeline Architecture** ASCII diagram:
+### 🟢 STEP 1: Show the Application (1 min)
+
+**Tab**: SheShield App → `http://localhost:8088/sheshield/pro/landing.html`
+
+> *"SheShield is a women's safety platform. Before I dive into the DevOps pipeline, let me quickly show you the live application we're deploying."*
+
+**Show**: Scroll through the landing page — hero section, services, features.
+
+> **Transition**: *"Now — how do we ensure this application is built securely, scanned for vulnerabilities, stored in a private registry, deployed automatically, and monitored 24/7? That's our DevOps pipeline."*
+
+---
+
+### 🟢 STEP 2: Architecture Overview (1.5 min)
+
+**Tab**: GitHub Repo → Show the README.md architecture section
+
+> *"Every code push goes through 8 automated stages. Here's the pipeline flow:"*
 
 ```
-Checkout → Build Docker → Helm Lint → Terraform Validate → Security Scan (Trivy) → SonarQube → Push to Nexus → Deploy to K8s
+Code Push → Checkout → Docker Build → Helm Lint → Terraform Validate → Trivy Scan → SonarQube → Push to Nexus → Deploy to K8s
 ```
 
-**Explain each box briefly:**
-1. **Checkout** — Code pulled from GitHub
-2. **Build** — Docker image built from a multi-stage Dockerfile
-3. **Helm Lint** — Validates Kubernetes Helm charts for syntax errors
-4. **Terraform Validate** — Checks AWS Infrastructure-as-Code configs
-5. **Security Scan** — Aqua Trivy scans for CVEs (HIGH/CRITICAL vulnerabilities)
-6. **Code Quality** — SonarQube analyzes code quality and security hotspots
-7. **Artifact Storage** — Docker image pushed to private Nexus registry
-8. **Deployment** — Kubernetes deploys 3 replicas with rolling update
+**Explain the tools used at each stage:**
 
-> **Key phrase to impress judges:**  
-> *"This is not a theoretical pipeline — every stage you see here is live and running on my machine right now. Let me prove it."*
-
----
-
-### STEP 3: Live Demo — GitHub Actions (1 min)
-
-> **What to say:**  
-> *"We have two parallel CI/CD systems. First, GitHub Actions triggers on every push to the master branch."*
-
-**Action:** Switch to the **GitHub Actions** tab. Show:
-- The workflow runs list (multiple green ✅ checkmarks)
-- Click on the latest run to show the steps (PHP setup, Composer, Trivy scan, Docker build)
-
-> **Key point:**  
-> *"This runs in the cloud on GitHub's infrastructure. It's our first line of defense — if something breaks here, it never reaches production."*
+| Stage | Tool | Purpose |
+|-------|------|---------|
+| Source Control | **Git + GitHub** | Version control & collaboration |
+| CI/CD | **Jenkins** + **GitHub Actions** | Pipeline orchestration |
+| Containerization | **Docker** | Package app into containers |
+| K8s Packaging | **Helm** | Template & lint K8s manifests |
+| IaC Validation | **Terraform** | Validate AWS infrastructure code |
+| Security Scan | **Aqua Trivy** | CVE vulnerability scanning |
+| Code Quality | **SonarQube** | Static analysis & quality gates |
+| Artifact Store | **Sonatype Nexus** | Private Docker image registry |
+| Deployment | **Kubernetes** | Container orchestration (3 replicas) |
+| Monitoring | **Prometheus + Grafana** | Metrics collection & dashboards |
+| Cloud IaC | **Terraform + Ansible** | AWS provisioning & configuration |
+| Git Quality | **Husky + Commitlint** | Enforce commit message standards |
 
 ---
 
-### STEP 4: Live Demo — Jenkins Pipeline (2 min) ⭐ MOST IMPORTANT
+### 🟢 STEP 3: Jenkins Pipeline — 8 Stages (2 min) ⭐ CRITICAL
 
-> **What to say:**  
-> *"Our main pipeline runs on Jenkins with 8 stages. Let me show you a successful build."*
+**Tab**: Jenkins → Build #16 stages view
 
-**Action:** Switch to **Jenkins** → SheShield-Pipeline → Show Build #11 (all green).
+> *"This is our main CI/CD pipeline running on Jenkins. 8 automated stages, all green. Let me walk you through each one."*
 
-**Walk through each stage visually** (they're shown as green circles in the stage view):
+**Click each stage and explain:**
 
-1. ✅ **Checkout SCM** — *"Pulls the latest code from GitHub"*
-2. ✅ **Build Docker Image** — *"Builds a production-ready Docker image using our multi-stage Dockerfile"*
-3. ✅ **Helm Lint** — *"Validates our Kubernetes packaging configurations"*
-4. ✅ **Terraform Validate** — *"Ensures our AWS IaC templates are syntactically perfect before deployment"*
-5. ✅ **Security Scan** — *"Aqua Trivy runs inside Docker to scan for vulnerabilities — no local install needed"*
-6. ✅ **SonarQube Analysis** — *"Performs static code analysis — I'll show you the results in a moment"*
-7. ✅ **Push to Nexus** — *"The image gets versioned and pushed to our private Docker registry"*
-8. ✅ **Deploy to Kubernetes** — *"Kubernetes performs a rolling deployment with 3 replicas"*
+| Stage | Time | What to Say |
+|-------|------|-------------|
+| **Checkout SCM** | 15s | *"Pulls latest code from GitHub master branch"* |
+| **Build Docker Image** | 59s | *"Builds a production-ready Docker image using our multi-stage Dockerfile with PHP 8.2 + Apache"* |
+| **Helm Lint** | 4s | *"Validates our Kubernetes Helm chart for syntax errors — ensures K8s manifests are correct BEFORE deployment"* |
+| **Terraform Validate** | 50s | *"Runs `terraform init` + `validate` inside a Docker container to verify our AWS infrastructure code is syntactically perfect"* |
+| **Security Scan** | 46s | *"Aqua Trivy scans the Docker image for known CVEs — checking for HIGH and CRITICAL vulnerabilities"* |
+| **SonarQube Analysis** | 2m | *"Static code analysis — scans code quality, bugs, security hotspots across all languages"* |
+| **Push to Nexus** | — | *"Pushes the versioned Docker image to our private Sonatype Nexus registry"* |
+| **Deploy to Kubernetes** | — | *"Deploys 3 replicas with zero-downtime rolling updates to our K8s cluster"* |
 
-> **If a judge asks "Can you trigger a build live?":**
-> Click **Build Now** — it will start running through all stages in real time (~3-4 min). You can show it progressing while continuing to present.
+> *"If a judge asks 'Can you trigger this live?'* — Click **Build Now**. It takes ~5 minutes."
 
 ---
 
-### STEP 5: Live Demo — SonarQube Results (1.5 min)
+### 🟢 STEP 4: SonarQube — Code Quality (1.5 min) ⭐ IMPRESSIVE
 
-> **What to say:**  
+**Tab**: SonarQube → `http://localhost:9000/dashboard?id=sheshield`
+
 > *"Let me show you what SonarQube found when it analyzed our entire codebase."*
 
-**Action:** Switch to **SonarQube** dashboard. Point out:
+**Point out these sections:**
 
-| What to show | What to say |
+| What to Show | What to Say |
 |---|---|
-| **16k Lines of Code** | *"It analyzed over 16,000 lines across PHP, JavaScript, CSS, HTML, YAML, Docker, and more"* |
-| **Quality Gate: Passed ✅** | *"Our Quality Gate passed, meaning the code meets industry standards"* |
-| **23 Security issues** | *"It found 23 security hotspots — things like potential injection points that we can prioritize fixing"* |
-| **229 Bugs, 814 Code Smells** | *"These are reliability and maintainability issues — code smells aren't errors, they're areas for improvement"* |
-| **11% Duplication** | *"11% duplication is within acceptable thresholds"* |
+| **Quality Gate: PASSED ✅** (green) | *"Our code passed the Quality Gate — meaning it meets industry-standard code quality thresholds"* |
+| **35 Bugs** (Reliability D) | *"35 potential bugs detected — these are logic errors that could cause runtime failures"* |
+| **10 Vulnerabilities** (Security E) | *"10 security vulnerabilities identified — things like potential SQL injection or XSS"* |
+| **114 Security Hotspots** | *"114 areas that need manual security review — potential attack vectors"* |
+| **1.7k Code Smells** (Maintainability A) | *"1,700 code smells — these aren't bugs, they're areas to improve code readability and maintainability"* |
+| **13d Debt** | *"13 days of technical debt — the estimated time to fix all code smells"* |
 
-> **Key phrase:**  
-> *"SonarQube gives us continuous code quality feedback. Every build automatically pushes new analysis results, so the team always knows the health of the codebase."*
+**Click on "Issues" tab** → Show the detailed list of issues by severity.
 
----
+**Click on "Security Hotspots" tab** → Show the security review panel.
 
-### STEP 6: Live Demo — Nexus Artifact Registry (1 min)
-
-> **What to say:**  
-> *"After building and scanning, the Docker image gets pushed to our private Sonatype Nexus registry."*
-
-**Action:** Switch to **Nexus** → Browse → sheshield-repo. Show:
-- The `v2/` folder structure → `sheshield/` → `manifests/` → SHA256 hashes
-- The `tags/` → `latest` tag
-
-> **Explain:**  
-> *"Every build creates a versioned Docker image — sheshield:11, sheshield:12 — plus a 'latest' tag. This gives us full rollback capability. If a deployment goes wrong, we can pull any previous version instantly from this registry."*
-
-> **Key phrase:**  
-> *"This is a real Docker V2 registry running on port 8082 — same protocol Docker Hub uses, but fully private and self-hosted."*
+> *"SonarQube runs automatically on every Jenkins build. The team always knows the health of the codebase."*
 
 ---
 
-### STEP 7: Live Demo — Grafana Monitoring (1.5 min) ⭐ VISUAL WOW FACTOR
+### 🟢 STEP 5: Nexus — Artifact Registry (1 min)
 
-> **What to say:**  
-> *"Once deployed, we need to know if the infrastructure is healthy. That's where our monitoring stack comes in."*
+**Tab**: Nexus → `http://localhost:8081/#browse/browse:sheshield-repo`
 
-**Action:** Switch to **Grafana** dashboard. This is the most visual part — let it impress.
+> *"After building and scanning, the Docker image is pushed to our private Sonatype Nexus registry."*
 
-**Point out the panels:**
+**Show the folder tree:**
+- `v2/` → Docker V2 API
+  - `blobs/` → Image layers (binary data)
+  - `sheshield/` → Our image tags and manifests
 
-| Panel | What to say |
-|---|---|
-| **Prometheus: UP** (green) | *"Our metrics server is running and healthy"* |
-| **Time Series: 871** | *"Prometheus is tracking 871 unique time series metrics"* |
-| **Goroutines: 40** | *"40 concurrent goroutines processing requests"* |
-| **CPU Usage graph** | *"Real-time CPU utilization — you can see the spikes from our recent builds"* |
-| **Memory Usage graph** | *"Memory breakdown — RSS, virtual, and heap allocation"* |
-| **HTTP Request Rate** | *"HTTP requests per second hitting our monitoring endpoints"* |
+> *"Every build creates a versioned Docker image — sheshield:16, sheshield:17 — plus a 'latest' tag. This gives us complete rollback capability. If a deployment fails, we can instantly pull any previous version."*
 
-> **Key phrase:**  
-> *"This entire dashboard is provisioned as code — it's a JSON file in our repo. When we spin up the monitoring stack with docker-compose, Grafana auto-loads this dashboard. No manual configuration needed. That's Infrastructure-as-Code."*
+> *"This is the same Docker V2 protocol that Docker Hub uses, but fully private and self-hosted."*
 
 ---
 
-### STEP 7.5: Live Demo — Prometheus Queries (1.5 min) ⭐ LIVE CODING WOW
+### 🟢 STEP 6: Grafana — Monitoring Dashboard (1.5 min) ⭐ VISUAL WOW
 
-> **What to say:**  
-> *"Grafana is the visualization layer, but the real power is in Prometheus — our metrics engine. Let me show you live queries."*
+**Tab**: Grafana → `http://localhost:3000`
 
-**Action:** Switch to **Prometheus** tab (`http://localhost:9090`). Click the **Graph** tab. Type each query in the expression box and click **Execute**. Switch between **Table** and **Graph** views for effect.
+> *"Once deployed, we need real-time visibility into our infrastructure. That's Grafana."*
 
-#### 🔥 Demo Query 1: "Is everything alive?"
+**Point out each panel:**
 
+| Panel | Value | What to Say |
+|-------|-------|-------------|
+| **Prometheus: UP** | Green | *"Our metrics server is healthy"* |
+| **Time Series** | 918 | *"Prometheus is tracking 918 unique metric time series"* |
+| **Goroutines** | 39 | *"39 concurrent threads processing metrics"* |
+| **Scrape Targets** | 2 | *"We're monitoring 2 targets — Prometheus itself and Docker engine"* |
+| **CPU Usage Rate** | Graph | *"Real-time CPU — you can see spikes from our recent builds"* |
+| **Memory Usage** | Graph | *"Memory breakdown — RSS (64MB), Virtual (1.5GB), Heap allocation"* |
+| **HTTP Request Rate** | Graph | *"HTTP requests per second hitting our monitoring endpoints"* |
+| **Active Goroutines** | Graph | *"Thread count over time — stable means no resource leaks"* |
+
+> **Key phrase**: *"This entire dashboard is provisioned as code — it's a JSON file in our Git repo. When we run `docker compose up`, Grafana auto-loads this dashboard. No manual setup. That's Infrastructure as Code."*
+
+---
+
+### 🟢 STEP 7: Prometheus — Live Queries (2 min) ⭐ LIVE CODING WOW
+
+**Tab**: Prometheus → `http://localhost:9090/graph`
+
+> *"Grafana is the visualization layer. The real power is Prometheus and its query language PromQL."*
+
+**Run these queries one by one** (type in the expression box → click Execute → toggle Table/Graph):
+
+#### Query 1: "Is everything alive?"
 ```promql
 up
 ```
-> *"This is the simplest but most powerful query. It tells us which services Prometheus is monitoring. A value of 1 means UP, 0 means DOWN. Right now all our targets are healthy."*
+> *"The simplest but most powerful query. Value 1 = UP, 0 = DOWN."*
 
-**View:** Table — shows `up{instance="...", job="prometheus"} → 1`
-
----
-
-#### 🔥 Demo Query 2: "How much memory is our server using?"
-
+#### Query 2: "How much memory?"
 ```promql
 process_resident_memory_bytes / 1024 / 1024
 ```
-> *"This shows resident memory in megabytes. You can see Prometheus itself is using about 65 MB — very lightweight for a metrics server monitoring 319 metrics."*
+> *"Resident memory in megabytes. Prometheus uses ~64 MB — very lightweight."*
 
-**View:** Table — shows value in MB
-
----
-
-#### 🔥 Demo Query 3: "CPU usage over time" ⭐ Best for Graph view
-
+#### Query 3: "CPU usage over time" (Switch to Graph view ⭐)
 ```promql
 rate(process_cpu_seconds_total[5m])
 ```
-> *"This uses the `rate()` function — one of the most important PromQL concepts. It calculates the per-second CPU usage averaged over the last 5 minutes. Click Graph to see the trend."*
+> *"The `rate()` function calculates per-second CPU usage averaged over 5 minutes. This is exactly how production monitoring works."*
 
-**View:** Switch to **Graph** — shows a live CPU usage line chart
-
----
-
-#### 🔥 Demo Query 4: "How many HTTP requests has our monitoring received?"
-
+#### Query 4: "HTTP request breakdown"
 ```promql
 prometheus_http_requests_total
 ```
-> *"This shows every HTTP request Prometheus has served, broken down by handler and status code. You can see /metrics, /api/v1/query, /graph — these are all the endpoints being hit."*
+> *"Every HTTP request, broken down by handler and status code."*
 
-**View:** Table — shows multiple rows with different handlers
-
----
-
-#### 🔥 Demo Query 5: "Request rate per second" ⭐ Impressive
-
+#### Query 5: "Total active metrics"
 ```promql
-rate(prometheus_http_requests_total[5m])
+prometheus_tsdb_head_series
 ```
-> *"By wrapping the counter with `rate()`, we convert it to requests-per-second. This is exactly what production monitoring looks like — you watch for spikes that indicate unusual traffic."*
+> *"918 unique time series being tracked — each is a metric dimension."*
 
-**View:** Switch to **Graph** — shows request rate over time
+**Also show**: Click **Status → Targets** to show the scrape targets (prometheus = UP).
+
+> **Bridge to Grafana**: *"Every panel in our Grafana dashboard is powered by a PromQL query like these, but visualized with auto-refresh every 5 seconds."*
 
 ---
 
-#### 🔥 Demo Query 6: "How many concurrent threads are running?"
+### 🟢 STEP 8: Kubernetes — Live Demo (1.5 min)
 
-```promql
-go_goroutines
+**Terminal**: Open a terminal and run commands live:
+
+```powershell
+# Show running pods (3 app replicas + 1 MySQL)
+kubectl get pods -n sheshield
+
+# Show the deployment details
+kubectl get deployments -n sheshield
+
+# Show the services
+kubectl get svc -n sheshield
+
+# Show the horizontal pod autoscaler
+kubectl get hpa -n sheshield
+
+# Show pod details (rolling update strategy)
+kubectl describe deployment sheshield-app -n sheshield | Select-String "Strategy|Replicas|Image"
 ```
-> *"Goroutines are Go's lightweight threads. Prometheus is running about 40 concurrent goroutines — each handling scraping, storage, API requests, etc. If this number spikes, it could indicate a resource leak."*
 
-**View:** Graph — shows goroutine count over time
-
----
-
-#### 🎁 Bonus Queries (if judges ask for more)
-
-| Query | What it shows | What to say |
-|-------|---------------|-------------|
-| `prometheus_tsdb_head_series` | Total active time series | *"We're tracking 871+ unique time series"* |
-| `process_open_fds` | Open file descriptors | *"Shows how many files/sockets the server has open"* |
-| `go_gc_duration_seconds` | Garbage collection pauses | *"GC pause durations — tells us if memory management is healthy"* |
-| `prometheus_tsdb_head_samples_appended_total` | Total samples ingested | *"Total data points stored — proves the system is actively collecting"* |
-| `rate(prometheus_tsdb_head_samples_appended_total[5m])` | Ingestion rate | *"Samples per second being ingested — our data pipeline throughput"* |
-| `process_virtual_memory_bytes / 1024 / 1024 / 1024` | Virtual memory in GB | *"Total virtual memory allocation in gigabytes"* |
-
-> **Key phrase for judges:**  
-> *"Prometheus uses its own query language called PromQL. Every metric you see on our Grafana dashboard is powered by a PromQL query behind the scenes. Grafana is just the visualization — Prometheus is the brain."*
-
-> **Pro tip:** After showing Prometheus queries, switch back to Grafana and say:  
-> *"Now you understand — every panel in this Grafana dashboard is running a PromQL query like the ones I just showed you, but visualized beautifully with auto-refresh every 5 seconds."*
+> *"We have 3 replicas of our app running for high availability. If any pod crashes, Kubernetes automatically restarts it. The HPA (Horizontal Pod Autoscaler) can scale from 2 to 10 pods based on CPU usage."*
 
 ---
 
-### STEP 8: Wrap-Up — The DevOps Philosophy (1 min)
+### 🟢 STEP 9: Docker — Container Ecosystem (1 min)
 
-> **What to say:**  
-> *"To summarize our DevOps approach:"*
+**Terminal**: Run these commands:
 
-Show these points (you can have a slide or just speak):
+```powershell
+# Show ALL running containers
+docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 
-1. **Automation** — Zero manual steps from code push to production deployment
-2. **Security-first** — Trivy + SonarQube catch vulnerabilities before deployment
-3. **Observability** — Prometheus + Grafana provide real-time infrastructure health
-4. **Reproducibility** — Everything is containerized with Docker and orchestrated with Kubernetes
-5. **Infrastructure-as-Code** — Dashboards, pipelines, configs — everything is version-controlled in Git
+# Show Docker images
+docker images sheshield --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}"
+```
 
-> **Closing line:**  
-> *"SheShield isn't just a web application — it's a production-grade platform with enterprise-level DevOps practices. Thank you."*
+**Expected**: Shows 8+ containers — Nexus, SonarQube, Grafana, Prometheus, K8s pods, etc.
+
+> *"Our entire DevOps stack runs as Docker containers. One command to start, one command to stop."*
 
 ---
 
-## 🔥 Power Phrases for Judges
+### 🟢 STEP 10: Terraform — Infrastructure as Code (1 min)
 
-Use these when judges ask questions:
+**Terminal** (in `infrastructure/terraform/`):
+
+```powershell
+# Show what Terraform will create on AWS
+terraform plan
+
+# Show the resource summary
+terraform state list  # (only works after apply)
+```
+
+> *"Terraform provisions our entire AWS infrastructure — VPC, EC2 server, RDS MySQL database, S3 bucket, ECR registry — all with a single command. And it's Free Tier optimized."*
+
+**Tab**: Show `main.tf` in VS Code → Point out the resource blocks.
+
+**Tab**: AWS Console → Log in and show the IAM user we created via CLI.
+
+| AWS Console Login |  |
+|---|---|
+| **URL** | https://891924441743.signin.aws.amazon.com/console |
+| **Username** | sheshield-deployer |
+| **Password** | SheShield@2026 |
+
+---
+
+### 🟢 STEP 11: Helm — Kubernetes Package Manager (30s)
+
+**Terminal**:
+
+```powershell
+# Lint the Helm chart
+helm lint infrastructure/helm/sheshield
+
+# Show what K8s manifests Helm generates
+helm template sheshield infrastructure/helm/sheshield | Select-Object -First 30
+```
+
+> *"Helm is the package manager for Kubernetes. It templates our deployment manifests — so we can deploy to different environments (dev, staging, production) with different values."*
+
+---
+
+### 🟢 STEP 12: Ansible — Configuration Management (30s)
+
+**Terminal (WSL)**:
+
+```bash
+# Show the playbook
+wsl cat /mnt/d/Desktop/SheShield/infrastructure/ansible/playbook.yml | head -30
+
+# Validate the playbook
+wsl ansible-playbook /mnt/d/Desktop/SheShield/infrastructure/ansible/playbook.yml --syntax-check
+```
+
+> *"Ansible automates server configuration — installing Docker, configuring Apache, setting up monitoring. It runs via SSH, no agent needed on the target server."*
+
+---
+
+### 🟢 STEP 13: Husky + Commitlint — Git Quality (30s)
+
+**Terminal**:
+
+```powershell
+# Show the commit hook
+cat .husky/commit-msg
+
+# Show commitlint config
+cat commitlint.config.js
+
+# Try a bad commit (it will be rejected!)
+git commit --allow-empty -m "bad commit" 2>&1
+# Then a good one:
+git commit --allow-empty -m "feat: demo conventional commit" --no-verify
+```
+
+> *"Husky enforces Git hooks — every commit must follow the Conventional Commits standard (feat:, fix:, docs:, etc.). This ensures a clean, readable Git history."*
+
+---
+
+### 🟢 STEP 14: GitHub Actions — Cloud CI/CD (30s)
+
+**Tab**: GitHub Actions → `https://github.com/Ankit-Basu/SheShield/actions`
+
+> *"We have dual CI/CD — Jenkins for the main pipeline, GitHub Actions as a parallel cloud-based pipeline. It runs on every push."*
+
+**Show**: Click on the latest workflow run → show the steps.
+
+---
+
+### 🟢 STEP 15: Wrap-Up (1 min)
+
+> *"To summarize — our DevOps pipeline includes 16 integrated tools:"*
+
+| Category | Tools |
+|----------|-------|
+| **Source Control** | Git, GitHub |
+| **CI/CD** | Jenkins (8 stages), GitHub Actions |
+| **Containerization** | Docker, Docker Compose |
+| **Orchestration** | Kubernetes (3 replicas + HPA) |
+| **K8s Packaging** | Helm |
+| **Security** | Aqua Trivy (CVE scan), SonarQube (SAST) |
+| **Artifact Registry** | Sonatype Nexus |
+| **Monitoring** | Prometheus + Grafana |
+| **Cloud IaC** | Terraform (AWS Free Tier) |
+| **Config Mgmt** | Ansible |
+| **Git Quality** | Husky + Commitlint |
+
+> **Closing**: *"SheShield is not just a web application — it's a production-grade platform with enterprise-level DevOps practices. Every tool you've seen today is live, integrated, and running in our pipeline. Thank you."*
+
+---
+
+## 🔥 Judge Q&A — Power Answers
 
 | Question | Answer |
 |---|---|
-| *"Why not just deploy manually?"* | *"Manual deployments are error-prone and not reproducible. Our pipeline ensures every deployment goes through security scanning, code quality checks, and automated testing before reaching production."* |
-| *"Why Docker?"* | *"Docker gives us consistent environments. What runs on my machine runs identically in production. No 'works on my machine' problems."* |
-| *"Why Kubernetes?"* | *"Kubernetes gives us self-healing, auto-scaling, and rolling deployments. If a container crashes, K8s automatically restarts it. We run 3 replicas for high availability."* |
-| *"Why SonarQube?"* | *"SonarQube catches bugs, security vulnerabilities, and code smells that manual code review might miss. It analyzed 16,000+ lines of code in 9 languages automatically."* |
-| *"Why Nexus?"* | *"Nexus is our private Docker registry. It gives us version control for Docker images, rollback capability, and ensures we're not dependent on external registries."* |
-| *"Why Grafana?"* | *"Grafana gives us real-time visibility into our infrastructure. If CPU spikes or memory leaks occur, we see it immediately — not after users complain."* |
-| *"Why Prometheus?"* | *"Prometheus is the industry standard for metrics collection. It uses a pull-based model — scraping targets every 15 seconds — and its query language PromQL lets us slice and dice data in ways simple logging can't. It's what powers our Grafana dashboards."* |
-| *"What is PromQL?"* | *"PromQL is Prometheus Query Language — a functional language for selecting and aggregating time series data. Functions like `rate()` convert raw counters into meaningful per-second rates. It's the same language used at Google, Netflix, and Uber for production monitoring."* |
-| *"What about Cloud/AWS?"* | *"We use Terraform for Infrastructure as Code (IaC) to provision AWS EC2, RDS, and ECR. Then we use Ansible for configuration management. It's fully automated and cost-optimized for the AWS Free Tier."* |
-| *"Is this all running locally?"* | *"Yes — the CI/CD pipeline and monitoring stack run locally using Docker and Kubernetes. However, our Terraform and Ansible scripts are ready to provision the production environment on AWS EC2 with a single command."* |
+| *"Why so many tools?"* | *"Each tool serves a specific purpose in the DevOps lifecycle. Trivy handles container security, SonarQube handles code quality, Nexus handles artifact management — they're not redundant, they're complementary."* |
+| *"Why Docker?"* | *"Docker ensures consistent environments. What runs on my machine runs identically in production. No 'works on my machine' problems."* |
+| *"Why Kubernetes over Docker Compose?"* | *"Docker Compose is for development. Kubernetes gives us self-healing (auto-restart), auto-scaling (HPA), rolling updates (zero-downtime), and load balancing — production-grade features."* |
+| *"Why Jenkins + GitHub Actions?"* | *"GitHub Actions is our cloud CI — quick feedback on every push. Jenkins is our enterprise pipeline — full control, 8 stages including Trivy scan and K8s deployment."* |
+| *"Why Helm?"* | *"Helm templates Kubernetes manifests. Instead of hardcoding values, we use variables — so the same chart deploys to dev, staging, and production with different configs."* |
+| *"Why Terraform?"* | *"Terraform is Infrastructure as Code — our entire AWS setup (VPC, EC2, RDS, S3, ECR) is defined in .tf files. We can create AND destroy the entire infrastructure with one command."* |
+| *"Why Ansible?"* | *"Ansible handles server configuration — installing Docker, configuring Apache, setting up monitoring agents. It connects via SSH, no agent required."* |
+| *"Why Prometheus over CloudWatch?"* | *"Prometheus is open-source, vendor-agnostic, and uses PromQL — one of the most powerful query languages. CloudWatch locks you into AWS."* |
+| *"Why SonarQube over ESLint?"* | *"ESLint is for JavaScript only. SonarQube analyzes ALL languages — PHP, JS, CSS, HTML, YAML, Docker — with security vulnerability detection and quality gates."* |
+| *"What is Commitlint?"* | *"Commitlint enforces Conventional Commits — every commit must start with feat:, fix:, docs:, etc. This makes the Git history readable and enables automated changelog generation."* |
+| *"Is this overkill for a hackathon?"* | *"We wanted to demonstrate production-grade practices. In the real world, every one of these tools is used by companies like Google, Netflix, and Uber. We wanted SheShield to be built like a real product."* |
+| *"What's the AWS cost?"* | *"$0.00 per month. Everything runs on the AWS Free Tier — t2.micro EC2, db.t3.micro RDS, 500MB ECR storage."* |
+
+---
+
+## ⏱️ Timing Breakdown
+
+| Step | Duration | Priority |
+|------|----------|----------|
+| 1. Show App | 1 min | Medium |
+| 2. Architecture | 1.5 min | High |
+| 3. Jenkins 8 Stages | 2 min | **Critical** |
+| 4. SonarQube | 1.5 min | **Critical** |
+| 5. Nexus | 1 min | Medium |
+| 6. Grafana | 1.5 min | **Critical** |
+| 7. Prometheus Queries | 2 min | **Critical** |
+| 8. Kubernetes | 1.5 min | High |
+| 9. Docker | 1 min | Medium |
+| 10. Terraform + AWS | 1 min | High |
+| 11. Helm | 30s | Medium |
+| 12. Ansible | 30s | Medium |
+| 13. Husky + Commitlint | 30s | Low |
+| 14. GitHub Actions | 30s | Low |
+| 15. Wrap-Up | 1 min | High |
+| **Total** | **~15 min** | |
+
+> **If 8 min only**: Steps 3, 4, 6, 7, 8, 15  
+> **If 5 min only**: Steps 3, 6, 7, 15
 
 ---
 
@@ -309,75 +425,42 @@ Use these when judges ask questions:
 
 | Problem | Quick Fix |
 |---------|-----------|
-| Grafana not loading | `docker restart grafana` |
-| SonarQube down | `docker start sonarqube` — takes ~30s to boot |
-| Nexus shows empty | `docker start nexus` — takes ~2 min to boot |
-| Jenkins build fails | Click **Build Now** again — first run after restart may timeout |
-| Docker Desktop not running | Open Docker Desktop app — wait for "Engine running" |
-| GitHub Actions not showing | Make a small code change, commit, and push to trigger |
+| Grafana blank | `docker restart grafana` |
+| SonarQube down | `docker start sonarqube` — wait 30s |
+| Nexus empty | `docker start nexus` — wait 2 min |
+| K8s pods CrashLoop | `kubectl rollout restart deployment/sheshield-app -n sheshield` |
+| Jenkins build fails | Click **Build Now** again |
+| Prometheus target DOWN | Restart Docker Desktop (for Docker metrics) |
+| Docker Desktop not running | Open the app, wait for "Engine running" |
+| Terraform plan fails | Run `terraform init` first |
 
 ---
 
-## 📁 Files to Reference During Presentation
+## 📁 All 16 DevOps Tools — Summary
 
-If judges want to see the actual code/configuration:
-
-| File | What it shows |
-|------|--------------|
-| `infrastructure/jenkins/Jenkinsfile` | The 8-stage pipeline definition |
-| `.github/workflows/main.yml` | GitHub Actions workflow |
-| `infrastructure/docker/Dockerfile` | Multi-stage Docker build |
-| `infrastructure/kubernetes/deployment.yaml` | K8s deployment (3 replicas + MySQL) |
-| `infrastructure/docker-compose.yml` | Unified DevOps Stack (Nexus, Sonar, Grafana, Prometheus) |
-| `infrastructure/monitoring/grafana/dashboards/sheshield-overview.json` | Grafana dashboard (IaC) |
-| `infrastructure/monitoring/prometheus/prometheus.yml` | Prometheus scrape config |
-
----
-
-## ⏱️ Timing Breakdown
-
-| Section | Duration | Priority |
-|---------|----------|----------|
-| 1. Show the App | 1 min | Medium |
-| 2. Architecture Overview | 1.5 min | High |
-| 3. GitHub Actions | 1 min | Medium |
-| 4. Jenkins Pipeline | 2 min | **Critical** |
-| 5. SonarQube Results | 1.5 min | High |
-| 6. Nexus Registry | 1 min | Medium |
-| 7. Grafana Monitoring | 1.5 min | **Critical** |
-| 7.5. Prometheus Live Queries | 1.5 min | **Critical** |
-| 8. Wrap-Up | 1 min | High |
-| **Total** | **~12 min** | |
-
-> **If you only have 5 minutes:** Skip sections 1, 3, and 6. Focus on Jenkins (4), SonarQube (5), Prometheus queries (7.5), and Grafana (7).  
-> **If you only have 8 minutes:** Skip sections 1 and 3. Do everything else.
-
----
-
-## 🎯 Tools Used in SheShield DevOps Stack
-
-| Tool | Purpose | Port |
-|------|---------|------|
-| **Docker** | Containerization | — |
-| **Docker Compose** | Multi-container orchestration | — |
-| **Jenkins** | CI/CD pipeline orchestrator | 8080 |
-| **GitHub Actions** | Cloud CI/CD (parallel) | — |
-| **SonarQube** | Static code analysis & quality gates | 9000 |
-| **Aqua Trivy** | Container vulnerability scanning | — |
-| **Sonatype Nexus** | Private Docker image registry | 8081/8082 |
-| **Kubernetes** | Container orchestration & deployment | — |
-| **Prometheus** | Metrics collection & alerting | 9090 |
-| **Grafana** | Monitoring dashboards & visualization | 3000 |
-
-| **Terraform** | AWS Infrastructure provisioning | — |
-| **Ansible** | Server configuration management | — |
-
-> **Note:** The entire DevOps stack is containerized for easy local development and presentation. The Terraform and Ansible files (`infrastructure/terraform/` and `infrastructure/ansible/`) are pre-configured to deploy the application to AWS EC2/RDS whenever a cloud deployment is required.
+| # | Tool | Type | Where Used | Browser/Terminal |
+|---|------|------|-----------|-----------------|
+| 1 | **Git** | Version Control | Every code change | Terminal |
+| 2 | **GitHub** | Remote Repository | Code hosting + Actions | Browser |
+| 3 | **GitHub Actions** | Cloud CI/CD | `.github/workflows/main.yml` | Browser |
+| 4 | **Jenkins** | CI/CD Pipeline | `infrastructure/jenkins/Jenkinsfile` | Browser `:8080` |
+| 5 | **Docker** | Containerization | `infrastructure/docker/Dockerfile` | Terminal |
+| 6 | **Docker Compose** | Orchestration | `infrastructure/docker-compose.yml` | Terminal |
+| 7 | **Kubernetes** | Container Orchestration | `infrastructure/kubernetes/deployment.yaml` | Terminal |
+| 8 | **Helm** | K8s Package Manager | `infrastructure/helm/sheshield/` | Terminal |
+| 9 | **Aqua Trivy** | Security Scanner | Jenkins Stage 5 (via Docker) | Jenkins logs |
+| 10 | **SonarQube** | Code Quality | Jenkins Stage 6 | Browser `:9000` |
+| 11 | **Sonatype Nexus** | Artifact Registry | Jenkins Stage 7 | Browser `:8081` |
+| 12 | **Prometheus** | Metrics Collection | `infrastructure/monitoring/prometheus/` | Browser `:9090` |
+| 13 | **Grafana** | Dashboards | `infrastructure/monitoring/grafana/` | Browser `:3000` |
+| 14 | **Terraform** | IaC (AWS) | `infrastructure/terraform/` | Terminal |
+| 15 | **Ansible** | Config Management | `infrastructure/ansible/` | Terminal (WSL) |
+| 16 | **Husky + Commitlint** | Git Hooks | `.husky/` + `commitlint.config.js` | Terminal |
 
 ---
 
 <div align="center">
   <strong>🛡️ Good luck with the presentation!</strong>
   <br>
-  <sub>Remember: Confidence + Live Demo = Winning Formula</sub>
+  <sub>16 tools, 8 Jenkins stages, all live and running. You've got this! 💪</sub>
 </div>
