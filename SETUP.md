@@ -1,6 +1,6 @@
 # 🚀 SheShield — Quick Setup Guide
 
-Follow these steps to start the entire SheShield DevOps and Application infrastructure on your local machine.
+Follow the steps below to get the complete SheShield DevOps stack and application running on your local machine.
 
 ---
 

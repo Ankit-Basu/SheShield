@@ -1,5 +1,5 @@
 // SheShield - Jenkinsfile
-// CI/CD Pipeline: Build → Lint → Scan → Analyze → Push → Deploy (Windows-compatible)
+// CI/CD Pipeline: Checkout → Build → Lint → Validate → Scan → Analyze → Push → Deploy
 
 pipeline {
     agent any

@@ -1,5 +1,5 @@
 # SheShield - Dockerfile
-# Multi-stage build for PHP/Apache web application
+# Production-ready PHP 8.2 / Apache web application container
 
 FROM php:8.2-apache
 

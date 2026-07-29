@@ -21,7 +21,7 @@
 
 **SheShield** is a comprehensive women's safety platform built with a premium, glassmorphic dark-mode UI. It combines real-time emergency response, community-driven escort services, incident reporting with heat-map visualization, and a safety chatbot assistant — all designed to create a safer environment for women on campuses and beyond.
 
-> *"Technology that protects, empowers, and transforms lives."*
+> *"Technology that protects, empowers, and transforms lives — one feature at a time."*
 
 The platform features a fully responsive design powered by custom fonts (Clash Display, Satoshi), GSAP scroll animations, Lenis smooth scrolling, and a modular PHP backend with MySQL database integration and PHPMailer-based email notifications.
 
@@ -607,7 +607,7 @@ SheShield/
 - [x] Safety analytics dashboard
 - [x] Complaint management system
 - [x] Docker containerization with multi-stage builds
-- [x] Jenkins CI/CD pipeline (7 stages)
+- [x] Jenkins CI/CD pipeline (8 stages)
 - [x] GitHub Actions parallel CI/CD
 - [x] SonarQube code quality integration
 - [x] Aqua Trivy security scanning
@@ -631,7 +631,7 @@ SheShield/
 
 ## 👥 Team
 
-Built with dedication by students passionate about women's safety and modern web development.
+Built with dedication by students passionate about making campuses safer for women through modern web development and DevOps practices.
 
 ## 📄 License
 
