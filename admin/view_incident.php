@@ -1,220 +1,103 @@
 <?php
-session_start();
-require_once '../utils/session.php';
-require_once '../config/database.php';
-require_once '../models/Incident.php';
+require_once __DIR__ . '/../app/middleware/session.php';
+require_once __DIR__ . '/../app/config/database.php';
 
-// Check if user is logged in and is admin
 if (!Session::isLoggedIn() || !Session::get('is_admin')) {
-    header('Location: ../login.html');
+    header('Location: ../pro/login.html');
     exit();
 }
-
-// Check if incident ID is provided
 if (!isset($_GET['id'])) {
     header('Location: index.php');
     exit();
 }
 
-// Initialize database connection
 $database = new Database();
 $db = $database->getConnection();
-$incident = new Incident($db);
 
-// Get incident details
-$incident_id = $_GET['id'];
-$incident->getById($incident_id);
+$stmt = $db->prepare(
+    "SELECT i.*, u.email AS reporter_email, u.phone AS reporter_phone,
+            TRIM(CONCAT(COALESCE(u.first_name, ''), ' ', COALESCE(u.last_name, ''))) AS reporter_name
+     FROM incidents i LEFT JOIN users u ON i.user_id = u.id WHERE i.id = :id"
+);
+$stmt->execute([':id' => (int)$_GET['id']]);
+$row = $stmt->fetch(PDO::FETCH_ASSOC);
+if (!$row) {
+    header('Location: index.php');
+    exit();
+}
+
+function a($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
+function ai($name) { return '<svg class="i" aria-hidden="true"><use href="../public/icons.svg#' . $name . '"/></svg>'; }
+$files = array_filter(explode(',', (string)($row['evidence_file'] ?? '')));
+$status = $row['status'] ?? 'pending';
+$v = filemtime(__DIR__ . '/../public/css/glass.css');
 ?>
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-base="../">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Incident - SheShield Admin</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="icon" type="image/png" href="/images/logo.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Report #<?= (int)$row['id'] ?> · SheShield admin</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <script>try{document.documentElement.dataset.theme=localStorage.getItem('ss-theme')||'dawn'}catch(e){}</script>
+  <link rel="stylesheet" href="../public/css/glass.css?v=<?= $v ?>">
 </head>
-<body class="bg-gray-100">
-    <!-- Admin Navigation -->
-    <nav class="bg-gray-900 text-white px-6 py-4">
-        <div class="container mx-auto flex justify-between items-center">
-            <div class="flex items-center">
-                <h1 class="text-2xl font-bold">SheShield Admin</h1>
-            </div>
-            <div class="flex items-center space-x-4">
-                <a href="index.php" class="hover:text-gray-300">Dashboard</a>
-                <a href="../api/auth/logout.php" class="bg-red-600 px-4 py-2 rounded hover:bg-red-700">Logout</a>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Incident Details -->
-    <div class="container mx-auto px-4 py-8">
-        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-                <h2 class="text-2xl font-semibold">Incident Report #<?php echo htmlspecialchars($incident->id); ?></h2>
-                <span class="px-3 py-1 rounded-full text-sm font-semibold
-                    <?php 
-                    switch($incident->status) {
-                        case 'pending':
-                            echo 'bg-yellow-100 text-yellow-800';
-                            break;
-                        case 'in_progress':
-                            echo 'bg-blue-100 text-blue-800';
-                            break;
-                        case 'resolved':
-                            echo 'bg-green-100 text-green-800';
-                            break;
-                        case 'closed':
-                            echo 'bg-gray-100 text-gray-800';
-                            break;
-                    }
-                    ?>">
-                    <?php echo ucfirst(htmlspecialchars($incident->status)); ?>
-                </span>
-            </div>
-
-            <div class="p-6">
-                <!-- Incident Information -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div>
-                        <h3 class="text-lg font-semibold mb-4">Incident Details</h3>
-                        <div class="space-y-3">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-600">Type of Incident</label>
-                                <p class="mt-1 text-gray-900"><?php echo htmlspecialchars($incident->type); ?></p>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-600">Location</label>
-                                <p class="mt-1 text-gray-900"><?php echo htmlspecialchars($incident->location); ?></p>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-600">Incident Date</label>
-                                <p class="mt-1 text-gray-900"><?php echo htmlspecialchars($incident->incident_date); ?></p>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-600">Report Date</label>
-                                <p class="mt-1 text-gray-900"><?php echo htmlspecialchars($incident->created_at); ?></p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div>
-                        <h3 class="text-lg font-semibold mb-4">Reporter Information</h3>
-                        <div class="space-y-3">
-                            <?php if (!$incident->is_anonymous): ?>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-600">Reporter Name</label>
-                                <p class="mt-1 text-gray-900">
-                                    <?php 
-                                    require_once '../models/User.php';
-                                    $user = new User($db);
-                                    $user->getById($incident->user_id);
-                                    echo htmlspecialchars($user->first_name . ' ' . $user->last_name);
-                                    ?>
-                                </p>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-600">Contact Information</label>
-                                <p class="mt-1 text-gray-900">
-                                    Email: <?php echo htmlspecialchars($user->email); ?><br>
-                                    Phone: <?php echo htmlspecialchars($user->phone); ?>
-                                </p>
-                            </div>
-                            <?php else: ?>
-                            <div>
-                                <p class="text-gray-900">This report was submitted anonymously</p>
-                            </div>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Description -->
-                <div class="mb-6">
-                    <h3 class="text-lg font-semibold mb-4">Incident Description</h3>
-                    <div class="bg-gray-50 p-4 rounded-lg">
-                        <p class="text-gray-900 whitespace-pre-line"><?php echo htmlspecialchars($incident->description); ?></p>
-                    </div>
-                </div>
-
-                <!-- Evidence Files -->
-                <?php if ($incident->evidence_files): ?>
-                <div class="mb-6">
-                    <h3 class="text-lg font-semibold mb-4">Evidence Files</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        <?php 
-                        $files = explode(',', $incident->evidence_files);
-                        foreach ($files as $file):
-                            $file = trim($file);
-                            $ext = pathinfo($file, PATHINFO_EXTENSION);
-                            $is_image = in_array(strtolower($ext), ['jpg', 'jpeg', 'png', 'gif']);
-                        ?>
-                        <div class="border rounded-lg p-4">
-                            <?php if ($is_image): ?>
-                            <img src="../uploads/evidence/<?php echo htmlspecialchars($file); ?>" 
-                                 alt="Evidence" class="w-full h-48 object-cover rounded">
-                            <?php else: ?>
-                            <div class="flex items-center">
-                                <svg class="h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                          d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                                </svg>
-                                <span class="ml-2 text-sm text-gray-600"><?php echo htmlspecialchars($file); ?></span>
-                            </div>
-                            <?php endif; ?>
-                            <a href="../uploads/evidence/<?php echo htmlspecialchars($file); ?>" 
-                               class="mt-2 inline-block text-indigo-600 hover:text-indigo-900" 
-                               target="_blank">View File</a>
-                        </div>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-                <?php endif; ?>
-
-                <!-- Action Buttons -->
-                <div class="flex justify-end space-x-4 mt-8">
-                    <button onclick="updateStatus(<?php echo $incident->id; ?>)" 
-                            class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
-                        Update Status
-                    </button>
-                    <a href="index.php" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
-                        Back to Dashboard
-                    </a>
-                </div>
-            </div>
-        </div>
+<body>
+<div class="ss-backdrop" data-mode="calm" aria-hidden="true"></div>
+<div style="width:min(calc(100% - 32px),980px);margin:0 auto;padding:14px 0 48px;display:grid;gap:16px">
+  <header class="topbar glass glass-blur" style="margin:0;top:14px">
+    <a href="index.php" class="btn btn-ghost btn-icon" aria-label="Back to all reports"><?= ai('arrow-left') ?></a>
+    <div class="topbar-title"><span class="eyebrow">Report #<?= (int)$row['id'] ?></span><h1><?= a(ucwords(str_replace('_', ' ', $row['incident_type'] ?? 'Incident'))) ?></h1></div>
+    <div class="topbar-actions">
+      <label class="sr-only" for="statusSelect">Status</label>
+      <select class="input" id="statusSelect" style="height:38px;width:146px;font-size:13px">
+        <?php foreach (['pending' => 'Pending', 'in_progress' => 'In progress', 'resolved' => 'Resolved', 'closed' => 'Closed'] as $key => $label): ?>
+          <option value="<?= $key ?>" <?= $status === $key ? 'selected' : '' ?>><?= $label ?></option>
+        <?php endforeach; ?>
+      </select>
     </div>
-
-    <script>
-        function updateStatus(incidentId) {
-            const newStatus = prompt('Enter new status (pending, in_progress, resolved, closed):');
-            if (newStatus) {
-                fetch('../api/incidents/update_status.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        id: incidentId,
-                        status: newStatus
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        location.reload();
-                    } else {
-                        alert('Error updating status: ' + data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Error updating status');
-                });
-            }
-        }
-    </script>
+  </header>
+  <div class="grid g-2">
+    <section class="glass card-lg" data-reveal>
+      <h2 style="font-size:17px;margin-bottom:8px">Incident</h2>
+      <?php foreach ([['Location', $row['location'] ?? ''], ['Happened', date('j M Y, g:i A', strtotime($row['date_time'] ?? 'now'))], ['Reported', date('j M Y, g:i A', strtotime($row['created_at'] ?? 'now'))], ['Severity', ucfirst($row['severity'] ?? 'low')]] as [$label, $value]): ?>
+        <div class="list-row"><span class="small muted" style="width:92px;flex:none"><?= $label ?></span><span><?= a($value) ?></span></div>
+      <?php endforeach; ?>
+    </section>
+    <section class="glass card-lg" data-reveal>
+      <h2 style="font-size:17px;margin-bottom:8px">Reporter</h2>
+      <?php if (empty($row['user_id'])): ?>
+        <div class="empty" style="padding:22px 8px"><?= ai('eye-off') ?><span>Filed anonymously.</span></div>
+      <?php else: foreach ([['Name', trim($row['reporter_name'] ?? '') ?: 'Not given'], ['Email', $row['reporter_email'] ?? 'Not given'], ['Phone', ($row['reporter_phone'] ?? '') ?: 'Not given']] as [$label, $value]): ?>
+        <div class="list-row"><span class="small muted" style="width:92px;flex:none"><?= $label ?></span><span class="truncate"><?= a($value) ?></span></div>
+      <?php endforeach; endif; ?>
+    </section>
+  </div>
+  <section class="glass card-lg" data-reveal>
+    <h2 style="font-size:17px;margin-bottom:8px">Description</h2>
+    <p style="white-space:pre-wrap"><?= a($row['description'] ?? '') ?></p>
+  </section>
+  <?php if ($files): ?>
+    <section class="glass card-lg" data-reveal>
+      <h2 style="font-size:17px;margin-bottom:10px">Evidence</h2>
+      <div class="chips">
+        <?php foreach ($files as $f): $f = basename($f); ?>
+          <a class="chip" href="../uploads/evidence/<?= rawurlencode($f) ?>" target="_blank" rel="noopener"><?= ai('file-text') ?> <?= a($f) ?></a>
+        <?php endforeach; ?>
+      </div>
+    </section>
+  <?php endif; ?>
+</div>
+<script src="../public/lib/gsap.min.js"></script>
+<script src="../public/lib/ScrollTrigger.min.js"></script>
+<script src="../public/js/sheshield.js?v=<?= $v ?>"></script>
+<script>
+document.getElementById('statusSelect').addEventListener('change', async (e) => {
+  try {
+    await SS.post('../api/incidents/update_status.php', { id: <?= (int)$row['id'] ?>, status: e.target.value });
+    showToast('Status updated');
+  } catch (err) { showToast(err.message, 'error'); }
+});
+</script>
 </body>
 </html>

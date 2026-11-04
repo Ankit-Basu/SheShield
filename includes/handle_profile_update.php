@@ -1,6 +1,8 @@
 <?php
+require_once __DIR__ . '/../app/middleware/session_bootstrap.php';
+configure_session_storage();
 session_start();
-require_once 'profile_image_handler.php';
+require_once __DIR__ . '/profile_image_handler.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $response = ['success' => false, 'message' => ''];

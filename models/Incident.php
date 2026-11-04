@@ -11,6 +11,7 @@ class Incident {
     public $incident_date;
     public $is_anonymous;
     public $evidence_files;
+    public $severity = 'low';
     public $status;
     public $created_at;
 
@@ -33,6 +34,7 @@ class Incident {
                         date_time = :incident_date,
                         evidence_file = :evidence_files,
                         status = :status,
+                        severity = :severity,
                         created_at = :created_at";
 
             $stmt = $this->conn->prepare($query);
@@ -49,6 +51,7 @@ class Incident {
             $stmt->bindParam(":incident_date", $this->incident_date);
             $stmt->bindParam(":evidence_files", $this->evidence_files);
             $stmt->bindParam(":status", $this->status);
+            $stmt->bindParam(":severity", $this->severity);
             $stmt->bindParam(":created_at", $createdAt);
 
             if($stmt->execute()) {
@@ -70,12 +73,12 @@ class Incident {
                         date_time AS incident_date, 0 AS is_anonymous,
                         COALESCE(evidence_file, '') AS evidence_files, status, created_at
                     FROM " . $this->table_name . " 
-                    WHERE user_id = ? 
+                    WHERE user_id = :user_id 
                     ORDER BY created_at DESC 
                     LIMIT :limit OFFSET :offset";
             
             $stmt = $this->conn->prepare($query);
-            $stmt->bindParam(1, $user_id, PDO::PARAM_INT);
+            $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
             $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
             $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
             $stmt->execute();
@@ -173,7 +176,10 @@ class Incident {
     // Handle file upload with improved security
     public function uploadEvidence($files) {
         try {
-            $uploadDir = '../uploads/evidence/';
+            $uploadDir = dirname(__DIR__) . '/uploads/evidence/';
+            if (!is_dir($uploadDir)) {
+                @mkdir($uploadDir, 0755, true);
+            }
             $uploadedFiles = [];
             $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'application/pdf'];
             $maxFileSize = 5 * 1024 * 1024; // 5MB

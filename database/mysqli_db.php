@@ -236,13 +236,30 @@ function get_mysqli_connection() {
         die("Connection failed: " . $conn->connect_error);
     }
 
+    $conn->set_charset("utf8mb4");
+
+    require_once __DIR__ . '/schema_guard.php';
+    $marker = ss_schema_marker('mysqli', __FILE__, $dbname);
+    if (is_file($marker)) {
+        try {
+            if ($conn->select_db($dbname)) {
+                $tables = $conn->query("SHOW TABLES LIKE 'users'");
+                if ($tables && $tables->num_rows > 0) {
+                    return $conn;
+                }
+            }
+        } catch (mysqli_sql_exception $e) {
+            // The database is gone: fall through and rebuild it.
+        }
+    }
+
     $conn->query("CREATE DATABASE IF NOT EXISTS `$dbname` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
     if (!$conn->select_db($dbname)) {
         die("Database selection failed: " . $conn->error);
     }
 
-    $conn->set_charset("utf8mb4");
     ensure_mysqli_schema($conn);
+    @touch($marker);
 
     return $conn;
 }

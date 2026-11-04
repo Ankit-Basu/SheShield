@@ -9,66 +9,75 @@ if (!file_exists($cfgPath)) $cfgPath = __DIR__ . '/../../config/database.php';
 include_once $cfgPath;
 include_once __DIR__ . '/../../models/Incident.php';
 
-// Check if user is logged in for non-anonymous reports
-if(!isset($_SESSION['logged_in']) && !isset($_POST['is_anonymous'])) {
+// Accepts multipart form data (with evidence files) or a JSON body.
+$data = $_POST ?: (json_decode(file_get_contents("php://input"), true) ?: []);
+$isAnonymous = !empty($data['is_anonymous']);
+
+if (!isset($_SESSION['logged_in']) && !$isAnonymous) {
     http_response_code(401);
-    echo json_encode(array(
+    echo json_encode([
         "status" => "error",
-        "message" => "Unauthorized. Please login or submit anonymously."
-    ));
+        "message" => "Please sign in or submit anonymously.",
+    ]);
     exit();
 }
 
-// Initialize database connection
-$database = new Database();
-$db = $database->getConnection();
-$incident = new Incident($db);
+$type = $data['type'] ?? $data['incident_type'] ?? '';
+$when = $data['incident_date'] ?? $data['date_time'] ?? '';
 
-$response = array();
+if ($type === '' || empty($data['description']) || empty($data['location']) || $when === '') {
+    http_response_code(400);
+    echo json_encode([
+        "status" => "error",
+        "message" => "Please complete the incident type, date, location and description.",
+    ]);
+    exit();
+}
 
-// Handle both form data and JSON input
-$data = $_POST ?: json_decode(file_get_contents("php://input"), true);
+$timestamp = strtotime($when);
+if ($timestamp === false) {
+    http_response_code(400);
+    echo json_encode(["status" => "error", "message" => "That date and time is not valid."]);
+    exit();
+}
 
-if(
-    (!empty($data['type']) || !empty($data['incident_type'])) &&
-    !empty($data['description']) &&
-    !empty($data['location']) &&
-    (!empty($data['incident_date']) || !empty($data['date_time']))
-) {
-    // Set incident properties
-    $incident->type = $data['type'] ?? $data['incident_type'];
+$severities = ['low', 'medium', 'high'];
+$severity = in_array($data['severity'] ?? '', $severities, true) ? $data['severity'] : 'low';
+
+try {
+    $database = new Database();
+    $db = $database->getConnection();
+    $incident = new Incident($db);
+
+    $incident->type = $type;
     $incident->description = $data['description'];
     $incident->location = $data['location'];
-    $incident->incident_date = $data['incident_date'] ?? $data['date_time'];
-    $incident->is_anonymous = isset($data['is_anonymous']) ? 1 : 0;
-    $incident->user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
+    $incident->incident_date = date('Y-m-d H:i:s', $timestamp);
+    $incident->is_anonymous = $isAnonymous ? 1 : 0;
+    // An anonymous report must not be traceable back to the signed-in account.
+    $incident->user_id = (!$isAnonymous && isset($_SESSION['user_id'])) ? $_SESSION['user_id'] : null;
     $incident->status = 'pending';
+    $incident->severity = $severity;
+    $incident->evidence_files = '';
 
-    // Handle file uploads if present
-    if(isset($_FILES['evidence']) && !empty($_FILES['evidence']['name'][0])) {
+    if (isset($_FILES['evidence']) && !empty($_FILES['evidence']['name'][0])) {
         $incident->evidence_files = $incident->uploadEvidence($_FILES['evidence']);
     }
 
-    // Create the incident report
-    if($incident->create()) {
-        $response["status"] = "success";
-        $response["message"] = "Incident reported successfully";
+    if ($incident->create()) {
         http_response_code(201);
-
-        // Send notification to admin if configured
-        if(isset($incident->user_id)) {
-            // TODO: Implement notification system
-        }
+        echo json_encode([
+            "status" => "success",
+            "message" => "Incident reported successfully",
+            "report_id" => 'SS-' . date('Y') . '-' . str_pad((string)$incident->id, 4, '0', STR_PAD_LEFT),
+            "id" => (int)$incident->id,
+        ]);
     } else {
-        $response["status"] = "error";
-        $response["message"] = "Unable to create incident report";
         http_response_code(500);
+        echo json_encode(["status" => "error", "message" => "Unable to save the report. Please try again."]);
     }
-} else {
-    $response["status"] = "error";
-    $response["message"] = "Unable to create incident report. Data is incomplete";
-    http_response_code(400);
+} catch (Exception $e) {
+    error_log('Incident create error: ' . $e->getMessage());
+    http_response_code(500);
+    echo json_encode(["status" => "error", "message" => $e->getMessage()]);
 }
-
-echo json_encode($response);
-?>
