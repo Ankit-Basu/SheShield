@@ -9,26 +9,6 @@
   const year = $('#year');
   if (year) year.textContent = new Date().getFullYear();
 
-  /* Safety map thumbnail: deterministic dots, drawn once. Decorative, not data. */
-  (function buildMapViz() {
-    const host = $('#vizMap');
-    if (!host) return;
-    const dots = [];
-    let seed = 7;
-    const rnd = () => { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
-    const hot = [[150, 70], [340, 118], [500, 58]];
-    for (let x = 12; x < 620; x += 19) {
-      for (let y = 12; y < 190; y += 19) {
-        const near = Math.min(...hot.map(([hx, hy]) => Math.hypot(x - hx, y - hy)));
-        const heat = Math.max(0, 1 - near / 76);
-        const r = 1.6 + heat * 3.4 + rnd() * 0.5;
-        const fill = heat > 0.08 ? 'var(--primary)' : 'oklch(1 0 0 / .17)';
-        dots.push(`<circle cx="${x}" cy="${y}" r="${r.toFixed(1)}" fill="${fill}" opacity="${(0.42 + heat * 0.58).toFixed(2)}"/>`);
-      }
-    }
-    host.innerHTML = `<svg viewBox="0 0 620 190" preserveAspectRatio="xMidYMid slice">${dots.join('')}</svg>`;
-  }());
-
   /* Live counts from the database; the block stays hidden if the request fails. */
   fetch('../api/public_stats.php').then((r) => (r.ok ? r.json() : null)).then((stats) => {
     if (!stats || stats.reports === null) return;
@@ -129,19 +109,41 @@
     });
   }());
 
-  /* Statement: words brighten with the scrollbar. */
-  (function statement() {
-    const el = $('#statement');
-    if (!el) return;
-    el.setAttribute('aria-label', el.textContent.trim());
-    el.innerHTML = el.textContent.trim().split(/\s+/).map((w) => `<span class="sw" aria-hidden="true">${w}</span>`).join(' ');
-    const words = el.querySelectorAll('.sw');
-    if (reduced) { gsap.set(words, { opacity: 1 }); return; }
-    gsap.to(words, {
-      opacity: 1, ease: 'none', stagger: 0.08,
-      scrollTrigger: { trigger: el, start: 'top 82%', end: 'bottom 48%', scrub: 0.5 },
+  /* SOS demo: the page scroll drives the phone, screen by screen. */
+  (function demo() {
+    const screens = gsap.utils.toArray('.screen');
+    const steps = gsap.utils.toArray('#demoSteps li');
+    if (!screens.length) return;
+    gsap.set(screens, { autoAlpha: 0 });
+    gsap.set(screens[0], { autoAlpha: 1 });
+    if (reduced) return;
+    const tl = gsap.timeline({
+      defaults: { ease: 'none' },
+      scrollTrigger: {
+        trigger: '.demo', start: 'top top', end: 'bottom bottom', scrub: 0.4,
+      },
+      // Runs on the smoothed timeline, so the caption always matches the screen on show.
+      onUpdate() {
+        const active = Math.min(steps.length - 1, Math.floor(this.time() + 0.1));
+        steps.forEach((s, i) => s.classList.toggle('on', i === active));
+      },
     });
+    screens.forEach((screen, i) => {
+      if (i === 0) return;
+      const at = i - 0.18;
+      tl.to(screens[i - 1], { autoAlpha: 0, y: -24, scale: 0.97, duration: 0.18 }, at);
+      tl.fromTo(screen, { autoAlpha: 0, y: 28, scale: 0.97 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.18 }, at + 0.1);
+    });
+    tl.to({}, { duration: 0.3 });
+    gsap.fromTo('.phone', { rotateZ: -3, y: 24 }, { rotateZ: 3, y: -24, ease: 'none', scrollTrigger: { trigger: '.demo', start: 'top top', end: 'bottom bottom', scrub: 0.6 } });
   }());
+
+  /* Spheres drift at their own speed, so the frost in front of them keeps changing. */
+  if (!reduced) {
+    document.querySelectorAll('[data-orb]').forEach((orb) => {
+      gsap.to(orb, { y: Number(orb.dataset.orb) * 3, ease: 'none', scrollTrigger: { trigger: orb.parentElement, start: 'top bottom', end: 'bottom top', scrub: 0.6 } });
+    });
+  }
 
   /* Scroll-velocity marquee. Only ticks while on screen. */
   (function marquee() {
@@ -190,7 +192,7 @@
   if (reduced) return;
   const pass = $('#passCard');
   const stage = $('#heroStage');
-  gsap.from('.sticker', { scale: 0.6, opacity: 0, duration: 0.7, ease: 'back.out(2)', stagger: 0.08, delay: 0.05 });
+  gsap.from('.hero-clock', { y: -10, opacity: 0, duration: 0.7, ease: 'power3.out', delay: 0.05 });
   gsap.from(pass, { y: 60, opacity: 0, rotate: 6, duration: 1.2, ease: 'power4.out', delay: 0.35 });
   gsap.from('#floatSos', { x: 40, opacity: 0, duration: 0.9, ease: 'power3.out', delay: 0.75 });
   gsap.from('#floatLoc', { x: -40, opacity: 0, duration: 0.9, ease: 'power3.out', delay: 0.9 });

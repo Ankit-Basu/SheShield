@@ -85,6 +85,7 @@ $navGroups = [
       <?php endforeach; ?>
     <?php endforeach; ?>
     <div class="side-label">Account</div>
+    <?php if (!empty($_SESSION['is_admin'])): ?><a href="../../admin/index.php" class="side-link"><?= icon('badge-check') ?><span>Admin</span></a><?php endif; ?>
     <a href="settings.php" class="side-link <?= $activePage === 'settings' ? 'active' : '' ?>"><?= icon('settings') ?><span>Settings</span></a>
     <a href="../../auth/logout.php" class="side-link"><?= icon('log-out') ?><span>Log out</span></a>
   </nav>

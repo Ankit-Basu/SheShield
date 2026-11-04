@@ -12,7 +12,7 @@ if (isset($conn) && !$conn->connect_error) {
     $total_reports = $count("SELECT COUNT(*) FROM incidents WHERE user_id = $user_id");
     $resolved = $count("SELECT COUNT(*) FROM incidents WHERE user_id = $user_id AND status = 'resolved'");
     $pending = $count("SELECT COUNT(*) FROM incidents WHERE user_id = $user_id AND status = 'pending'");
-    $active_walkers = $count("SELECT COUNT(*) FROM escorts WHERE status = 'active'");
+    $active_walkers = $count("SELECT COUNT(*) FROM escorts WHERE status = 'active' AND verification_status = 'verified'");
     $safe_spaces = $count('SELECT COUNT(*) FROM safe_spaces') + $count('SELECT COUNT(*) FROM safe_zone');
 
     $r = $conn->query("SELECT * FROM incidents WHERE user_id = $user_id ORDER BY created_at DESC LIMIT 5");
@@ -29,17 +29,19 @@ $actions = '<a href="report.php" class="btn btn-primary hide-md">' . icon('plus'
 
 ss_page_open('dashboard', strtoupper(date('l, j F')), 'Overview', $actions);
 ?>
-<section class="glass card-lg spot" data-reveal>
-  <div class="row-between wrap">
-    <div>
-      <h2 class="display" style="font-size:clamp(30px,4.4vw,54px);margin-bottom:8px" data-split><?= e($greeting) ?><?= $name !== '' ? ', <span class="text-gradient">' . e($name) . '</span>' : '' ?>.</h2>
-      <p class="muted"><?php if ($pending > 0): ?>You have <?= $pending ?> report<?= $pending === 1 ? '' : 's' ?> waiting on review.<?php else: ?>Nothing is waiting on you right now.<?php endif; ?></p>
-    </div>
-    <div class="row wrap">
-      <a href="walkwithus.php" class="btn btn-outline btn-lg" data-magnet><?= icon('footprints') ?> Request a walk</a>
-      <button class="btn btn-sos btn-lg" data-sos data-magnet><?= icon('siren') ?> Open SOS</button>
-    </div>
+<section class="glass glass-frost dash-hero spot" data-reveal>
+  <div>
+    <span class="sunclock" data-sunclock></span>
+    <h2 class="display" data-split><?= e($greeting) ?><?= $name !== '' ? ', <span class="text-gradient">' . e($name) . '</span>' : '' ?>.</h2>
+    <p class="muted"><?php if ($pending > 0): ?>You have <?= $pending ?> report<?= $pending === 1 ? '' : 's' ?> waiting on review.<?php else: ?>Nothing is waiting on you right now.<?php endif; ?></p>
   </div>
+</section>
+
+<section class="grid g-4 actions-row">
+  <button class="glass action-tile is-sos lift" data-sos data-reveal><span class="icon-tile"><?= icon('siren') ?></span><?= icon('arrow-up-right', 'go') ?><span style="margin-top:auto"><b>Open SOS</b><small>Call and share your location</small></span></button>
+  <a href="walkwithus.php" class="glass glass-frost action-tile spot lift" data-reveal><span class="icon-tile"><?= icon('footprints') ?></span><?= icon('arrow-up-right', 'go') ?><span style="margin-top:auto"><b>Request a walk</b><small>Get company on your route</small></span></a>
+  <a href="report.php" class="glass glass-frost action-tile spot lift" data-reveal><span class="icon-tile"><?= icon('file-plus') ?></span><?= icon('arrow-up-right', 'go') ?><span style="margin-top:auto"><b>File a report</b><small>Confidential</small></span></a>
+  <a href="map.php" class="glass glass-frost action-tile spot lift" data-reveal><span class="icon-tile"><?= icon('map') ?></span><?= icon('arrow-up-right', 'go') ?><span style="margin-top:auto"><b>Campus map</b><small>LPU, by satellite</small></span></a>
 </section>
 
 <section class="grid g-4">
@@ -49,7 +51,7 @@ ss_page_open('dashboard', strtoupper(date('l, j F')), 'Overview', $actions);
     ['Active walkers', $active_walkers, 'footprints', 'Across campus'],
     ['Safe spaces', $safe_spaces, 'shield-check', 'Marked on the map'],
   ] as [$label, $value, $ico, $note]): ?>
-    <article class="glass stat spot" data-reveal>
+    <article class="glass glass-frost stat spot" data-reveal>
       <div class="stat-top"><span><?= e($label) ?></span><?= icon($ico) ?></div>
       <div class="stat-num" data-count="<?= (int)$value ?>"><?= (int)$value ?></div>
       <div class="stat-note"><?= e($note) ?></div>
@@ -95,17 +97,4 @@ ss_page_open('dashboard', strtoupper(date('l, j F')), 'Overview', $actions);
   </div>
 </section>
 
-<section class="grid g-3">
-  <?php foreach ([
-    ['analytics.php', 'chart-column', 'Analytics', 'Trends across your reports.'],
-    ['map.php', 'map', 'Safety map', 'Campus landmarks and reported incidents.'],
-    ['safespace.php', 'shield-check', 'Safe spaces', 'Find or mark somewhere safe.'],
-  ] as [$href, $ico, $title, $desc]): ?>
-    <a href="<?= $href ?>" class="glass card spot lift row" style="gap:14px" data-reveal>
-      <span class="icon-tile"><?= icon($ico) ?></span>
-      <span style="flex:1;min-width:0"><b style="display:block"><?= e($title) ?></b><span class="small muted"><?= e($desc) ?></span></span>
-      <?= icon('arrow-up-right', 'muted') ?>
-    </a>
-  <?php endforeach; ?>
-</section>
 <?php ss_page_close('dashboard'); ?>

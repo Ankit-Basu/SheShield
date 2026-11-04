@@ -89,9 +89,26 @@ function sendMail($to, $toName, $subject, $htmlBody) {
 }
 
 try {
+    require_once __DIR__ . '/../../app/middleware/session_bootstrap.php';
+    configure_session_storage();
+    session_start();
+    if (empty($_SESSION['user_id'])) {
+        throw new Exception('Please sign in again.');
+    }
+
     $data = json_decode(file_get_contents('php://input'), true);
     if (!$data || !isset($data['type'])) {
         throw new Exception('Invalid request');
+    }
+    $data['userEmail'] = $_SESSION['email'] ?? '';
+    $data['userName'] = trim(($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? '')) ?: 'there';
+    foreach (['userName', 'pickupLocation', 'destination', 'requestTime', 'availableFrom', 'availableUntil', 'walkId'] as $field) {
+        if (isset($data[$field])) {
+            $data[$field] = htmlspecialchars((string)$data[$field], ENT_QUOTES, 'UTF-8');
+        }
+    }
+    if (isset($data['preferredAreas']) && is_array($data['preferredAreas'])) {
+        $data['preferredAreas'] = array_map(fn ($a) => htmlspecialchars((string)$a, ENT_QUOTES, 'UTF-8'), $data['preferredAreas']);
     }
 
     $type = $data['type'];
@@ -106,7 +123,7 @@ try {
         $pickup = $data['pickupLocation'] ?? '';
         $dest = $data['destination'] ?? '';
         $time = $data['requestTime'] ?? date('Y-m-d H:i');
-        $walkId = 'WALK-' . date('Ymd') . '-' . substr(uniqid(), -6);
+        $walkId = $data['walkId'] ?? ('WALK-' . date('Ymd') . '-' . substr(uniqid(), -6));
 
         if (!$pickup || !$dest) {
             throw new Exception('Pickup and destination are required');

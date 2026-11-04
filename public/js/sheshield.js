@@ -36,7 +36,7 @@
 
     const vert = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
     const frag = `precision mediump float;
-      uniform vec2 r;uniform float t,d;uniform vec3 a,b,c,base;
+      uniform vec2 r,ms;uniform float t,d;uniform vec3 a,b,c,base;
       vec3 m(vec3 x){return x-floor(x/289.)*289.;}vec2 m(vec2 x){return x-floor(x/289.)*289.;}
       vec3 pm(vec3 x){return m((x*34.+1.)*x);}
       float sn(vec2 v){const vec4 C=vec4(.211324865,.366025403,-.577350269,.024390243);
@@ -57,7 +57,7 @@
         vec3 col=mix(base,ramp,band*(.44+glow*.2));
         col=mix(col,mix(b,c,.7),low*.28);
         float vig=1.-smoothstep(.3,1.25,length((u-vec2(.5,.55))*vec2(1.,1.15)));
-        gl_FragColor=vec4(col*(.62+.38*vig),1.);}`;
+        col*=.62+.38*vig;col+=mix(b,c,.5)*.2*(1.-smoothstep(0.,.42,length((u-ms)*vec2(r.x/r.y,1.))));gl_FragColor=vec4(col,1.);}`;
 
     const compile = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return s; };
     const prog = gl.createProgram();
@@ -72,7 +72,7 @@
     gl.enableVertexAttribArray(loc);
     gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
     const u = {};
-    ['r', 't', 'd', 'a', 'b', 'c', 'base'].forEach((k) => { u[k] = gl.getUniformLocation(prog, k); });
+    ['r', 'ms', 't', 'd', 'a', 'b', 'c', 'base'].forEach((k) => { u[k] = gl.getUniformLocation(prog, k); });
 
     const hex = (v) => { const n = parseInt(v.trim().slice(1), 16); return [(n >> 16 & 255) / 255, (n >> 8 & 255) / 255, (n & 255) / 255]; };
     const recolor = () => {
@@ -95,6 +95,16 @@
     };
 
     let progress = 0; let shown = 0; let time = Math.random() * 40;
+    // The light follows the pointer. Off-screen values leave the frame dark.
+    let msX = -2; let msY = -2; let msGoalX = -2; let msGoalY = -2;
+    if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      window.addEventListener('pointermove', (e) => {
+        msGoalX = e.clientX / window.innerWidth;
+        msGoalY = 1 - e.clientY / window.innerHeight;
+        if (msX < -1) { msX = msGoalX; msY = msGoalY; }
+      }, { passive: true });
+    }
+    gl.uniform2f(u.ms, -2, -2);
     function draw() {
       gl.uniform1f(u.t, time);
       gl.uniform1f(u.d, shown);
@@ -118,6 +128,9 @@
       last = now;
       time += Math.min(dt, 120) / 1000 * (calm ? 0.55 : 0.8);
       shown += (progress - shown) * 0.08;
+      msX += (msGoalX - msX) * 0.12;
+      msY += (msGoalY - msY) * 0.12;
+      gl.uniform2f(u.ms, msX, msY);
       draw();
     }
 
@@ -153,6 +166,33 @@
     if (b) setTheme(b.dataset.set);
   });
   syncSwatches();
+
+  /* ─── Campus clock: local time plus the next sunrise or sunset at LPU ─ */
+  function sunMinutes(date) {
+    const lat = 31.2533 * Math.PI / 180; const lng = 75.704;
+    const start = Date.UTC(date.getUTCFullYear(), 0, 0);
+    const g = 2 * Math.PI / 365 * ((date - start) / 864e5 - 1);
+    const eq = 229.18 * (0.000075 + 0.001868 * Math.cos(g) - 0.032077 * Math.sin(g) - 0.014615 * Math.cos(2 * g) - 0.040849 * Math.sin(2 * g));
+    const dec = 0.006918 - 0.399912 * Math.cos(g) + 0.070257 * Math.sin(g) - 0.006758 * Math.cos(2 * g) + 0.000907 * Math.sin(2 * g) - 0.002697 * Math.cos(3 * g) + 0.00148 * Math.sin(3 * g);
+    const ha = Math.acos(Math.cos(90.833 * Math.PI / 180) / (Math.cos(lat) * Math.cos(dec)) - Math.tan(lat) * Math.tan(dec)) * 180 / Math.PI;
+    return { rise: 720 - 4 * (lng + ha) - eq + 330, set: 720 - 4 * (lng - ha) - eq + 330 }; // minutes after midnight, IST
+  }
+  function renderClocks() {
+    const nodes = document.querySelectorAll('[data-sunclock]');
+    if (!nodes.length) return;
+    const now = new Date();
+    const ist = new Date(now.getTime() + 330 * 6e4);
+    const mins = ist.getUTCHours() * 60 + ist.getUTCMinutes();
+    const { rise, set } = sunMinutes(now);
+    const day = mins >= rise && mins < set;
+    const gap = Math.round(day ? set - mins : (mins < rise ? rise - mins : rise + 1440 - mins));
+    const span = gap >= 60 ? `${Math.floor(gap / 60)}h ${gap % 60}m` : `${gap}m`;
+    const clock = `${String(ist.getUTCHours()).padStart(2, '0')}:${String(ist.getUTCMinutes()).padStart(2, '0')}`;
+    const html = `${icon(day ? 'sun' : 'moon')}<b>${clock} IST</b><span class="sep"></span><span class="sc-place">LPU, Phagwara</span><span class="sep"></span><span>${day ? 'Sunset' : 'Sunrise'} in ${span}</span>`;
+    nodes.forEach((n) => { n.innerHTML = html; });
+  }
+  renderClocks();
+  setInterval(renderClocks, 30000);
 
   /* ─── Toast ───────────────────────────────────────────────────── */
   let toastHost;

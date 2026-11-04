@@ -7,8 +7,8 @@ header('Cache-Control: public, max-age=60');
 $queries = [
     'reports' => "SELECT COUNT(*) FROM incidents",
     'resolved' => "SELECT COUNT(*) FROM incidents WHERE status = 'resolved'",
-    'safe_spaces' => "SELECT COUNT(*) FROM safe_spaces",
-    'walkers' => "SELECT COUNT(*) FROM escorts WHERE status = 'active'",
+    'safe_spaces' => "SELECT COUNT(*) FROM safe_spaces WHERE TIMESTAMPADD(HOUR, time_active, timestamp) > NOW()",
+    'walkers' => "SELECT COUNT(*) FROM escorts WHERE status = 'active' AND verification_status = 'verified'",
 ];
 
 $stats = [];

@@ -39,7 +39,7 @@ const icons = [
   'mail', 'user', 'users', 'eye', 'eye-off', 'upload', 'camera', 'palette', 'sparkles', 'heart-handshake',
   'hand-heart', 'graduation-cap', 'building', 'store', 'door-open', 'trophy', 'rotate-cw', 'plus', 'layers',
   'trash-2', 'chevron-right', 'chevron-down', 'route', 'user-round-check', 'pentagon', 'circle', 'database', 'activity',
-  'inbox', 'scale',
+  'inbox', 'scale', 'moon', 'sun', 'sunrise', 'sunset', 'satellite', 'circle-x', 'badge-check', 'smartphone', 'radar', 'check-check', 'video', 'wifi', 'battery-full', 'signal',
 ];
 const symbols = icons.map((name) => {
   const svg = fs.readFileSync(path.join(nm, 'lucide-static', 'icons', `${name}.svg`), 'utf8');

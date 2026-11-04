@@ -17,6 +17,15 @@ $total = $count('SELECT COUNT(*) FROM incidents');
 $pending = $count("SELECT COUNT(*) FROM incidents WHERE status = 'pending'");
 $resolved = $count("SELECT COUNT(*) FROM incidents WHERE status = 'resolved'");
 
+$walkers = $db->query("SELECT escort_id, name, email, phone, type, id_proof_type, id_proof_number, verification_status, available_from, available_to FROM escorts ORDER BY FIELD(verification_status, 'pending', 'verified', 'rejected'), created_at DESC")->fetchAll(PDO::FETCH_ASSOC);
+$walks = $db->query(
+    "SELECT w.walk_id, w.pickup_location, w.destination, w.request_time, w.status, w.escort_id,
+            TRIM(CONCAT(COALESCE(u.first_name, ''), ' ', COALESCE(u.last_name, ''))) AS requester
+     FROM walk_requests w LEFT JOIN users u ON u.id = w.user_id
+     ORDER BY w.request_time DESC LIMIT 50"
+)->fetchAll(PDO::FETCH_ASSOC);
+$verified = array_filter($walkers, fn ($w) => $w['verification_status'] === 'verified');
+
 $filter = in_array($_GET['status'] ?? '', ['pending', 'in_progress', 'resolved', 'closed'], true) ? $_GET['status'] : '';
 $incidents = $incident->getAllIncidents(1, 100, $filter ? ['status' => $filter] : []);
 
@@ -88,12 +97,96 @@ $v = filemtime(__DIR__ . '/../public/css/glass.css');
       </table>
     </div>
   </section>
+
+  <section class="glass card-lg" data-reveal>
+    <h2 style="font-size:19px;margin-bottom:14px">Walkers</h2>
+    <?php if (!$walkers): ?>
+      <div class="empty"><?= ai('users') ?><span>No one has volunteered yet.</span></div>
+    <?php else: ?>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>Name</th><th>Contact</th><th>Role</th><th>ID</th><th>Hours</th><th>Verification</th></tr></thead>
+        <tbody>
+          <?php foreach ($walkers as $w): ?>
+            <tr>
+              <td><?= a($w['name']) ?></td>
+              <td><div><?= a($w['email']) ?></div><div class="small muted"><?= a($w['phone']) ?></div></td>
+              <td><?= a(ucfirst($w['type'])) ?></td>
+              <td><div><?= a($w['id_proof_type']) ?></div><div class="small muted mono"><?= a($w['id_proof_number']) ?></div></td>
+              <td style="white-space:nowrap"><?= a(substr((string)$w['available_from'], 0, 5)) ?>–<?= a(substr((string)$w['available_to'], 0, 5)) ?></td>
+              <td>
+                <label class="sr-only" for="wv<?= a($w['escort_id']) ?>">Verification for <?= a($w['name']) ?></label>
+                <select class="input" id="wv<?= a($w['escort_id']) ?>" data-verify="<?= a($w['escort_id']) ?>" style="height:34px;width:128px;font-size:13px">
+                  <?php foreach (['pending' => 'Pending', 'verified' => 'Verified', 'rejected' => 'Rejected'] as $key => $label): ?>
+                    <option value="<?= $key ?>" <?= $w['verification_status'] === $key ? 'selected' : '' ?>><?= $label ?></option>
+                  <?php endforeach; ?>
+                </select>
+              </td>
+            </tr>
+          <?php endforeach; ?>
+        </tbody>
+      </table>
+    </div>
+    <?php endif; ?>
+  </section>
+
+  <section class="glass card-lg" data-reveal>
+    <h2 style="font-size:19px;margin-bottom:14px">Walk requests</h2>
+    <?php if (!$walks): ?>
+      <div class="empty"><?= ai('route') ?><span>No walk requests yet.</span></div>
+    <?php else: ?>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>Who</th><th>Route</th><th>When</th><th>Walker</th><th>Status</th></tr></thead>
+        <tbody>
+          <?php foreach ($walks as $w): ?>
+            <tr data-walk="<?= a($w['walk_id']) ?>">
+              <td><?= a($w['requester'] ?: 'Member') ?></td>
+              <td><?= a($w['pickup_location']) ?> → <?= a($w['destination']) ?></td>
+              <td style="white-space:nowrap"><?= a(date('j M, g:i A', strtotime($w['request_time']))) ?></td>
+              <td>
+                <select class="input" data-walk-field="escort" aria-label="Walker" style="height:34px;width:150px;font-size:13px">
+                  <option value="">Unassigned</option>
+                  <?php foreach ($verified as $v): ?><option value="<?= a($v['escort_id']) ?>" <?= $w['escort_id'] === $v['escort_id'] ? 'selected' : '' ?>><?= a($v['name']) ?></option><?php endforeach; ?>
+                </select>
+              </td>
+              <td>
+                <select class="input" data-walk-field="status" aria-label="Status" style="height:34px;width:128px;font-size:13px">
+                  <?php foreach (['pending' => 'Pending', 'accepted' => 'Assigned', 'completed' => 'Completed', 'cancelled' => 'Cancelled', 'rejected' => 'Declined'] as $key => $label): ?>
+                    <option value="<?= $key ?>" <?= $w['status'] === $key ? 'selected' : '' ?>><?= $label ?></option>
+                  <?php endforeach; ?>
+                </select>
+              </td>
+            </tr>
+          <?php endforeach; ?>
+        </tbody>
+      </table>
+    </div>
+    <?php endif; ?>
+  </section>
 </div>
 <script src="../public/lib/gsap.min.js"></script>
 <script src="../public/lib/ScrollTrigger.min.js"></script>
 <script src="../public/js/sheshield.js?v=<?= $v ?>"></script>
 <script>
 document.addEventListener('change', async (e) => {
+  const verify = e.target.closest('[data-verify]');
+  const walkRow = e.target.closest('[data-walk]');
+  if (verify || walkRow) {
+    const body = verify
+      ? { action: 'verify_walker', escortId: verify.dataset.verify, decision: verify.value }
+      : {
+        action: 'update_walk',
+        walkId: walkRow.dataset.walk,
+        escortId: walkRow.querySelector('[data-walk-field=escort]').value,
+        status: walkRow.querySelector('[data-walk-field=status]').value,
+      };
+    try {
+      const d = await SS.post('../api/walks/admin_action.php', body);
+      showToast(d.message);
+    } catch (err) { showToast(err.message, 'error'); }
+    return;
+  }
   const s = e.target.closest('[data-status]');
   if (!s) return;
   try {

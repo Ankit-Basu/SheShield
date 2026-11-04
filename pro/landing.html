@@ -10,8 +10,8 @@
   <script>try{document.documentElement.dataset.theme=localStorage.getItem('ss-theme')||'dawn'}catch(e){}</script>
   <link rel="preload" href="../fonts/Clash%20Display/Fonts/WEB/fonts/ClashDisplay-Semibold.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="../fonts/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Variable.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="../public/css/glass.css?v=7">
-  <link rel="stylesheet" href="../public/css/landing.css?v=7">
+  <link rel="stylesheet" href="../public/css/glass.css?v=11">
+  <link rel="stylesheet" href="../public/css/landing.css?v=11">
 </head>
 <body>
 <div class="ss-backdrop" aria-hidden="true"></div>
@@ -42,12 +42,8 @@
   <!-- ═══ HERO ═══ -->
   <section class="hero" id="top">
     <div class="hero-copy" id="heroCopy">
-      <div class="stickers" aria-hidden="true">
-        <span class="sticker sticker-a">SOS · ONE TAP</span>
-        <span class="sticker sticker-b">LIVE LOCATION</span>
-        <span class="sticker sticker-c">ANONYMOUS REPORTING</span>
-      </div>
-      <h1 class="display hero-title" data-split data-delay="0.15">No one walks <span class="text-gradient">home alone.</span></h1>
+      <div class="sunclock hero-clock" data-sunclock></div>
+      <h1 class="display hero-title" data-split data-delay="0.1"><span class="ln">No one walks</span> <span class="ln text-gradient">home alone.</span></h1>
       <p class="hero-sub" data-reveal>SheShield puts help one tap away. Find a walking companion, call for help with your location ready to send, and report what happened in confidence.</p>
       <div class="row wrap hero-cta" data-reveal>
         <a href="signup.html" class="btn btn-primary btn-lg" data-magnet>Get started <svg class="i" aria-hidden="true"><use href="../public/icons.svg#arrow-right"/></svg></a>
@@ -56,7 +52,9 @@
     </div>
 
     <div class="hero-stage" id="heroStage" aria-hidden="true">
-      <div class="pass glass glass-solid-lite" id="passCard">
+      <span class="orb" data-orb="-22" style="width:250px;height:250px;right:0;top:0"></span>
+      <span class="orb orb-b" data-orb="30" style="width:170px;height:170px;left:-2%;bottom:6%"></span>
+      <div class="pass glass glass-frost" id="passCard">
         <div class="pass-main">
           <div class="row-between"><span class="eyebrow">Walk pass</span><span class="badge badge-good"><span class="dot dot-live"></span>On the way</span></div>
           <div class="pass-route">
@@ -76,11 +74,11 @@
         </div>
       </div>
 
-      <div class="float-card glass" id="floatSos">
+      <div class="float-card glass glass-frost" id="floatSos">
         <span class="mini-beacon"><svg class="i"><use href="../public/icons.svg#siren"/></svg></span>
         <div><b>SOS ready</b><span class="xs muted">Works without signing in</span></div>
       </div>
-      <div class="float-card glass" id="floatLoc">
+      <div class="float-card glass glass-frost" id="floatLoc">
         <span class="icon-tile" style="width:36px;height:36px;font-size:16px"><svg class="i"><use href="../public/icons.svg#locate-fixed"/></svg></span>
         <div><b>31.2533, 75.7050</b><span class="xs muted">Ready to send</span></div>
       </div>
@@ -105,6 +103,7 @@
       <span class="eyebrow">How it works</span>
       <h2 class="display section-title" data-split="scroll">One walk, <span class="text-gradient">night to dawn.</span></h2>
       <div class="walk-map glass" aria-hidden="true">
+        <img class="walk-sat" src="images/lpu-satellite.jpg" alt="" loading="lazy" decoding="async">
         <svg viewBox="0 0 420 420" id="walkSvg" fill="none">
           <path class="walk-ghost" d="M52 372 C120 372 110 268 188 262 C276 256 318 296 350 232 C382 168 262 158 214 136 C166 114 196 56 300 48"/>
           <path class="walk-line" id="walkLine" pathLength="1" d="M52 372 C120 372 110 268 188 262 C276 256 318 296 350 232 C382 168 262 158 214 136 C166 114 196 56 300 48"/>
@@ -139,9 +138,49 @@
     </ol>
   </section>
 
-  <!-- ═══ STATEMENT ═══ -->
-  <section class="statement">
-    <p class="display" id="statement">Every feature here does one job: shorten the distance between something feeling wrong and someone being able to help.</p>
+  <!-- ═══ SOS DEMO: scroll drives the phone ═══ -->
+  <section class="demo" id="demo">
+    <div class="demo-sticky">
+      <div class="demo-copy">
+        <span class="eyebrow">See it work</span>
+        <h2 class="display section-title">What one tap <span class="text-gradient">does.</span></h2>
+        <ol class="demo-steps" id="demoSteps">
+          <li class="on"><span class="mono">1</span><div><h3>Tap SOS</h3><p>It sits on every page, even before you sign in.</p></div></li>
+          <li><span class="mono">2</span><div><h3>Call straight away</h3><p>Calling 112 never waits for GPS.</p></div></li>
+          <li><span class="mono">3</span><div><h3>Your exact spot is ready</h3><p>Coordinates and a map link, prepared for you.</p></div></li>
+          <li><span class="mono">4</span><div><h3>You choose who gets it</h3><p>Send it by WhatsApp or SMS. Nothing goes out without your tap.</p></div></li>
+        </ol>
+      </div>
+      <div class="demo-stage" aria-hidden="true">
+        <span class="orb" data-orb="-40" style="width:300px;height:300px;right:-3%;top:2%"></span>
+        <span class="orb orb-b" data-orb="46" style="width:190px;height:190px;left:0;bottom:4%"></span>
+        <div class="phone glass glass-frost">
+          <div class="phone-bar"><span>21:40</span><span class="row" style="gap:4px"><svg class="i" aria-hidden="true"><use href="../public/icons.svg#signal"/></svg><svg class="i" aria-hidden="true"><use href="../public/icons.svg#wifi"/></svg><svg class="i" aria-hidden="true"><use href="../public/icons.svg#battery-full"/></svg></span></div>
+          <div class="screen" data-screen="1">
+            <p class="eyebrow">Walking home</p>
+            <div class="big-sos"><span class="ring"></span><span class="ring r2"></span><span class="core"><svg class="i" aria-hidden="true"><use href="../public/icons.svg#siren"/></svg><b>SOS</b></span></div>
+            <p class="small muted">Tap once</p>
+          </div>
+          <div class="screen" data-screen="2">
+            <div class="radar"><i></i><i></i><i></i><span><svg class="i" aria-hidden="true"><use href="../public/icons.svg#locate-fixed"/></svg></span></div>
+            <b class="display" style="font-size:22px">Finding you</b>
+            <span class="btn btn-sos btn-block" style="margin-top:auto"><svg class="i" aria-hidden="true"><use href="../public/icons.svg#phone-call"/></svg> Call 112 now</span>
+            <span class="btn btn-outline btn-block"><svg class="i" aria-hidden="true"><use href="../public/icons.svg#phone"/></svg> Women's helpline 1091</span>
+          </div>
+          <div class="screen" data-screen="3">
+            <div class="mini-map"><img src="images/lpu-satellite.jpg" alt="" loading="lazy" decoding="async"><span class="mini-pin"></span></div>
+            <div class="coords"><div><span class="eyebrow">Lat</span><b>31.25330</b></div><div><span class="eyebrow">Lng</span><b>75.70400</b></div></div>
+            <span class="btn btn-block phone-wa" style="margin-top:auto"><svg class="i" aria-hidden="true"><use href="../public/icons.svg#message-circle"/></svg> Send on WhatsApp</span>
+            <span class="btn btn-outline btn-block"><svg class="i" aria-hidden="true"><use href="../public/icons.svg#message-square"/></svg> Send by SMS</span>
+          </div>
+          <div class="screen" data-screen="4">
+            <div class="chat-top"><span class="avatar" style="width:34px;height:34px;font-size:14px">M</span><b>Mom</b></div>
+            <div class="bubble"><b>SOS. I need help.</b><br>My location: maps.google.com/?q=31.2533,75.7040<div class="ticks">21:41 <svg class="i" aria-hidden="true"><use href="../public/icons.svg#check-check"/></svg></div></div>
+            <div class="bubble in">Calling you now. Stay on the line.</div>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- ═══ SERVICES BENTO ═══ -->
@@ -149,37 +188,40 @@
     <span class="eyebrow">Services</span>
     <h2 class="display section-title" data-split="scroll">Everything for <span class="text-gradient">the way home.</span></h2>
     <div class="grid g-bento bento">
-      <a href="#top" data-sos class="glass spot lift bento-card span-5 is-sos" data-reveal>
+      <span class="orb" data-orb="-60" style="width:340px;height:340px;left:34%;top:-3%"></span>
+      <span class="orb orb-b" data-orb="70" style="width:240px;height:240px;right:-3%;bottom:20%"></span>
+      <span class="orb" data-orb="-30" style="width:170px;height:170px;left:-3%;bottom:6%"></span>
+      <a href="#top" data-sos class="glass glass-frost spot lift bento-card span-5 is-sos" data-reveal>
         <div class="viz viz-sos" aria-hidden="true"><span class="ring"></span><span class="ring r2"></span><span class="core"><svg class="i"><use href="../public/icons.svg#siren"/></svg></span></div>
         <h3>SOS, in one tap</h3>
         <p>Calls first, GPS second. Your location is ready to send to anyone you trust.</p>
       </a>
-      <a href="../views/pages/map.php" class="glass spot lift bento-card span-7" data-reveal>
-        <div class="viz viz-map" aria-hidden="true" id="vizMap"></div>
+      <a href="../views/pages/map.php" class="glass glass-frost spot lift bento-card span-7" data-reveal>
+        <div class="viz viz-map" aria-hidden="true"><img src="images/lpu-satellite.jpg" alt="" loading="lazy" decoding="async"><i style="left:41%;top:44%"></i><i style="left:58%;top:62%"></i><i style="left:49%;top:27%"></i><em style="left:33%;top:68%"></em><em style="left:68%;top:35%"></em></div>
         <h3>Safety map</h3>
         <p>Campus landmarks alongside the incidents reported around them, so you can choose your route.</p>
       </a>
-      <a href="../views/pages/walkwithus.php" class="glass spot lift bento-card span-4" data-reveal>
+      <a href="../views/pages/walkwithus.php" class="glass glass-frost spot lift bento-card span-4" data-reveal>
         <div class="viz viz-icon" aria-hidden="true"><svg class="i"><use href="../public/icons.svg#footprints"/></svg></div>
         <h3>Walk with us</h3>
         <p>Request a companion for your route, or volunteer to walk with someone else.</p>
       </a>
-      <a href="report.html" class="glass spot lift bento-card span-4" data-reveal>
+      <a href="report.html" class="glass glass-frost spot lift bento-card span-4" data-reveal>
         <div class="viz viz-toggle" aria-hidden="true"><span>Name</span><span class="toggle-demo"></span><span>Anonymous</span></div>
         <h3>Confidential reports</h3>
         <p>File with your name or anonymously, and attach photos or documents as evidence.</p>
       </a>
-      <a href="../views/pages/safespace.php" class="glass spot lift bento-card span-4" data-reveal>
+      <a href="../views/pages/safespace.php" class="glass glass-frost spot lift bento-card span-4" data-reveal>
         <div class="viz viz-icon" aria-hidden="true"><svg class="i"><use href="../public/icons.svg#shield-check"/></svg></div>
         <h3>Safe spaces</h3>
         <p>See places others have marked as safe, and add ones you know.</p>
       </a>
-      <a href="../views/pages/analytics.php" class="glass spot lift bento-card span-6" data-reveal>
+      <a href="../views/pages/analytics.php" class="glass glass-frost spot lift bento-card span-6" data-reveal>
         <div class="viz viz-bars" aria-hidden="true"><i style="--h:34%"></i><i style="--h:58%"></i><i style="--h:42%"></i><i style="--h:76%"></i><i style="--h:52%"></i><i style="--h:92%"></i><i style="--h:66%"></i></div>
         <h3>Analytics</h3>
         <p>See where your reports stand, by status, type and time.</p>
       </a>
-      <a href="../views/pages/templates.php" class="glass spot lift bento-card span-6" data-reveal>
+      <a href="../views/pages/templates.php" class="glass glass-frost spot lift bento-card span-6" data-reveal>
         <div class="viz viz-lines" aria-hidden="true"><i></i><i></i><i></i></div>
         <h3>Complaint templates</h3>
         <p>Guided prompts for harassment, stalking, cybercrime and POSH complaints, for when the words are hard to find.</p>
@@ -189,6 +231,7 @@
 
   <!-- ═══ ABOUT + LIVE COUNTS ═══ -->
   <section class="section about" id="about">
+    <span class="orb orb-b" data-orb="-50" style="width:220px;height:220px;right:-2%;bottom:-6%"></span>
     <div class="about-img glass" data-reveal>
       <img src="images/about-dawn-1200.jpg" alt="A person standing under a starry night sky as dawn breaks on the horizon" decoding="async" id="aboutImg">
     </div>
@@ -196,7 +239,7 @@
       <span class="eyebrow">About</span>
       <h2 class="display section-title" data-split="scroll">Built on campus, <span class="text-gradient">for campus.</span></h2>
       <p class="muted" data-reveal>SheShield is a student-built project. It started with a simple observation: when you feel unsafe, you should not have to work out who to call, where you are, or how to explain it. Those answers should already be on your screen.</p>
-      <div class="live glass" id="liveStats" data-reveal hidden>
+      <div class="live glass glass-frost" id="liveStats" data-reveal hidden>
         <div class="row-between" style="grid-column:1/-1"><span class="eyebrow">Live from our database</span><span class="badge badge-good"><span class="dot dot-live"></span>Live</span></div>
         <div><b class="display" data-stat="reports">0</b><span class="small muted">Reports filed</span></div>
         <div><b class="display" data-stat="resolved">0</b><span class="small muted">Resolved</span></div>
@@ -217,11 +260,15 @@
   </section>
 
   <!-- ═══ CTA ═══ -->
-  <section class="section cta glass spot" data-reveal>
+  <div class="cta-wrap">
+  <span class="orb" data-orb="-40" style="width:260px;height:260px;left:-2%;top:-14%"></span>
+  <span class="orb orb-b" data-orb="30" style="width:170px;height:170px;right:-4%;bottom:-8%"></span>
+  <section class="cta glass glass-frost spot" data-reveal>
     <h2 class="display" data-split="scroll">Set it up before you need it.</h2>
     <p class="muted">A minute now means one less thing to think about later.</p>
     <a href="signup.html" class="btn btn-primary btn-lg" data-magnet>Create your account <svg class="i" aria-hidden="true"><use href="../public/icons.svg#arrow-right"/></svg></a>
   </section>
+  </div>
 </main>
 
 <footer class="footer">
@@ -234,7 +281,7 @@
     <nav aria-label="On this page"><span class="eyebrow">Explore</span><a href="#walk">How it works</a><a href="#services">Services</a><a href="#about">About</a><a href="#helplines">Helplines</a></nav>
   </div>
   <div class="footer-mark display" aria-hidden="true">SheShield</div>
-  <p class="xs muted" style="text-align:center">© <span id="year">2026</span> SheShield. All rights reserved.</p>
+  <p class="xs muted" style="text-align:center">© <span id="year">2026</span> SheShield. All rights reserved. Campus imagery &copy; Esri, Maxar.</p>
 </footer>
 
 <!-- Assistant: fixed answers about the product, not a live person -->
@@ -251,7 +298,7 @@
 <script src="../public/lib/gsap.min.js"></script>
 <script src="../public/lib/ScrollTrigger.min.js"></script>
 <script src="../public/lib/lenis.min.js"></script>
-<script src="../public/js/sheshield.js?v=7"></script>
-<script src="../public/js/landing.js?v=7"></script>
+<script src="../public/js/sheshield.js?v=11"></script>
+<script src="../public/js/landing.js?v=11"></script>
 </body>
 </html>

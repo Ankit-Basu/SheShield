@@ -193,7 +193,7 @@ class Database {
 
         $this->conn->exec("CREATE TABLE IF NOT EXISTS walk_requests (
             walk_id VARCHAR(50) PRIMARY KEY,
-            escort_id VARCHAR(20) NOT NULL,
+            escort_id VARCHAR(20) NULL,
             user_id INT NULL,
             pickup_location VARCHAR(255) NOT NULL,
             destination VARCHAR(255) NOT NULL,

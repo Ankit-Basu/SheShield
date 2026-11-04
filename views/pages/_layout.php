@@ -45,7 +45,10 @@ function ss_head($title, $extraHead = '') {
   <?= $extraHead ?>
 </head>
 <body>
-<div class="ss-backdrop" data-mode="calm" aria-hidden="true"></div>
+<div class="ss-backdrop" data-mode="calm" aria-hidden="true">
+  <span class="orb" style="width:260px;height:260px;right:5%;top:15%"></span>
+  <span class="orb orb-b" style="width:200px;height:200px;left:38%;top:58%"></span>
+</div>
     <?php
 }
 

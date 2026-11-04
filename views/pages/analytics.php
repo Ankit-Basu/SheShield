@@ -66,7 +66,7 @@ ss_page_open('analytics', 'Analytics', 'Your safety analytics', '<span class="hi
     ['This week', $recent, '', 'clock', 'Last 7 days'],
     ['Pending', $pending, '', 'bell', $pending > 0 ? 'Awaiting review' : 'All clear'],
   ] as [$label, $value, $suffix, $ico, $note]): ?>
-    <article class="glass stat spot" data-reveal>
+    <article class="glass glass-frost stat spot" data-reveal>
       <div class="stat-top"><span><?= e($label) ?></span><?= icon($ico) ?></div>
       <div class="stat-num" data-count="<?= (int)$value ?>" data-suffix="<?= $suffix ?>"><?= (int)$value ?><?= $suffix ?></div>
       <div class="stat-note"><?= e($note) ?></div>

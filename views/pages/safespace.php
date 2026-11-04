@@ -4,9 +4,9 @@ require __DIR__ . '/_layout.php';
 $ts = 0; $ti = 0; $tw = 0;
 if (isset($conn) && !$conn->connect_error) {
     $count = function ($sql) use ($conn) { $r = $conn->query($sql); return $r ? (int)$r->fetch_row()[0] : 0; };
-    $ts = $count('SELECT COUNT(*) FROM safe_spaces');
+    $ts = $count('SELECT COUNT(*) FROM safe_spaces WHERE TIMESTAMPADD(HOUR, time_active, timestamp) > NOW()');
     $ti = $count("SELECT COUNT(*) FROM incidents WHERE status != 'resolved'");
-    $tw = $count("SELECT COUNT(*) FROM escorts WHERE status = 'active'");
+    $tw = $count("SELECT COUNT(*) FROM escorts WHERE status = 'active' AND verification_status = 'verified'");
 }
 $head = '<link rel="stylesheet" href="../../public/lib/leaflet.css"><link rel="stylesheet" href="../../public/lib/leaflet.draw.css">';
 ss_page_open('safespace', 'Safe spaces', 'Safe spaces', '', $head);
@@ -17,7 +17,7 @@ ss_page_open('safespace', 'Safe spaces', 'Safe spaces', '', $head);
     ['Open incidents', $ti, 'triangle-alert', 'Not yet resolved'],
     ['Active walkers', $tw, 'footprints', 'Listed across campus'],
   ] as [$label, $value, $ico, $note]): ?>
-    <article class="glass stat spot" data-reveal>
+    <article class="glass glass-frost stat spot" data-reveal>
       <div class="stat-top"><span><?= e($label) ?></span><?= icon($ico) ?></div>
       <div class="stat-num" <?= $ico === 'shield-check' ? 'id="spaceCount"' : '' ?> data-count="<?= (int)$value ?>"><?= (int)$value ?></div>
       <div class="stat-note"><?= e($note) ?></div>
@@ -28,7 +28,7 @@ ss_page_open('safespace', 'Safe spaces', 'Safe spaces', '', $head);
 <div class="grid g-main">
   <div class="map-wrap glass" data-reveal style="padding:6px">
     <div id="safeMap" class="map" data-lenis-prevent role="application" aria-label="Map of safe spaces"></div>
-    <div class="map-legend" style="left:18px;bottom:18px">
+    <div class="map-legend">
       <span><span class="dot" style="color:#22c55e"></span>Active safe space</span>
       <span><span class="dot" style="color:var(--accent)"></span>Your new zone</span>
     </div>
@@ -61,13 +61,12 @@ ss_page_open('safespace', 'Safe spaces', 'Safe spaces', '', $head);
 <?php ob_start(); ?>
 <script src="../../public/lib/leaflet.js"></script>
 <script src="../../public/lib/leaflet.draw.js"></script>
+<script src="../../public/js/locations.js"></script>
+<script src="../../public/js/lpu-campus.js"></script>
+<script src="../../public/js/campus-map.js"></script>
 <script>
-const map = L.map('safeMap').setView([31.2533, 75.705], 16);
-map.attributionControl.setPrefix(false);
-const esri = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas';
-L.tileLayer(esri + '/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', { attribution: 'Tiles &copy; Esri, HERE, Garmin, &copy; OpenStreetMap contributors', maxNativeZoom: 16, maxZoom: 19 }).addTo(map);
-L.tileLayer(esri + '/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}', { maxNativeZoom: 16, maxZoom: 19 }).addTo(map);
-setTimeout(() => map.invalidateSize(), 250);
+const { map, addLandmarks } = CampusMap.create('safeMap');
+addLandmarks();
 
 const accent = getComputedStyle(document.documentElement).getPropertyValue('--aurora-3').trim();
 const shape = { color: accent, fillColor: accent, fillOpacity: 0.2, weight: 2 };
