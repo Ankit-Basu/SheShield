@@ -13,12 +13,13 @@ class Database {
                 'driver' => 'pgsql'
             ];
         }
+        // Docker Compose, Kubernetes and Helm set these. XAMPP uses the defaults.
         return [
-            'host' => 'localhost',
-            'db'   => 'sheshield',
-            'user' => 'root',
-            'pass' => '',
-            'port' => 3306,
+            'host' => getenv('DB_HOST') ?: 'localhost',
+            'db'   => getenv('DB_NAME') ?: 'sheshield',
+            'user' => getenv('DB_USER') ?: 'root',
+            'pass' => getenv('DB_PASS') !== false ? getenv('DB_PASS') : '',
+            'port' => (int)(getenv('DB_PORT') ?: 3306),
             'driver' => 'mysql'
         ];
     }

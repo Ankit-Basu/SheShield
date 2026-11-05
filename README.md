@@ -434,6 +434,18 @@ cp app/config/email_config.example.php app/config/email_config.php
 
 The database and tables are created automatically on the first request.
 
+### Run with Docker
+
+From the repository root, this starts the app, MySQL and phpMyAdmin:
+
+```bash
+docker compose -f infrastructure/docker/docker-compose.yml up -d --build
+```
+
+The site is at http://localhost:8080, and phpMyAdmin at http://localhost:8081. If port 8080 is taken, set `APP_PORT` first, for example `APP_PORT=8095`.
+
+The app reads `DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASS` and `DB_PORT` from the environment, which Docker Compose, Kubernetes and Helm all set. Without them it falls back to the XAMPP defaults. Email config is never baked into the image: mount `app/config/email_config.php` into the container to enable confirmation emails.
+
 To make someone an admin, add their user id to the `admins` table, then have them sign in again:
 
 ```sql
