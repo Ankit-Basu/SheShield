@@ -10,13 +10,13 @@
 
 @font-face {
   font-family: 'Clash Display';
-  src: url('../../fonts/Clash Display/Fonts/WEB/fonts/ClashDisplay-Semibold.woff2') format('woff2');
+  src: url('../fonts/ClashDisplay-Semibold.woff2') format('woff2');
   font-weight: 600;
   font-display: swap;
 }
 @font-face {
   font-family: 'Satoshi';
-  src: url('../../fonts/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Variable.woff2') format('woff2');
+  src: url('../fonts/Satoshi-Variable.woff2') format('woff2');
   font-weight: 300 900;
   font-display: swap;
 }
@@ -219,9 +219,12 @@ h1, h2, h3, h4 { font-weight: 600; line-height: 1.14; letter-spacing: -0.006em; 
 .glass-solid { background: var(--glass-solid); }
 
 /* MagicBento / SpotlightCard port. --mx/--my are written only for the hovered card. */
-.spot { --mx: 50%; --my: 50%; overflow: hidden; }
+@property --mx { syntax: '<length-percentage>'; inherits: false; initial-value: 50%; }
+@property --my { syntax: '<length-percentage>'; inherits: false; initial-value: 50%; }
+.spot { overflow: hidden; }
 .spot > * { position: relative; z-index: 1; }
 .spot::after {
+  --mx: inherit; --my: inherit;
   content: ''; position: absolute; inset: 0; opacity: 0; border-radius: inherit; pointer-events: none;
   background: radial-gradient(340px circle at var(--mx) var(--my), color-mix(in oklab, var(--primary) 26%, transparent), transparent 70%);
   transition: opacity 0.3s;

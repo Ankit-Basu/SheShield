@@ -34,7 +34,7 @@ $initial = strtoupper(substr($firstName ?: 'M', 0, 1));
 
 $profileImage = $_SESSION['profile_image'] ?? null;
 if (!$profileImage && $sessionUserId > 0) {
-    $handler = __DIR__ . '/../../includes/profile_image_handler.php';
+    $handler = __DIR__ . '/../../app/helpers/profile_image.php';
     if (file_exists($handler)) {
         include_once $handler;
         if (function_exists('getProfileImage')) {
@@ -87,7 +87,7 @@ $navGroups = [
     <div class="side-label">Account</div>
     <?php if (!empty($_SESSION['is_admin'])): ?><a href="../../admin/index.php" class="side-link"><?= icon('badge-check') ?><span>Admin</span></a><?php endif; ?>
     <a href="settings.php" class="side-link <?= $activePage === 'settings' ? 'active' : '' ?>"><?= icon('settings') ?><span>Settings</span></a>
-    <a href="../../auth/logout.php" class="side-link"><?= icon('log-out') ?><span>Log out</span></a>
+    <a href="../../api/auth/logout.php" class="side-link"><?= icon('log-out') ?><span>Log out</span></a>
   </nav>
   <div class="side-foot">
     <a href="settings.php" class="side-user">

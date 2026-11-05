@@ -38,7 +38,7 @@ $v = filemtime(__DIR__ . '/../public/css/glass.css');
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Report #<?= (int)$row['id'] ?> · SheShield admin</title>
-  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="icon" type="image/svg+xml" href="../public/assets/favicon.svg">
   <script>try{document.documentElement.dataset.theme=localStorage.getItem('ss-theme')||'dawn'}catch(e){}</script>
   <link rel="stylesheet" href="../public/css/glass.css?v=<?= $v ?>">
 </head>

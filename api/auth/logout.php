@@ -1,12 +1,13 @@
 <?php
-$sessionPath = __DIR__ . '/../../app/middleware/session.php';
-if (!file_exists($sessionPath)) $sessionPath = __DIR__ . '/../../utils/session.php';
-require_once $sessionPath;
-
-// Destroy the session
-Session::destroy();
-
-// Redirect to login page
+require_once __DIR__ . '/../../app/middleware/session_bootstrap.php';
+configure_session_storage();
+// Session management - simple version that works without custom Session class
+session_start();
+$_SESSION = array();
+if (ini_get("session.use_cookies")) {
+    $params = session_get_cookie_params();
+    setcookie(session_name(), '', time() - 42000, $params["path"], $params["domain"], $params["secure"], $params["httponly"]);
+}
+session_destroy();
 header('Location: ../../pro/landing.html');
 exit();
-?>

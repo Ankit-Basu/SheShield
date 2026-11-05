@@ -127,7 +127,7 @@ document.getElementById('photoInput').addEventListener('change', async (e) => {
   const form = new FormData();
   form.append('profile_image', file);
   try {
-    const d = await SS.post('../../includes/handle_profile_update.php', form);
+    const d = await SS.post('../../api/user/upload_photo.php', form);
     document.getElementById('avatarPreview').innerHTML = `<img src="../../${d.image_path.replace(/^\//, '')}" alt="">`;
     showToast(d.message);
   } catch (err) { showToast(err.message, 'error'); }

@@ -36,6 +36,6 @@ module.exports = {
     'infrastructure/',
     'vendor/',
     '*.min.js',
-    'src/output.css',
+    'public/lib/',
   ],
 };
