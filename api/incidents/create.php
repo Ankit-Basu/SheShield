@@ -5,9 +5,8 @@ session_start();
 header("Content-Type: application/json; charset=UTF-8");
 
 $cfgPath = __DIR__ . '/../../app/config/database.php';
-if (!file_exists($cfgPath)) $cfgPath = __DIR__ . '/../../config/database.php';
 include_once $cfgPath;
-include_once __DIR__ . '/../../models/Incident.php';
+include_once __DIR__ . '/../../app/models/Incident.php';
 
 // Accepts multipart form data (with evidence files) or a JSON body.
 $data = $_POST ?: (json_decode(file_get_contents("php://input"), true) ?: []);

@@ -6,12 +6,12 @@
   <title>SheShield · No one walks home alone</title>
   <meta name="description" content="SheShield is a campus safety platform for women: one-tap SOS, walk companions, confidential reporting and a live safety map.">
   <meta name="theme-color" content="#170d17">
-  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="icon" type="image/svg+xml" href="../public/assets/favicon.svg">
   <script>try{document.documentElement.dataset.theme=localStorage.getItem('ss-theme')||'dawn'}catch(e){}</script>
-  <link rel="preload" href="../fonts/Clash%20Display/Fonts/WEB/fonts/ClashDisplay-Semibold.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="../fonts/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Variable.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="../public/css/glass.css?v=11">
-  <link rel="stylesheet" href="../public/css/landing.css?v=11">
+  <link rel="preload" href="../public/fonts/ClashDisplay-Semibold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../public/fonts/Satoshi-Variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../public/css/glass.css?v=15">
+  <link rel="stylesheet" href="../public/css/landing.css?v=15">
 </head>
 <body>
 <div class="ss-backdrop" aria-hidden="true"></div>
@@ -103,7 +103,7 @@
       <span class="eyebrow">How it works</span>
       <h2 class="display section-title" data-split="scroll">One walk, <span class="text-gradient">night to dawn.</span></h2>
       <div class="walk-map glass" aria-hidden="true">
-        <img class="walk-sat" src="images/lpu-satellite.jpg" alt="" loading="lazy" decoding="async">
+        <img class="walk-sat" src="../public/images/lpu-satellite.jpg" alt="" loading="lazy" decoding="async">
         <svg viewBox="0 0 420 420" id="walkSvg" fill="none">
           <path class="walk-ghost" d="M52 372 C120 372 110 268 188 262 C276 256 318 296 350 232 C382 168 262 158 214 136 C166 114 196 56 300 48"/>
           <path class="walk-line" id="walkLine" pathLength="1" d="M52 372 C120 372 110 268 188 262 C276 256 318 296 350 232 C382 168 262 158 214 136 C166 114 196 56 300 48"/>
@@ -168,7 +168,7 @@
             <span class="btn btn-outline btn-block"><svg class="i" aria-hidden="true"><use href="../public/icons.svg#phone"/></svg> Women's helpline 1091</span>
           </div>
           <div class="screen" data-screen="3">
-            <div class="mini-map"><img src="images/lpu-satellite.jpg" alt="" loading="lazy" decoding="async"><span class="mini-pin"></span></div>
+            <div class="mini-map"><img src="../public/images/lpu-satellite.jpg" alt="" loading="lazy" decoding="async"><span class="mini-pin"></span></div>
             <div class="coords"><div><span class="eyebrow">Lat</span><b>31.25330</b></div><div><span class="eyebrow">Lng</span><b>75.70400</b></div></div>
             <span class="btn btn-block phone-wa" style="margin-top:auto"><svg class="i" aria-hidden="true"><use href="../public/icons.svg#message-circle"/></svg> Send on WhatsApp</span>
             <span class="btn btn-outline btn-block"><svg class="i" aria-hidden="true"><use href="../public/icons.svg#message-square"/></svg> Send by SMS</span>
@@ -197,7 +197,7 @@
         <p>Calls first, GPS second. Your location is ready to send to anyone you trust.</p>
       </a>
       <a href="../views/pages/map.php" class="glass glass-frost spot lift bento-card span-7" data-reveal>
-        <div class="viz viz-map" aria-hidden="true"><img src="images/lpu-satellite.jpg" alt="" loading="lazy" decoding="async"><i style="left:41%;top:44%"></i><i style="left:58%;top:62%"></i><i style="left:49%;top:27%"></i><em style="left:33%;top:68%"></em><em style="left:68%;top:35%"></em></div>
+        <div class="viz viz-map" aria-hidden="true"><img src="../public/images/lpu-satellite.jpg" alt="" loading="lazy" decoding="async"><i style="left:41%;top:44%"></i><i style="left:58%;top:62%"></i><i style="left:49%;top:27%"></i><em style="left:33%;top:68%"></em><em style="left:68%;top:35%"></em></div>
         <h3>Safety map</h3>
         <p>Campus landmarks alongside the incidents reported around them, so you can choose your route.</p>
       </a>
@@ -233,7 +233,7 @@
   <section class="section about" id="about">
     <span class="orb orb-b" data-orb="-50" style="width:220px;height:220px;right:-2%;bottom:-6%"></span>
     <div class="about-img glass" data-reveal>
-      <img src="images/about-dawn-1200.jpg" alt="A person standing under a starry night sky as dawn breaks on the horizon" decoding="async" id="aboutImg">
+      <img src="../public/images/about-dawn-1200.jpg" alt="A person standing under a starry night sky as dawn breaks on the horizon" decoding="async" id="aboutImg">
     </div>
     <div class="about-copy">
       <span class="eyebrow">About</span>
@@ -298,7 +298,7 @@
 <script src="../public/lib/gsap.min.js"></script>
 <script src="../public/lib/ScrollTrigger.min.js"></script>
 <script src="../public/lib/lenis.min.js"></script>
-<script src="../public/js/sheshield.js?v=11"></script>
-<script src="../public/js/landing.js?v=11"></script>
+<script src="../public/js/sheshield.js?v=15"></script>
+<script src="../public/js/landing.js?v=15"></script>
 </body>
 </html>

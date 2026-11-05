@@ -82,7 +82,7 @@ const spaceLayer = L.layerGroup().addTo(map);
 
 async function loadSpaces() {
   try {
-    const res = await fetch('../../safespace/get_safe_spaces.php', { credentials: 'same-origin' });
+    const res = await fetch('../../api/safespaces/list.php', { credentials: 'same-origin' });
     const list = await res.json();
     spaceLayer.clearLayers();
     list.forEach((s) => {
@@ -113,7 +113,7 @@ document.querySelectorAll('[data-draw]').forEach((chip) => chip.addEventListener
 map.on(L.Draw.Event.CREATED, (e) => {
   drawn.clearLayers();
   drawn.addLayer(e.layer);
-  // save_safe_zone.php takes a circle or polygon; a single point is stored as a small circle.
+  // api/safespaces/save_zone.php takes a circle or polygon; a single point is stored as a small circle.
   if (e.layerType === 'circle') {
     const c = e.layer.getLatLng();
     coordinates = { type: 'circle', center: [c.lat, c.lng], radius: e.layer.getRadius() };
@@ -140,7 +140,7 @@ document.getElementById('zoneForm').addEventListener('submit', async (e) => {
   const desc = document.getElementById('zoneDesc').value.trim();
   SS.busy(btn, true, 'Saving');
   try {
-    await SS.post('../../safespace/save_safe_zone.php', {
+    await SS.post('../../api/safespaces/save_zone.php', {
       coordinates: JSON.stringify(coordinates), description: `${name}\n${desc}`, timeActive: hours,
     });
     showToast('Safe zone saved and live on the map.');

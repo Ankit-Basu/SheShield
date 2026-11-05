@@ -17,6 +17,8 @@
   const icon = (name) => `<svg class="i" aria-hidden="true"><use href="${BASE}public/icons.svg#${name}"/></svg>`;
 
   root.classList.add('js');
+  // A device that struggled on an earlier page starts the next one in lite mode.
+  try { if (sessionStorage.getItem('ss-lite')) root.classList.add('ss-lite'); } catch (e) { /* private mode */ }
 
   /* ─── Aurora ────────────────────────────────────────────────────
      A small fragment shader drawn to a tiny canvas and stretched by the
@@ -111,20 +113,25 @@
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     }
 
-    let frameGap = calm ? 1000 / 15 : 1000 / 30;
-    let last = 0; let slow = 0; let frozen = reduced || lowEnd;
+    const frameGap = calm ? 1000 / 15 : 1000 / 30;
+    let last = 0; let slow = 0; let frozen = reduced || lowEnd || root.classList.contains('ss-lite');
+    let lastFrame = 0;
+    const graceUntil = performance.now() + 1500; // page load is allowed to be busy
     function loop(now) {
       if (frozen) return;
       requestAnimationFrame(loop);
+      // Judge every browser frame, so a steady 30 fps counts as struggling, not just long stalls.
+      const frame = now - lastFrame;
+      lastFrame = now;
+      if (!document.hidden && now > graceUntil && frame < 500) {
+        if (frame > 30) { slow += 1; } else if (slow > 0) { slow -= 0.5; }
+      }
+      if (slow > 36) {
+        enterLite();
+        return;
+      }
       const dt = now - last;
       if (document.hidden || dt < frameGap) return;
-      // Over-budget frames mean the main thread or GPU is struggling.
-      if (last && dt > frameGap + 34) { slow += 1; } else if (slow > 0) { slow -= 0.25; }
-      if (slow > 24) {
-        slow = 0;
-        root.classList.add('ss-lite');
-        if (frameGap < 1000 / 12) { frameGap *= 2; } else { frozen = true; return; }
-      }
       last = now;
       time += Math.min(dt, 120) / 1000 * (calm ? 0.55 : 0.8);
       shown += (progress - shown) * 0.08;
@@ -143,9 +150,15 @@
     requestAnimationFrame(loop);
 
     return {
-      setProgress(v) { progress = v; if (frozen) { shown = v; draw(); } },
+      setProgress(v) {
+        progress = v;
+        // A frozen aurora still shifts toward dawn, but only redraws for a visible change.
+        if (frozen && Math.abs(v - shown) > 0.02) { shown = v; draw(); }
+      },
       recolor,
-      pause(flag) { if (flag) { frozen = true; } else if (!reduced && !lowEnd && frozen) { frozen = false; last = 0; requestAnimationFrame(loop); } },
+      pause(flag) {
+        if (flag) { frozen = true; } else if (!reduced && !lowEnd && frozen && !root.classList.contains('ss-lite')) { frozen = false; last = 0; lastFrame = 0; requestAnimationFrame(loop); }
+      },
     };
   }());
 
@@ -222,14 +235,29 @@
 
   /* ─── Smooth scroll + GSAP wiring ─────────────────────────────── */
   let lenis = null;
+  let lenisTick = null;
+  // Lite mode: the aurora freezes on its current frame, which is its main cost on slow CPUs.
+  // Scrolling goes native, which runs on the compositor and stays smooth when the main
+  // thread is busy. Blur goes too, for weak GPUs. Lasts for the rest of the visit.
+  function enterLite() {
+    root.classList.add('ss-lite');
+    try { sessionStorage.setItem('ss-lite', '1'); } catch (e) { /* private mode */ }
+    aurora.pause(true);
+    if (lenis) {
+      gsap.ticker.remove(lenisTick);
+      lenis.destroy();
+      lenis = null;
+    }
+  }
   if (hasGsap) {
     gsap.registerPlugin(window.ScrollTrigger);
     gsap.config({ force3D: 'auto' });
     gsap.defaults({ overwrite: 'auto' });
-    if (!reduced && typeof window.Lenis !== 'undefined') {
+    if (!reduced && !root.classList.contains('ss-lite') && typeof window.Lenis !== 'undefined') {
       lenis = new window.Lenis({ duration: 1.05, smoothWheel: true, wheelMultiplier: 1, syncTouch: false });
       lenis.on('scroll', window.ScrollTrigger.update);
-      gsap.ticker.add((time) => lenis.raf(time * 1000));
+      lenisTick = (time) => lenis.raf(time * 1000);
+      gsap.ticker.add(lenisTick);
       gsap.ticker.lagSmoothing(500, 33);
     }
   }
@@ -344,8 +372,10 @@
 
   /* ─── Spotlight: one delegated listener, writes only to the hovered card ─ */
   if (window.matchMedia('(hover: hover)').matches && !reduced) {
-    let card = null; let ev = null; let queued = false;
+    let card = null; let ev = null; let queued = false; let lastX = -1; let lastY = -1;
     document.addEventListener('pointermove', (e) => {
+      if (e.clientX === lastX && e.clientY === lastY) return;
+      lastX = e.clientX; lastY = e.clientY;
       ev = e;
       if (queued) return;
       queued = true;
@@ -477,7 +507,7 @@
         el.querySelector('#sosMap').href = mapUrl();
         el.querySelector('#sosFound').hidden = false;
         status('Location found. Send it to someone you trust.');
-        fetch(`${BASE}emergency/emergency_handler.php`, {
+        fetch(`${BASE}api/emergency/alert.php`, {
           method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin',
           body: JSON.stringify({ latitude: lat, longitude: lng }),
         }).then((r) => r.json()).then((d) => {
@@ -540,7 +570,7 @@
     }
   }
 
-  window.SS = { aurora, lenis, dialog, SOS, toast: showToast, post, busy, icon, scrollTo, reduced, initMotion, splitWords, BASE };
+  window.SS = { aurora, get lenis() { return lenis; }, dialog, SOS, toast: showToast, post, busy, icon, scrollTo, reduced, initMotion, splitWords, BASE };
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => initMotion());
   else initMotion();

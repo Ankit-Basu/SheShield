@@ -108,7 +108,7 @@ document.addEventListener('click', async (e) => {
   if (!b) return;
   SS.busy(b, true, 'Saving');
   try {
-    await SS.post('../../incidents/resolve-incident.php', { id: Number(b.dataset.resolve) });
+    await SS.post('../../api/incidents/resolve.php', { id: Number(b.dataset.resolve) });
     showToast('Report marked as resolved');
     setTimeout(() => location.reload(), 700);
   } catch (err) {

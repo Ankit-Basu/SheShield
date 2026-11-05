@@ -37,10 +37,10 @@ function ss_head($title, $extraHead = '') {
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><?= e($title) ?> · SheShield</title>
   <meta name="theme-color" content="#170d17">
-  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="icon" type="image/svg+xml" href="../../public/assets/favicon.svg">
   <script>try{document.documentElement.dataset.theme=localStorage.getItem('ss-theme')||'dawn'}catch(e){}</script>
-  <link rel="preload" href="../../fonts/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Variable.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="../../fonts/Clash%20Display/Fonts/WEB/fonts/ClashDisplay-Semibold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../../public/fonts/Satoshi-Variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../../public/fonts/ClashDisplay-Semibold.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../../public/css/glass.css?v=<?= $v ?>">
   <?= $extraHead ?>
 </head>

@@ -1,68 +1,63 @@
 <?php
+// Simple, bulletproof login handler using mysqli (same as dashboard)
 require_once __DIR__ . '/../../app/middleware/session_bootstrap.php';
 configure_session_storage();
 session_start();
 header("Content-Type: application/json; charset=UTF-8");
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 
-$cfgPath = __DIR__ . '/../../app/config/database.php';
-if (!file_exists($cfgPath)) $cfgPath = __DIR__ . '/../../config/database.php';
-$modelPath = __DIR__ . '/../../models/User.php';
-$sessionPath = __DIR__ . '/../../app/middleware/session.php';
-
-include_once $cfgPath;
-include_once $modelPath;
-if (file_exists($sessionPath)) include_once $sessionPath;
-
-$database = new Database();
-$db = $database->getConnection();
-$user = new User($db);
+require_once __DIR__ . '/../../app/models/mysqli_db.php';
 
 $data = json_decode(file_get_contents("php://input"));
-$response = array();
+$response = [];
 
-// Add debug logging
-error_log("Login attempt for email: " . ($data->email ?? 'not set'));
-
-if(!empty($data->email) && !empty($data->password)) {
-    $user->email = $data->email;
-    
-    // Verify user credentials
-    if($user->authenticate($data->password)) {
-        // Set session variables
-        Session::set('logged_in', true);
-        Session::set('user_id', $user->id);
-        Session::set('email', $user->email);
-        Session::set('first_name', $user->first_name);
-        Session::set('last_name', $user->last_name);
-        Session::set('user_name', trim($user->first_name . ' ' . $user->last_name));
-        Session::set('is_admin', $user->is_admin ?? false);
-        Session::set('profile_image', null);
-        
-        $response["status"] = "success";
-        $response["message"] = "Login successful";
-        $response["user"] = array(
-            "id" => $user->id,
-            "email" => $user->email,
-            "first_name" => $user->first_name,
-            "last_name" => $user->last_name,
-            "is_admin" => $user->is_admin ?? false,
-            "profile_image" => null
-        );
-        http_response_code(200);
-    } else {
-        $response["status"] = "error";
-        $response["message"] = "Invalid email or password";
-        http_response_code(401);
-    }
-} else {
-    $response["status"] = "error";
-    $response["message"] = "Missing email or password";
+if (empty($data->email) || empty($data->password)) {
     http_response_code(400);
+    echo json_encode(["status" => "error", "message" => "Email and password required"]);
+    exit;
 }
 
-// Add debug logging
-error_log("Login response: " . json_encode($response));
+$email = $data->email;
+$password = $data->password;
 
-echo json_encode($response);
+if (!isset($conn) || $conn->connect_error) {
+    http_response_code(500);
+    echo json_encode(["status" => "error", "message" => "Database connection failed"]);
+    exit;
+}
+
+$stmt = $conn->prepare("SELECT u.id, u.first_name, u.last_name, u.email, u.password, u.phone, CASE WHEN a.id IS NOT NULL THEN 1 ELSE 0 END AS is_admin FROM users u LEFT JOIN admins a ON a.user_id = u.id WHERE u.email = ? LIMIT 1");
+$stmt->bind_param("s", $email);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($row = $result->fetch_assoc()) {
+    if (password_verify($password, $row['password'])) {
+        // Set all session variables directly
+        $_SESSION['logged_in'] = true;
+        $_SESSION['user_id'] = (int)$row['id'];
+        $_SESSION['first_name'] = $row['first_name'];
+        $_SESSION['last_name'] = $row['last_name'];
+        $_SESSION['email'] = $row['email'];
+        $_SESSION['phone'] = $row['phone'] ?? '';
+        $_SESSION['is_admin'] = (bool)$row['is_admin'];
+
+        http_response_code(200);
+        echo json_encode([
+            "status" => "success",
+            "message" => "Login successful",
+            "user" => [
+                "id" => $row['id'],
+                "first_name" => $row['first_name'],
+                "last_name" => $row['last_name'],
+                "email" => $row['email']
+            ]
+        ]);
+    } else {
+        http_response_code(401);
+        echo json_encode(["status" => "error", "message" => "Invalid password"]);
+    }
+} else {
+    http_response_code(401);
+    echo json_encode(["status" => "error", "message" => "User not found"]);
+}
+$stmt->close();

@@ -12,11 +12,9 @@ ini_set('display_errors', 0);
 
 // Try to load from MVC structure, fallback to old paths
 $configPath = __DIR__ . '/../../app/config/database.php';
-$modelPath = __DIR__ . '/../../models/User.php';
+$modelPath = __DIR__ . '/../../app/models/User.php';
 $sessionPath = __DIR__ . '/../../app/middleware/session.php';
 
-if (!file_exists($configPath)) $configPath = __DIR__ . '/../../config/database.php';
-if (!file_exists($sessionPath)) $sessionPath = __DIR__ . '/../../utils/session.php';
 
 if (file_exists($configPath)) require_once $configPath;
 if (file_exists($modelPath)) require_once $modelPath;

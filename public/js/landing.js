@@ -3,7 +3,7 @@
 (function () {
   'use strict';
 
-  const { reduced, aurora, lenis } = window.SS;
+  const { reduced, aurora } = window.SS;
   const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
   const $ = (s) => document.querySelector(s);
   const year = $('#year');
@@ -80,11 +80,16 @@
     const total = line.getTotalLength();
     // Where each stop sits along the path, so a stop lights exactly when the dot arrives.
     const marks = [0, 0.3, 0.6, 1];
+    let lastReached = -1;
     const place = (p) => {
       line.style.strokeDashoffset = String(1 - p);
       const pt = line.getPointAtLength(total * p);
       dot.setAttribute('transform', `translate(${pt.x} ${pt.y})`);
-      stops.forEach((s, i) => s.classList.toggle('on', p >= marks[i] - 0.005));
+      const reached = marks.filter((m) => p >= m - 0.005).length;
+      if (reached !== lastReached) {
+        lastReached = reached;
+        stops.forEach((s, i) => s.classList.toggle('on', i < reached));
+      }
     };
     place(reduced ? 1 : 0);
     if (reduced) return;
@@ -116,6 +121,7 @@
     if (!screens.length) return;
     gsap.set(screens, { autoAlpha: 0 });
     gsap.set(screens[0], { autoAlpha: 1 });
+    let lastActive = 0;
     if (reduced) return;
     const tl = gsap.timeline({
       defaults: { ease: 'none' },
@@ -125,6 +131,8 @@
       // Runs on the smoothed timeline, so the caption always matches the screen on show.
       onUpdate() {
         const active = Math.min(steps.length - 1, Math.floor(this.time() + 0.1));
+        if (active === lastActive) return;
+        lastActive = active;
         steps.forEach((s, i) => s.classList.toggle('on', i === active));
       },
     });
@@ -167,7 +175,7 @@
     const setters = data.map((d) => gsap.quickSetter(d.row, 'x', 'px'));
     gsap.ticker.add((_, dt) => {
       if (!on) return;
-      const v = lenis ? Math.min(Math.abs(lenis.velocity), 60) : 0;
+      const v = window.SS.lenis ? Math.min(Math.abs(window.SS.lenis.velocity), 60) : 0;
       data.forEach((d, i) => {
         d.x += d.dir * (0.045 + v * 0.018) * dt;
         if (d.width) {

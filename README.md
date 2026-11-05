@@ -1,10 +1,10 @@
 <div align="center">
-  <img src="screenshots/landing.png" alt="SheShield Landing Page" width="100%">
+  <img src="screenshots/landing.jpg" alt="SheShield landing page" width="100%">
   <br><br>
   <h1>🛡️ SheShield</h1>
-  <h3>Empowering Women's Safety Through Technology</h3>
-  <p><em>24/7 emergency support, real-time tracking, incident reporting, and community-driven protection — all in one platform.</em></p>
-  <a href="https://github.com/Ankit-Basu/SheShield-/actions/workflows/main.yml"><img src="https://github.com/Ankit-Basu/SheShield-/actions/workflows/main.yml/badge.svg?branch=master" alt="CI/CD Pipeline"></a>
+  <h3>No one walks home alone.</h3>
+  <p><em>A campus safety platform for women at Lovely Professional University: one-tap SOS, walking companions, confidential reporting and a live satellite safety map.</em></p>
+  <a href="https://github.com/Ankit-Basu/SheShield/actions/workflows/main.yml"><img src="https://github.com/Ankit-Basu/SheShield/actions/workflows/main.yml/badge.svg?branch=master" alt="CI/CD Pipeline"></a>
   <br>
   <a href="#-key-features">Features</a> •
   <a href="#-screenshots">Screenshots</a> •
@@ -12,6 +12,7 @@
   <a href="#-cicd--devops-pipeline">CI/CD & DevOps</a> •
   <a href="#-installation">Installation</a> •
   <a href="#-project-structure">Structure</a> •
+  <a href="#-performance">Performance</a> •
   <a href="#-security">Security</a> •
   <a href="#-roadmap">Roadmap</a>
 </div>
@@ -20,56 +21,48 @@
 
 ## 🌟 About SheShield
 
-**SheShield** is a comprehensive women's safety platform built with a premium, glassmorphic dark-mode UI. It combines real-time emergency response, community-driven escort services, incident reporting with heat-map visualization, and a safety chatbot assistant — all designed to create a safer environment for women on campuses and beyond.
+**SheShield** is a women's safety platform built around one idea: when something feels wrong, you should not have to work out who to call, where you are, or how to explain it.
 
-> *"Technology that protects, empowers, and transforms lives — one feature at a time."*
-
-The platform features a fully responsive design powered by custom fonts (Clash Display, Satoshi), GSAP scroll animations, Lenis smooth scrolling, and a modular PHP backend with MySQL database integration and PHPMailer-based email notifications.
+It pairs a glassmorphic interface with a PHP and MySQL backend. Every library, font and icon is served locally, and the only runtime network calls are map tiles and, when needed, Firebase sign-in.
 
 ---
 
 ## ✨ Key Features
 
-### 🆘 Emergency SOS System
-- **One-tap emergency alerts** with live GPS location sharing
-- Instant notification to registered emergency contacts via SMS and email
-- Silent alarm mode for discreet signaling
-- Real-time tracking and status updates during emergencies
-- Works offline with limited connectivity fallback
+### 🆘 Emergency SOS
+- Opens instantly from every page, **with no sign-in**
+- **Call 112, 1091 or 100 in one tap**, without waiting for GPS
+- Finds your exact location and logs an alert
+- Send your location by WhatsApp or SMS, copy it, or open it in Google Maps
 
-### 📝 Incident Reporting
-- Secure incident reporting with **photo and location evidence**
-- Anonymous reporting option for user safety
-- Predefined campus locations (Block 32, Girls Hostel, Library, etc.)
-- Case tracking with real-time status updates
-- Integration with safety heat maps for pattern analysis
+> SOS does not message anyone automatically. You choose who receives your location.
+
+### 🗺️ LPU Safety Map
+- Satellite and street views of the real campus, with its OpenStreetMap boundary
+- Reports grouped into one count per place. Other people's descriptions stay private
+- Mark your own open reports as resolved
 
 ### 👣 Walk With Us
-- Request **verified volunteer walkers** for safe campus escorts
-- Dropdown-based pickup/destination selection matching campus locations
-- Availability scheduling with preferred time selection
-- **Branded email confirmations** sent to both requester and walker
-- Walker registration system with area preference selection
-- Live walker count showing active volunteers nearby
+- Requests are saved and matched with a **verified** walker on duty at that time
+- See and cancel your walks, with a confirmation email for each request
+- Volunteers register with ID details and are only matched after an admin verifies them
 
-### 💬 Safety Chatbot Assistant
-- Floating chatbot widget on the landing page (bottom-right)
-- **6 predefined quick-reply topics** covering incident reporting, SOS usage, Walk With Us, data privacy, emergency contacts, and safe spaces
-- Animated message bubbles with typing delay simulation
+### 📝 Incident Reporting
+- File with your name or **fully anonymously**, unlinked from your account
+- Attach photos or PDFs as evidence, and get a report ID once it is saved
+- Guided complaint templates for harassment, stalking, cybercrime and POSH
 
-### 🗺️ Safety Heat Map & Safe Spaces
-- Interactive heat map powered by community-reported incident data
-- Real-time area safety analysis with color-coded danger zones
-- Verified women-friendly establishments, shelters, and police stations
-- Interactive map with directions and contact details
+### 🛡️ Safe Spaces
+- See places marked as safe, and draw your own as an area, circle or point
+- Choose how long a safe zone stays active
 
-### 📊 Premium Dashboard
-- Glassmorphic dark-mode UI with gradient accents
-- Personalized safety statistics and analytics
-- Incident history tracking and complaint management
-- Emergency contact management
-- Walk request history and active walk status
-- Settings panel with profile customization
+### 📊 Dashboard and Analytics
+- Quick actions, live campus clock, and your reports by status, type and time
+- Three themes from [tweakcn](https://tweakcn.com): Sunset Horizon, Cosmic Night and Solar Dusk
+
+### 🔑 Admin
+- Update report status and view evidence
+- Verify walkers and assign them to walk requests
 
 ---
 
@@ -88,20 +81,21 @@ The platform features a fully responsive design powered by custom fonts (Clash D
         • HTML5 / CSS3<br>
         • Vanilla JS (ES6+)<br>
         • Glass design system (tweakcn tokens, shadcn/ui anatomy)<br>
+        • React Bits effects, ported to plain JS<br>
         • Custom Fonts (Clash Display, Satoshi)<br>
-        • Glassmorphism Design System<br>
       </td>
       <td>
         • PHP 8.2+<br>
         • MySQL / MySQLi<br>
-        • RESTful API Architecture<br>
-        • MVC Pattern<br>
+        • JSON API endpoints<br>
         • Session-based Auth<br>
       </td>
       <td>
-        • GSAP 3.12 + ScrollTrigger<br>
+        • GSAP 3.13 + ScrollTrigger<br>
         • Lenis Smooth Scroll<br>
-        • VanillaTilt.js<br>
+        • Leaflet + Leaflet.draw<br>
+        • Esri imagery + OpenStreetMap data<br>
+        • Firebase Auth (Google sign-in)<br>
         • PHPMailer (SMTP)<br>
         • Geolocation API<br>
         • Lucide icons<br>
@@ -322,109 +316,96 @@ git commit -m "FEAT: ADD FEATURE"    # Uppercase not allowed
 ## 📸 Screenshots
 
 ### Landing Page
-Premium glassmorphic hero with animated headline, morphing text ("Built for every woman / every night / every campus"), horizontal ticker, and gradient CTAs.
-
 <div align="center">
-  <img src="screenshots/landing.png" alt="Landing Page" width="90%">
+  <img src="screenshots/landing.jpg" alt="Landing page hero" width="90%">
+  <br><em>A live campus clock and frosted glass over solid spheres</em>
 </div>
 
----
-
-### Safety Services — Honeycomb Grid
-Hexagonal honeycomb layout showcasing all 6 core safety features with glowing borders and hover effects.
+### How It Works
+A route across the real campus draws itself as you scroll.
 
 <div align="center">
-  <img src="screenshots/safety_services.png" alt="Safety Services" width="90%">
+  <img src="screenshots/how_it_works.jpg" alt="How it works section" width="90%">
+  
 </div>
 
----
-
-### How It Works — Timeline
-Vertical timeline with animated pulse nodes showing the 4-step onboarding process.
+### SOS Demo
+Scrolling drives a phone through what one tap actually does.
 
 <div align="center">
-  <img src="screenshots/How_it_works.png" alt="How It Works" width="90%">
+  <img src="screenshots/sos_demo.jpg" alt="Scroll-driven SOS demo" width="90%">
+  
 </div>
 
----
+### Services
+<div align="center">
+  <img src="screenshots/services.jpg" alt="Services bento grid" width="90%">
+  
+</div>
 
-### About SheShield
-About section with marquee banner, team description, and glassmorphic content cards.
+### Emergency SOS
+Call buttons work immediately, and your location is ready to send.
 
 <div align="center">
-  <img src="screenshots/about_SheShield.png" alt="About SheShield" width="90%">
+  <img src="screenshots/sos.jpg" alt="Emergency SOS dialog" width="90%">
+  
 </div>
-
----
-
-### Sign In
-Secure login page with glassmorphic form, gradient accents, and session-based authentication.
-
-<div align="center">
-  <img src="screenshots/Signin.png" alt="Sign In" width="90%">
-</div>
-
----
 
 ### Dashboard
-Glassmorphic dashboard with safety stats, recent activity, and quick-action cards.
-
 <div align="center">
-  <img src="screenshots/dashboard.png" alt="Dashboard" width="90%">
+  <img src="screenshots/dashboard.jpg" alt="Dashboard overview" width="90%">
+  
 </div>
 
----
-
-### Incident Reporting
-Report form with location dropdown, incident type selector, photo upload, and anonymous mode.
-
+### Campus Safety Map
 <div align="center">
-  <img src="screenshots/report.png" alt="Incident Reporting" width="90%">
+  <img src="screenshots/map.jpg" alt="Satellite map of the LPU campus with report counts" width="90%">
+  
 </div>
-
----
-
-### Safety Analytics
-Detailed analytics with safety patterns, response metrics, and community intelligence visualizations.
-
-<div align="center">
-  <img src="screenshots/analytics.png" alt="Safety Analytics" width="90%">
-</div>
-
----
-
-### Walk With Us
-Side-by-side forms for requesting a walk (with campus location dropdowns) and volunteering as a walker.
-
-<div align="center">
-  <img src="screenshots/walk_with_us.png" alt="Walk With Us" width="90%">
-</div>
-
----
-
-### Safety Heat Map
-Interactive heat map visualization of reported incidents across the campus.
-
-<div align="center">
-  <img src="screenshots/map.png" alt="Safety Heat Map" width="90%">
-</div>
-
----
 
 ### Safe Spaces
-Verified safe locations including shelters, police stations, and women-friendly businesses with interactive map.
-
 <div align="center">
-  <img src="screenshots/safe_space.png" alt="Safe Spaces" width="90%">
+  <img src="screenshots/safe_spaces.jpg" alt="Safe spaces map with the zone drawing form" width="90%">
+  
 </div>
 
----
+### Walk With Us
+<div align="center">
+  <img src="screenshots/walk_with_us.jpg" alt="Walk request form with saved walks" width="90%">
+  
+</div>
 
-### Complaints & Case Management
-Track and manage reported incidents with status updates, resolution tracking, and case history.
+### Report an Incident
+<div align="center">
+  <img src="screenshots/report.jpg" alt="Incident report form with helplines" width="90%">
+  
+</div>
+
+### Analytics
+<div align="center">
+  <img src="screenshots/analytics.jpg" alt="Analytics charts" width="90%">
+  
+</div>
+
+### Complaint Templates
+<div align="center">
+  <img src="screenshots/templates.jpg" alt="Complaint templates" width="90%">
+  
+</div>
+
+### Sign In
+<div align="center">
+  <img src="screenshots/signin.jpg" alt="Sign in page" width="90%">
+  
+</div>
+
+### On Mobile
+Every page adapts to a phone, with SOS always within reach in the bottom dock.
 
 <div align="center">
-  <img src="screenshots/complaints.png" alt="Complaints Management" width="90%">
+  <img src="screenshots/mobile_landing.jpg" alt="Landing page on a phone" width="30%">
+  <img src="screenshots/mobile_dashboard.jpg" alt="Dashboard on a phone" width="30%">
+  <img src="screenshots/mobile_map.jpg" alt="Safety map on a phone" width="30%">
 </div>
 
 ---
@@ -432,74 +413,47 @@ Track and manage reported incidents with status updates, resolution tracking, an
 ## 🚀 Installation
 
 ### Prerequisites
-- **PHP** 8.2 or higher
-- **MySQL** 5.7 or higher
-- **Docker Desktop** (for CI/CD and monitoring stack)
-- **XAMPP** / **WAMP** / **MAMP** (or any Apache + MySQL stack)
-- **PHPMailer** (included in `/PHPMailer/`)
-- Gmail account with App Password for SMTP email
+- **PHP** 8.2 or higher with mysqli, pdo_mysql and gd
+- **MySQL** 5.7+ or MariaDB
+- **XAMPP**, WAMP, MAMP or any Apache and MySQL stack
+- A Gmail account with an App Password, for walk confirmation emails
 
 ### Quick Setup
 
 ```bash
-# 1. Clone the repository
-git clone https://github.com/Ankit-Basu/SheShield.git
-cd SheShield
+# 1. Clone into your web server's document root (XAMPP: htdocs/)
+git clone https://github.com/Ankit-Basu/SheShield.git sheshield
+cd sheshield
 
-# 2. Place in your web server's document root
-# For XAMPP: copy to C:/xampp/htdocs/sheshield/
-
-# 3. Import the database
-# Open phpMyAdmin → Import → Select database/mysqli_db.php
-# The database auto-creates tables on first run
-
-# 4. Configure email (for Walk With Us notifications)
+# 2. Configure email (optional: everything except confirmation emails works without it)
 cp app/config/email_config.example.php app/config/email_config.php
-# Edit email_config.php with your Gmail + App Password
 
-# 5. Access the application
-# Landing page: http://localhost/sheshield/pro/landing.html
-# Dashboard:    http://localhost/sheshield/views/pages/dashboard.php
+# 3. Start Apache and MySQL, then open the site
+# http://localhost/sheshield/
 ```
 
-### 🐳 DevOps Stack Setup
+The database and tables are created automatically on the first request.
+
+To make someone an admin, add their user id to the `admins` table, then have them sign in again:
+
+```sql
+INSERT INTO admins (user_id) VALUES (1);
+```
+
+### More guides
+- [Full DevOps stack setup](docs/SETUP.md)
+- [Email setup](docs/EMAIL_SETUP.md)
+- [Firebase and Google sign-in](docs/FIREBASE_SETUP.md)
+- [AWS deployment](docs/AWS_DEPLOYMENT_GUIDE.md)
+- [DevOps presentation guide](docs/DEVOPS_PRESENTATION_GUIDE.md)
+
+### Rebuilding front-end libraries
+
+Local copies live in `public/lib/`. After upgrading GSAP, Lenis or Leaflet, or adding an icon:
 
 ```bash
-# Start the monitoring stack (Prometheus + Grafana)
-cd infrastructure/monitoring
-docker-compose up -d
-
-# Access monitoring tools
-# Grafana:    http://localhost:3000  (admin/admin)
-# Prometheus: http://localhost:9090
-
-# Start Nexus artifact registry
-docker run -d --name nexus -p 8081:8081 -p 8082:8082 sonatype/nexus3:latest
-# Nexus UI:   http://localhost:8081  (admin/admin)
-
-# SonarQube code quality server
-docker run -d --name sonarqube -p 9000:9000 sonarqube:latest
-# SonarQube:  http://localhost:9000
-
-# Run SonarQube scan manually
-docker run --rm -v "%cd%:/usr/src" sonarsource/sonar-scanner-cli \
-  "-Dsonar.projectKey=sheshield" \
-  "-Dsonar.sources=." \
-  "-Dsonar.host.url=http://host.docker.internal:9000" \
-  "-Dsonar.token=YOUR_SONAR_TOKEN"
-```
-
-### Email Configuration
-
-```php
-// app/config/email_config.php
-define('SMTP_HOST', 'smtp.gmail.com');
-define('SMTP_USERNAME', 'your-email@gmail.com');
-define('SMTP_PASSWORD', 'your-app-password');  // Google App Password
-define('SMTP_PORT', 587);
-define('SMTP_ENCRYPTION', 'tls');
-define('DEFAULT_FROM_EMAIL', 'your-email@gmail.com');
-define('DEFAULT_FROM_NAME', 'SheShield');
+npm install
+npm run build:vendor
 ```
 
 ---
@@ -508,74 +462,53 @@ define('DEFAULT_FROM_NAME', 'SheShield');
 
 ```
 SheShield/
-├── .github/
-│   └── workflows/
-│       └── main.yml                # GitHub Actions CI/CD pipeline
-├── api/                            # RESTful API endpoints
-│   ├── auth/                       # Login, signup, session verification
-│   ├── incidents/                  # Incident CRUD operations
-│   └── walks/                      # Walk request & walker registration APIs
-│       ├── request_walk.php
-│       └── send_walk_email.php     # Branded email sender
+├── index.php              # Redirects the site root to the landing page
+├── pro/                   # Public pages: landing, login, signup, report
+├── views/pages/           # Signed-in dashboard pages and shared layout
+├── admin/                 # Admin pages: reports, walkers, walk requests
+├── api/                   # All JSON endpoints
+│   ├── auth/              #   login, signup, logout, session status, Firebase
+│   ├── emergency/         #   SOS alert logging
+│   ├── incidents/         #   create, resolve, update status
+│   ├── safespaces/        #   list and save safe zones
+│   ├── user/              #   profile, password, photo
+│   ├── walks/             #   requests, volunteers, confirmation email, admin
+│   └── public_stats.php   #   anonymous counts for the landing page
 ├── app/
-│   ├── config/                     # Email config, database config
-│   ├── controllers/                # Business logic controllers
-│   ├── middleware/                  # Session bootstrap, auth middleware
-│   └── models/                     # Database connection (mysqli_db.php)
-├── auth/                           # Authentication handlers
-│   ├── simple_login.php            # Login with session management
-│   └── signup.php                  # User registration
-├── infrastructure/
-│   ├── docker-compose.yml          # Unified DevOps stack (Prometheus+Grafana+SonarQube+Nexus)
-│   ├── docker/
-│   │   └── Dockerfile              # Multi-stage PHP 8.2-Apache build
-│   ├── jenkins/
-│   │   └── Jenkinsfile             # 7-stage CI/CD pipeline
-│   ├── kubernetes/
-│   │   └── deployment.yaml         # K8s deployment (3 replicas) + MySQL
-│   ├── helm/sheshield/             # Helm chart
-│   │   ├── Chart.yaml              # Chart metadata
-│   │   ├── values.yaml             # Configurable values
-│   │   └── templates/              # K8s manifest templates
-│   ├── terraform/                  # AWS Infrastructure-as-Code
-│   │   ├── main.tf                 # VPC, EC2, RDS, S3
-│   │   ├── ecr.tf                  # Docker registry (ECR)
-│   │   ├── variables.tf            # Input variables
-│   │   ├── outputs.tf              # Output values
-│   │   └── terraform.tfvars.example
-│   ├── ansible/                    # Configuration management
-│   │   ├── playbook.yml            # Server provisioning playbook
-│   │   ├── inventory.ini           # Host inventory
-│   │   └── templates/              # Jinja2 templates
-│   └── monitoring/
-│       ├── prometheus/
-│       │   └── prometheus.yml      # Scrape configuration
-│       └── grafana/
-│           ├── dashboards/
-│           │   └── sheshield-overview.json  # 16-panel dashboard
-│           └── provisioning/
-│               ├── dashboards/dashboards.yml
-│               └── datasources/datasource.yml
-├── pro/                            # Premium landing page
-│   ├── landing.html                # Main landing page (glassmorphic UI + chatbot)
-│   ├── report.html, login.html, signup.html
-│   └── js/auth.js                  # Sign in and sign up (Firebase loads on demand)
-├── views/pages/                    # Dashboard pages (PHP)
-│   ├── dashboard.php               # Main dashboard
-│   ├── report.php                  # Incident reporting form
-│   ├── walkwithus.php              # Walk request + volunteer registration
-│   ├── analytics.php               # Safety analytics & insights
-│   ├── _layout.php                 # Shared dashboard shell and login guard
-│   ├── sidebar.php                 # Navigation sidebar component
-│   └── settings.php                # Profile, password and theme
-├── PHPMailer/                      # PHPMailer library
-├── public/                         # css/glass.css, css/landing.css, js/sheshield.js, js/landing.js,
-│                                   # icons.svg, lib/ (local GSAP, Lenis, Leaflet: npm run build:vendor)
-├── screenshots/                    # Application & DevOps screenshots
-├── database/                       # Database schema & connection
-├── fonts/                          # Custom fonts (Clash Display, Satoshi)
-└── README.md                       # This file
+│   ├── config/            # Database config and email config template
+│   ├── helpers/           # Profile image handling
+│   ├── lib/PHPMailer/     # Email library
+│   ├── middleware/        # Sessions
+│   └── models/            # Incident and User models
+├── database/              # Connection, automatic schema setup, SQL migrations
+├── public/                # Everything the browser downloads
+│   ├── css/               #   Glass design system and landing styles
+│   ├── js/                #   Core motion and SOS, landing, map, auth
+│   ├── lib/               #   Local GSAP, Lenis and Leaflet
+│   ├── fonts/  images/  assets/  icons.svg
+├── docs/                  # Setup, deployment and DevOps guides
+├── infrastructure/        # Docker, Jenkins, Kubernetes, Helm, Terraform, Ansible, monitoring
+├── screenshots/           # Images used in this README
+└── scripts/               # Rebuilds public/lib and the icon sprite
 ```
+
+---
+
+## ⚡ Performance
+
+Measured with real mouse-wheel scrolling in Chrome on Intel Iris Xe integrated graphics:
+
+| Measure | Result |
+|---------|--------|
+| Landing page scrolling | 60 frames per second on screen, none slower than 50 ms |
+| Landing page on a 4x slower CPU | About 60 frames per second on screen, in lite mode |
+| Dashboard page scrolling | 55 to 60 frames per second, no long tasks |
+| Dashboard page load | 65 to 336 ms |
+| Map page load, including satellite imagery | About 1.7 s |
+| Server response | Dashboard about 31 ms, API about 27 ms |
+| Landing page download | 15 requests, about 740 KB, nothing from third parties |
+
+Slower devices lower the aurora frame rate and turn off blur automatically.
 
 ---
 
@@ -584,60 +517,43 @@ SheShield/
 | Layer | Implementation |
 |-------|---------------|
 | **Authentication** | Session-based auth with `password_hash()` / `password_verify()` |
-| **Session** | Custom session bootstrap with secure cookie settings |
-| **Database** | Prepared statements (MySQLi) to prevent SQL injection |
-| **Input** | Server-side validation and `htmlspecialchars()` sanitization |
-| **Email** | SMTP with TLS encryption via PHPMailer |
-| **Privacy** | Anonymous incident reporting, no third-party data sharing |
-| **Config** | Sensitive credentials in `.gitignore`-protected config files |
+| **Authorization** | Dashboard pages require sign-in, and admin actions require an admin account |
+| **Ownership** | Reports can only be resolved by their owner or an admin |
+| **Database** | Prepared statements across the live endpoints |
+| **Privacy** | Anonymous reports are unlinked from accounts, and the shared map shows counts only |
+| **Email** | Sent only to the signed-in user, over TLS via PHPMailer |
+| **Config** | Credentials live in `.gitignore`-protected config files |
 | **Container** | Aqua Trivy CVE scanning on every Docker build |
 | **Code Quality** | SonarQube static analysis with Quality Gate enforcement |
-| **Registry** | Private Nexus Docker registry with authentication |
 
 ---
 
 ## 🗺️ Roadmap
 
-- [x] Premium glassmorphic landing page with GSAP animations
-- [x] Honeycomb grid for Safety Services section
-- [x] Vertical timeline for How It Works section
-- [x] Morphing hero text animation
-- [x] Floating chatbot with predefined safety Q&A
-- [x] Walk With Us — branded email notifications
-- [x] Walker registration with email confirmation
-- [x] Campus location dropdowns (matching report locations)
-- [x] Safety analytics dashboard
-- [x] Complaint management system
-- [x] Docker containerization with multi-stage builds
-- [x] Jenkins CI/CD pipeline (8 stages)
-- [x] GitHub Actions parallel CI/CD
-- [x] SonarQube code quality integration
-- [x] Aqua Trivy security scanning
-- [x] Sonatype Nexus artifact registry
-- [x] Kubernetes deployment (3 replicas)
-- [x] Prometheus + Grafana monitoring stack
-- [x] Helm chart for K8s packaging
-- [x] Terraform AWS infrastructure (Free Tier — $0/mo)
-- [x] AWS ECR private Docker registry
-- [x] Ansible server provisioning playbook
-- [x] Husky + Commitlint git hooks
-- [x] Unified Docker Compose (all DevOps tools)
-- [ ] Native mobile app (React Native)
-- [ ] AI-powered chatbot with NLP
-- [ ] Push notifications for SOS alerts
-- [ ] Wearable device integration
+- [x] Glass design system with GSAP scroll motion
+- [x] One-tap SOS with location sharing
+- [x] Satellite campus map with grouped reports
+- [x] Walk With Us with verified walker matching
+- [x] Anonymous reporting with evidence upload
+- [x] Admin tools for reports and walkers
+- [x] Docker, Jenkins, GitHub Actions, SonarQube, Trivy and Nexus
+- [x] Kubernetes, Helm, Terraform, Ansible, Prometheus and Grafana
+- [x] Husky and Commitlint git hooks
+- [ ] Automatic SOS alerts to emergency contacts
+- [ ] Verified building positions on the campus map
+- [ ] Native mobile app
+- [ ] AI-powered assistant
 - [ ] Multi-language support
-- [ ] Admin dashboard for moderation
 
 ---
 
 ## 👥 Team
 
-Built with dedication by students passionate about making campuses safer for women through modern web development and DevOps practices.
+Built by students passionate about making campuses safer for women through modern web development and DevOps practices.
 
 ## 📄 License
 
-This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
+This project is licensed under the **MIT License**.
 
 ## 🤝 Contributing
 

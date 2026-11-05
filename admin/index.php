@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../app/middleware/session.php';
 require_once __DIR__ . '/../app/config/database.php';
-require_once __DIR__ . '/../models/Incident.php';
+require_once __DIR__ . '/../app/models/Incident.php';
 
 if (!Session::isLoggedIn() || !Session::get('is_admin')) {
     header('Location: ../pro/login.html');
@@ -40,7 +40,7 @@ $v = filemtime(__DIR__ . '/../public/css/glass.css');
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Admin · SheShield</title>
-  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="icon" type="image/svg+xml" href="../public/assets/favicon.svg">
   <script>try{document.documentElement.dataset.theme=localStorage.getItem('ss-theme')||'dawn'}catch(e){}</script>
   <link rel="stylesheet" href="../public/css/glass.css?v=<?= $v ?>">
 </head>
@@ -51,7 +51,7 @@ $v = filemtime(__DIR__ . '/../public/css/glass.css');
     <div class="topbar-title"><span class="eyebrow">SheShield admin</span><h1>Incident reports</h1></div>
     <div class="topbar-actions">
       <span class="small muted hide-md"><?= a(Session::getUserName()) ?></span>
-      <a href="../auth/logout.php" class="btn btn-outline btn-sm"><?= ai('log-out') ?> Log out</a>
+      <a href="../api/auth/logout.php" class="btn btn-outline btn-sm"><?= ai('log-out') ?> Log out</a>
     </div>
   </header>
   <section class="grid g-3">

@@ -4,8 +4,6 @@
 node_modules/
 vendor/
 composer.phar
-package-lock.json
-composer.lock
 
 # Environment & Secrets
 .env
@@ -23,6 +21,9 @@ app/config/config.php
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Runtime files (PHP sessions can hold personal data)
+tmp/
 
 # Logs
 logs/

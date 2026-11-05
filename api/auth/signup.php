@@ -12,8 +12,7 @@ ini_set('display_errors', 1);
 error_log("Starting signup process...");
 
 $cfgPath = __DIR__ . '/../../app/config/database.php';
-if (!file_exists($cfgPath)) $cfgPath = __DIR__ . '/../../config/database.php';
-$modelPath = __DIR__ . '/../../models/User.php';
+$modelPath = __DIR__ . '/../../app/models/User.php';
 $sessionPath = __DIR__ . '/../../app/middleware/session.php';
 
 require_once $cfgPath;
