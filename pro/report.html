@@ -1,336 +1,335 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-base="../">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SheShield — Report an Incident</title>
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
-    <link rel="stylesheet" href="css/report.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Report an incident · SheShield</title>
+  <meta name="theme-color" content="#170d17">
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <script>try{document.documentElement.dataset.theme=localStorage.getItem('ss-theme')||'dawn'}catch(e){}</script>
+  <link rel="preload" href="../fonts/Clash%20Display/Fonts/WEB/fonts/ClashDisplay-Semibold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../public/css/glass.css?v=11">
+  <style>
+    .rp { width: min(calc(100% - 32px), 760px); margin: 0 auto; padding: 100px 0 60px; }
+    .rp-title { font-size: clamp(40px, 7vw, 74px); margin: 12px 0 10px; }
+    .stepper { display: flex; align-items: center; gap: 8px; margin: 24px 0 14px; }
+    .step-pip { display: flex; align-items: center; gap: 9px; font-size: 13px; font-weight: 600; color: var(--muted-foreground); }
+    .step-pip b { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font-size: 12.5px; background: oklch(1 0 0 / .08); box-shadow: inset 0 0 0 1px var(--glass-line); }
+    .step-pip.active { color: var(--foreground); }
+    .step-pip.active b, .step-pip.done b { color: var(--primary-foreground); background: linear-gradient(120deg, var(--primary), var(--accent)); box-shadow: none; }
+    .step-gap { flex: 1; height: 2px; border-radius: 2px; background: oklch(1 0 0 / .1); position: relative; overflow: hidden; }
+    .step-gap i { position: absolute; inset: 0; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform .45s var(--ease); }
+    .step-gap.done i { transform: none; }
+    @media (max-width: 560px) { .step-pip span { display: none; } }
+    .types { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+    @media (max-width: 480px) { .types { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    .type-opt { display: grid; justify-items: center; gap: 6px; padding: 14px 8px; border-radius: 14px; font-size: 13px; font-weight: 600; color: var(--muted-foreground); background: oklch(1 0 0 / .04); box-shadow: inset 0 0 0 1px var(--glass-line-soft); transition: all .2s; }
+    .type-opt .i { font-size: 21px; }
+    .type-opt:hover { color: var(--foreground); background: oklch(1 0 0 / .08); }
+    .type-opt[aria-checked='true'] { color: var(--accent); background: color-mix(in oklab, var(--primary) 16%, transparent); box-shadow: inset 0 0 0 1.5px var(--primary); }
+    .drop { display: grid; justify-items: center; gap: 4px; padding: 26px 16px; border-radius: 16px; text-align: center; cursor: pointer; border: 1.5px dashed var(--glass-line); transition: background-color .2s, border-color .2s; }
+    .drop:hover, .drop.over { background: oklch(1 0 0 / .05); border-color: var(--primary); }
+    .drop .i { font-size: 26px; color: var(--accent); }
+    .files { display: grid; gap: 6px; margin-top: 10px; }
+    .file-row { display: flex; align-items: center; gap: 10px; padding: 7px 8px 7px 13px; border-radius: 11px; font-size: 13px; background: oklch(1 0 0 / .05); }
+    .step-nav { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 22px; }
+    .ok-mark { width: 74px; height: 74px; margin: 0 auto 16px; border-radius: 50%; display: grid; place-items: center; font-size: 34px; color: #06230f; background: var(--good); }
+  </style>
 </head>
 <body>
-<!-- ═══ NAVBAR ═══ -->
-<nav class="glass-nav">
-    <div class="nav-inner">
-        <a href="landing.html" class="logo">
-            <img src="../assets/logo.svg" alt="SheShield" style="height:36px;width:auto">
-            <span style="font-family:'Clash Display',sans-serif;font-size:1.4rem;font-weight:700;letter-spacing:-0.03em"><span style="color:#fff">She</span><span style="background:linear-gradient(135deg,#e91e8c,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Shield</span></span>
-        </a>
-        <div class="nav-links">
-            <a href="landing.html">Home</a>
-            <a href="landing.html#about">About Us</a>
-            <a href="landing.html#features">Services</a>
-            <a href="landing.html#contact">Emergency</a>
+<div class="ss-backdrop" data-mode="calm" aria-hidden="true"></div>
+<header class="site-nav glass glass-blur">
+  <a href="landing.html" class="brand">
+    <svg class="brand-mark" viewBox="0 0 100 110" fill="none" aria-hidden="true"><defs><linearGradient id="ssLogo" x1="0" y1="0" x2="1" y2="1"><stop stop-color="var(--primary)"/><stop offset="1" stop-color="var(--accent)"/></linearGradient></defs><path d="M50 6 88 22v34q0 24-38 40Q12 80 12 56V22Z" fill="url(#ssLogo)"/><circle cx="50" cy="40" r="12" stroke="#1d121b" stroke-width="5"/><path d="M50 52v21M41 64h18" stroke="#1d121b" stroke-width="5" stroke-linecap="round"/></svg>
+    SheShield
+  </a>
+  <div class="site-actions" style="margin-left:auto">
+    <a href="login.html" class="btn btn-ghost hide-sm">Log in</a>
+    <button class="btn btn-sos" data-sos><svg class="i" aria-hidden="true"><use href="../public/icons.svg#siren"/></svg> SOS</button>
+  </div>
+</header>
+
+<main class="rp">
+  <div class="alert alert-danger" data-reveal style="margin-bottom:22px"><svg class="i" aria-hidden="true"><use href="../public/icons.svg#siren"/></svg><div>In immediate danger? <a href="tel:112" style="font-weight:700;text-decoration:underline">Call 112</a> or use the SOS button.</div></div>
+  <span class="eyebrow">Confidential report</span>
+  <h1 class="display rp-title" data-split>Tell us <span class="text-gradient">what happened.</span></h1>
+  <p class="muted" data-reveal>Share only what you are comfortable with. Reports are read by the SheShield admin team.</p>
+
+  <div class="stepper" id="stepper" data-reveal>
+    <div class="step-pip active" data-pip="1"><b>1</b><span>You</span></div><div class="step-gap"><i></i></div>
+    <div class="step-pip" data-pip="2"><b>2</b><span>Incident</span></div><div class="step-gap"><i></i></div>
+    <div class="step-pip" data-pip="3"><b>3</b><span>Evidence</span></div>
+  </div>
+
+  <form class="glass card-lg" id="reportForm" data-reveal novalidate>
+    <div class="alert alert-danger" id="formError" role="alert" hidden style="margin-bottom:16px"><svg class="i" aria-hidden="true"><use href="../public/icons.svg#circle-alert"/></svg><div></div></div>
+
+    <!-- Step 1 -->
+    <div class="step form-grid" data-step="1">
+      <div class="row-between" style="padding:14px 16px;border-radius:16px;background:oklch(1 0 0 / .05);gap:16px">
+        <div><b>Report anonymously</b><div class="small muted">The report will not be linked to you or your account.</div></div>
+        <label class="switch"><input type="checkbox" id="anonCheck" aria-label="Report anonymously"><span></span></label>
+      </div>
+      <div class="form-grid" id="personalFields">
+        <div class="alert" id="signinNote" hidden><svg class="i" aria-hidden="true"><use href="../public/icons.svg#info"/></svg><div>To file with your name, <a href="login.html" style="text-decoration:underline;font-weight:600">sign in first</a>. Or switch on anonymous above.</div></div>
+        <div class="form-row">
+          <div class="field"><label class="label" for="first_name">First name <span class="opt">(optional)</span></label><input class="input" id="first_name" autocomplete="given-name"></div>
+          <div class="field"><label class="label" for="last_name">Last name <span class="opt">(optional)</span></label><input class="input" id="last_name" autocomplete="family-name"></div>
         </div>
-        <div class="nav-actions">
-            <a href="login.html" class="btn-premium btn-outline" style="font-size:.85rem;padding:8px 22px">Log In</a>
+        <div class="form-row">
+          <div class="field"><label class="label" for="phone">Phone <span class="opt">(optional)</span></label><input class="input" type="tel" id="phone" autocomplete="tel"></div>
+          <div class="field"><label class="label" for="email">Email <span class="opt">(optional)</span></label><input class="input" type="email" id="email" autocomplete="email"></div>
         </div>
-    </div>
-</nav>
-
-<!-- Urgency Banner -->
-<div class="urgency-banner">
-    <span class="live-dot"></span>
-    If you are in immediate danger — call <strong>112</strong> or press
-    <a href="#" class="sos-link">SOS Emergency</a>
-</div>
-
-<!-- Page Header -->
-<div class="report-header">
-    <div class="secure-badge">🔒 ENCRYPTED & SECURE REPORT</div>
-    <h1 id="pageTitle">Report an Incident</h1>
-    <p class="sub">Your report is confidential. Every detail you share helps us respond faster and protect more women.</p>
-    <div class="trust-row">
-        <div class="trust-item"><span>🔒</span> End-to-end encrypted</div>
-        <div class="trust-item"><span>👁</span> Anonymous option available</div>
-        <div class="trust-item"><span>⚡</span> Reviewed within 1 hour</div>
-    </div>
-</div>
-
-<!-- Form Container -->
-<div class="report-container">
-    <div class="bg-blob b1"></div>
-    <div class="bg-blob b2"></div>
-
-    <!-- Stepper -->
-    <div class="stepper" id="stepper">
-        <div class="step-group"><div class="step-circle active" data-step="1">1</div><div class="step-label active">Your Info</div></div>
-        <div class="step-line"></div>
-        <div class="step-group"><div class="step-circle inactive" data-step="2">2</div><div class="step-label inactive">Incident Details</div></div>
-        <div class="step-line"></div>
-        <div class="step-group"><div class="step-circle inactive" data-step="3">3</div><div class="step-label inactive">Evidence & Submit</div></div>
+      </div>
     </div>
 
-    <!-- Glass Card -->
-    <div class="form-card" id="formCard">
-        <form id="reportForm">
-        <!-- ═══ STEP 1 ═══ -->
-        <div class="step-content" data-step="1">
-            <div class="anon-card">
-                <div style="font-size:24px">👁</div>
-                <div style="flex:1">
-                    <div class="anon-title">Report Anonymously</div>
-                    <div class="anon-sub">Your identity will be hidden from all reports</div>
-                </div>
-                <label style="cursor:pointer"><input type="checkbox" id="anonCheck" style="display:none" onchange="toggleAnon()"><span class="toggle-track"></span></label>
-            </div>
-            <div id="personalFields">
-                <div class="field-row">
-                    <div class="field-group"><label>First Name</label><input type="text" class="premium-input" id="first_name" placeholder="Jane"></div>
-                    <div class="field-group"><label>Last Name</label><input type="text" class="premium-input" id="last_name" placeholder="Doe"></div>
-                </div>
-                <div class="field-group"><label>Contact Number</label><input type="tel" class="premium-input" id="phone" placeholder="+91 98765 43210"></div>
-                <div class="field-group"><label>Email Address</label><input type="email" class="premium-input" id="email" placeholder="you@example.com"></div>
-            </div>
-            <div id="anonOverlay" style="display:none;text-align:center;padding:24px;color:rgba(255,255,255,0.5);font-size:14px;border:1px dashed rgba(233,30,140,0.3);border-radius:12px;margin-top:16px">
-                <i class="fas fa-user-secret" style="font-size:32px;color:var(--rose);display:block;margin-bottom:12px"></i>
-                Fields hidden — anonymous mode active
-            </div>
+    <!-- Step 2 -->
+    <div class="step form-grid" data-step="2" hidden>
+      <div class="field">
+        <span class="label" id="typeLabel">Type of incident</span>
+        <div class="types" id="typeGrid" role="radiogroup" aria-labelledby="typeLabel">
+          <button type="button" class="type-opt" role="radio" aria-checked="false" data-val="harassment"><svg class="i" aria-hidden="true"><use href="../public/icons.svg#triangle-alert"/></svg>Harassment</button>
+          <button type="button" class="type-opt" role="radio" aria-checked="false" data-val="assault"><svg class="i" aria-hidden="true"><use href="../public/icons.svg#shield-alert"/></svg>Assault</button>
+          <button type="button" class="type-opt" role="radio" aria-checked="false" data-val="stalking"><svg class="i" aria-hidden="true"><use href="../public/icons.svg#eye"/></svg>Stalking</button>
+          <button type="button" class="type-opt" role="radio" aria-checked="false" data-val="road_safety"><svg class="i" aria-hidden="true"><use href="../public/icons.svg#route"/></svg>Road safety</button>
+          <button type="button" class="type-opt" role="radio" aria-checked="false" data-val="domestic"><svg class="i" aria-hidden="true"><use href="../public/icons.svg#house"/></svg>Domestic</button>
+          <button type="button" class="type-opt" role="radio" aria-checked="false" data-val="cybercrime"><svg class="i" aria-hidden="true"><use href="../public/icons.svg#lock"/></svg>Cybercrime</button>
         </div>
-
-        <!-- ═══ STEP 2 ═══ -->
-        <div class="step-content" data-step="2" style="display:none">
-            <div class="field-group">
-                <label>Type of Incident</label>
-                <div class="type-grid" id="typeGrid">
-                    <div class="type-card" data-val="harassment" onclick="selectType(this)"><div class="icon">⚠️</div><div class="label">Harassment</div></div>
-                    <div class="type-card" data-val="assault" onclick="selectType(this)"><div class="icon">🔪</div><div class="label">Assault</div></div>
-                    <div class="type-card" data-val="stalking" onclick="selectType(this)"><div class="icon">👁</div><div class="label">Stalking</div></div>
-                    <div class="type-card" data-val="road_safety" onclick="selectType(this)"><div class="icon">🚗</div><div class="label">Road Safety</div></div>
-                    <div class="type-card" data-val="domestic" onclick="selectType(this)"><div class="icon">🏠</div><div class="label">Domestic</div></div>
-                    <div class="type-card" data-val="cybercrime" onclick="selectType(this)"><div class="icon">📱</div><div class="label">Cybercrime</div></div>
-                </div>
-                <input type="hidden" id="incident_type">
-            </div>
-            <div class="field-group">
-                <label>Date and Time of Incident</label>
-                <input type="datetime-local" class="premium-input" id="date_time" style="color-scheme:dark">
-            </div>
-            <div class="field-group">
-                <div style="display:flex;justify-content:space-between;align-items:center">
-                    <label>Location</label>
-                    <button type="button" class="loc-btn" onclick="useMyLocation()">📍 Use My Location</button>
-                </div>
-                <input type="text" class="premium-input" id="location" placeholder="Where did the incident occur?">
-            </div>
-            <div class="field-group">
-                <label>Severity Level</label>
-                <input type="range" class="severity-slider" id="severity" min="1" max="5" value="1" oninput="updateSeverity(this.value)">
-                <div class="severity-label" id="sevLabel" style="color:#22c55e">Low</div>
-            </div>
-            <div class="field-group">
-                <label>Description</label>
-                <textarea class="premium-textarea" id="description" maxlength="1000" placeholder="Provide as much detail as you can..." oninput="updateCharCount()"></textarea>
-                <div class="char-count" id="charCount">0 / 1000</div>
-            </div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label class="label" for="date_time">When did it happen?</label><input class="input" type="datetime-local" id="date_time"></div>
+        <div class="field">
+          <div class="row-between"><label class="label" for="location">Where?</label><button type="button" class="xs" id="useLoc" style="color:var(--accent);font-weight:600">Use my location</button></div>
+          <input class="input" id="location" placeholder="Place or address">
         </div>
-
-        <!-- ═══ STEP 3 ═══ -->
-        <div class="step-content" data-step="3" style="display:none">
-            <div class="field-group">
-                <label>Upload Evidence (Optional)</label>
-                <div class="upload-zone" id="dropZone" onclick="document.getElementById('fileInput').click()" ondragover="event.preventDefault();this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="handleDrop(event)">
-                    <div class="upload-icon">☁️</div>
-                    <div class="upload-title">Drag & drop photos or videos</div>
-                    <div class="upload-sub">or <span class="upload-browse">browse files</span></div>
-                    <div class="upload-types">Supports JPG, PNG, MP4, PDF — max 20MB</div>
-                </div>
-                <input type="file" id="fileInput" multiple accept="image/*,video/*,.pdf" style="display:none" onchange="handleFiles(this.files)">
-                <div class="file-previews" id="filePreviews"></div>
-            </div>
-            <div>
-                <span class="witness-toggle" onclick="toggleWitness()">+ Add Witness Details</span>
-                <div class="witness-fields" id="witnessFields">
-                    <div class="field-row">
-                        <div class="field-group"><label>Witness Name</label><input type="text" class="premium-input" id="witness_name" placeholder="Optional"></div>
-                        <div class="field-group"><label>Witness Contact</label><input type="text" class="premium-input" id="witness_contact" placeholder="Optional"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="consent-box">
-                <input type="checkbox" id="consentCheck" onchange="updateSubmitState()">
-                <p>I confirm all information is accurate to the best of my knowledge. This report will be reviewed by the SheShield safety team.</p>
-            </div>
+      </div>
+      <div class="field">
+        <span class="label" id="sevL">How serious was it?</span>
+        <div class="tabs" id="sevTabs" role="radiogroup" aria-labelledby="sevL" style="width:fit-content">
+          <button type="button" class="tab active" role="radio" aria-checked="true" data-sev="low">Low</button>
+          <button type="button" class="tab" role="radio" aria-checked="false" data-sev="medium">Medium</button>
+          <button type="button" class="tab" role="radio" aria-checked="false" data-sev="high">High</button>
         </div>
-
-        <!-- Step Nav -->
-        <div class="step-nav">
-            <button type="button" class="btn-back" id="backBtn" style="display:none" onclick="prevStep()">← Back</button>
-            <div class="step-indicator" id="stepIndicator">Step 1 of 3</div>
-            <button type="button" class="btn-next" id="nextBtn" onclick="nextStep()">Next →</button>
-        </div>
-        </form>
+      </div>
+      <div class="field">
+        <label class="label" for="description">What happened?</label>
+        <textarea class="input" id="description" maxlength="1000" rows="5" placeholder="As much or as little as you are comfortable with."></textarea>
+        <span class="hint" id="charCount" style="text-align:right">0 / 1000</span>
+      </div>
     </div>
 
-    <!-- Success Screen (hidden) -->
-    <div class="form-card" id="successScreen" style="display:none">
-        <div class="success-screen">
-            <div class="success-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
-            <h2>Report Submitted Successfully</h2>
-            <div class="report-id" id="reportId">Report ID: #SS-2025-0847</div>
-            <p>Our team will review this within 1 hour. You'll receive a confirmation at your email.</p>
-            <div class="success-actions">
-                <a href="landing.html" class="btn-back" style="display:inline-block">Back to Home</a>
-                <a href="#" class="btn-next" style="display:inline-block">View Report Status</a>
-            </div>
+    <!-- Step 3 -->
+    <div class="step form-grid" data-step="3" hidden>
+      <div class="field">
+        <span class="label">Evidence <span class="opt">(optional)</span></span>
+        <label class="drop" id="dropZone" for="fileInput">
+          <svg class="i" aria-hidden="true"><use href="../public/icons.svg#upload"/></svg>
+          <b style="font-size:14px">Add photos or documents</b>
+          <span class="xs muted">JPG, PNG, GIF or PDF, up to 5 MB each</span>
+        </label>
+        <input class="sr-only" type="file" id="fileInput" multiple accept="image/jpeg,image/png,image/gif,application/pdf">
+        <div class="files" id="fileList"></div>
+      </div>
+      <details>
+        <summary style="cursor:pointer;font-size:14px;font-weight:600">Add a witness <span class="muted" style="font-weight:450">(optional)</span></summary>
+        <div class="form-row" style="margin-top:12px">
+          <div class="field"><label class="label" for="witness_name">Name</label><input class="input" id="witness_name"></div>
+          <div class="field"><label class="label" for="witness_contact">Contact</label><input class="input" id="witness_contact"></div>
         </div>
+      </details>
+      <label class="check" style="padding:13px 15px;border-radius:14px;background:oklch(1 0 0 / .05)">
+        <input type="checkbox" id="consentCheck">
+        <span>What I have shared is accurate to the best of my knowledge, and the SheShield team may review it.</span>
+      </label>
     </div>
-</div>
 
-<!-- Footer -->
-<footer class="premium-footer">
-    <div class="footer-gradient-line"></div>
-    <div class="footer-bottom">© 2025 SheShield. All rights reserved.</div>
-</footer>
+    <div class="step-nav">
+      <button type="button" class="btn btn-outline" id="backBtn" hidden><svg class="i" aria-hidden="true"><use href="../public/icons.svg#arrow-left"/></svg> Back</button>
+      <span class="xs muted mono" id="stepLabel">Step 1 of 3</span>
+      <button type="button" class="btn btn-primary" id="nextBtn"><span>Next</span> <svg class="i" aria-hidden="true"><use href="../public/icons.svg#arrow-right"/></svg></button>
+    </div>
+  </form>
 
+  <section class="glass card-lg" id="successCard" hidden style="text-align:center">
+    <div class="ok-mark"><svg class="i" aria-hidden="true"><use href="../public/icons.svg#check"/></svg></div>
+    <h2 class="display" style="font-size:34px;margin-bottom:8px">Your report is saved.</h2>
+    <p class="mono small" id="reportId" style="margin-bottom:8px"></p>
+    <p class="muted" style="max-width:46ch;margin:0 auto 20px" id="successNote"></p>
+    <div class="row wrap" style="justify-content:center">
+      <a href="landing.html" class="btn btn-outline">Back to home</a>
+      <a href="../views/pages/dashboard.php" class="btn btn-primary" id="successDash">Go to dashboard</a>
+    </div>
+  </section>
+</main>
+
+<script src="../public/lib/gsap.min.js"></script>
+<script src="../public/lib/ScrollTrigger.min.js"></script>
+<script src="../public/lib/lenis.min.js"></script>
+<script src="../public/js/sheshield.js?v=11"></script>
 <script>
-let currentStep = 1, selectedType = '', uploadedFiles = [];
+(function () {
+  'use strict';
+  const { post, busy, reduced, BASE } = window.SS;
+  const $ = (id) => document.getElementById(id);
+  let step = 1;
+  let type = '';
+  let severity = 'low';
+  let files = [];
+  let signedIn = false;
 
-function updateStepper() {
-    document.querySelectorAll('.step-circle').forEach(c => {
-        const s = +c.dataset.step;
-        c.className = 'step-circle ' + (s < currentStep ? 'done' : s === currentStep ? 'active' : 'inactive');
-        c.innerHTML = s < currentStep ? '✓' : s;
+  // The server decides whether a named report is allowed, so ask it who this is.
+  fetch('check_session_status.php', { credentials: 'same-origin' }).then((r) => r.json())
+    .then((d) => {
+      signedIn = !!d.logged_in;
+      if (!signedIn) $('signinNote').hidden = false;
+    }).catch(() => { $('signinNote').hidden = false; });
+
+  const errBox = $('formError');
+  const showErr = (m) => { errBox.querySelector('div').textContent = m; errBox.hidden = false; };
+  const clearErr = () => { errBox.hidden = true; };
+
+  function render() {
+    document.querySelectorAll('.step').forEach((s) => { s.hidden = Number(s.dataset.step) !== step; });
+    document.querySelectorAll('[data-pip]').forEach((p) => {
+      const n = Number(p.dataset.pip);
+      p.classList.toggle('active', n === step);
+      p.classList.toggle('done', n < step);
     });
-    document.querySelectorAll('.step-label').forEach((l, i) => {
-        l.className = 'step-label ' + (i + 1 <= currentStep ? 'active' : 'inactive');
-    });
-    document.querySelectorAll('.step-line').forEach((l, i) => {
-        l.className = 'step-line' + (i + 1 < currentStep ? ' done' : '');
-    });
-    document.getElementById('backBtn').style.display = currentStep > 1 ? 'block' : 'none';
-    document.getElementById('stepIndicator').textContent = `Step ${currentStep} of 3`;
-    document.getElementById('nextBtn').textContent = currentStep === 3 ? 'Submit Report →' : 'Next →';
-    if (currentStep === 3) updateSubmitState();
-}
+    document.querySelectorAll('.step-gap').forEach((g, i) => g.classList.toggle('done', i + 1 < step));
+    $('backBtn').hidden = step === 1;
+    $('stepLabel').textContent = `Step ${step} of 3`;
+    $('nextBtn').querySelector('span').textContent = step === 3 ? 'Submit report' : 'Next';
+    if (!reduced) gsap.from(`.step[data-step="${step}"]`, { x: 24, opacity: 0, duration: 0.4, ease: 'power3.out', clearProps: 'all' });
+  }
 
-function showStep(n) {
-    document.querySelectorAll('.step-content').forEach(s => s.style.display = 'none');
-    const target = document.querySelector(`.step-content[data-step="${n}"]`);
-    target.style.display = 'block';
-    gsap.from(target, { x: 40, opacity: 0, duration: 0.4, ease: 'power2.out' });
-}
-
-function nextStep() {
-    if (currentStep === 3) { submitReport(); return; }
-    const cur = document.querySelector(`.step-content[data-step="${currentStep}"]`);
-    gsap.to(cur, { x: -40, opacity: 0, duration: 0.3, ease: 'power2.in', onComplete: () => {
-        currentStep++; updateStepper(); showStep(currentStep);
-    }});
-}
-
-function prevStep() {
-    const cur = document.querySelector(`.step-content[data-step="${currentStep}"]`);
-    gsap.to(cur, { x: 40, opacity: 0, duration: 0.3, ease: 'power2.in', onComplete: () => {
-        currentStep--; updateStepper(); showStep(currentStep);
-    }});
-}
-
-function toggleAnon() {
-    const on = document.getElementById('anonCheck').checked;
-    document.getElementById('personalFields').className = on ? 'anon-hidden' : '';
-    document.getElementById('anonOverlay').style.display = on ? 'block' : 'none';
-}
-
-function selectType(el) {
-    document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
-    el.classList.add('selected');
-    selectedType = el.dataset.val;
-    document.getElementById('incident_type').value = selectedType;
-}
-
-function updateSeverity(v) {
-    const map = {1:['Low','#22c55e'],2:['Moderate','#eab308'],3:['High','#f97316'],4:['Severe','#ef4444'],5:['Critical','#dc2626']};
-    document.getElementById('sevLabel').textContent = map[v][0];
-    document.getElementById('sevLabel').style.color = map[v][1];
-}
-
-function updateCharCount() {
-    const len = document.getElementById('description').value.length;
-    const el = document.getElementById('charCount');
-    el.textContent = `${len} / 1000`;
-    el.className = 'char-count' + (len > 900 ? ' warn' : '');
-}
-
-function useMyLocation() {
-    if (!navigator.geolocation) return alert('Geolocation not supported');
-    navigator.geolocation.getCurrentPosition(pos => {
-        document.getElementById('location').value = `${pos.coords.latitude.toFixed(6)}, ${pos.coords.longitude.toFixed(6)}`;
-    }, () => alert('Location access denied'));
-}
-
-function handleDrop(e) { e.preventDefault(); e.currentTarget.classList.remove('dragover'); handleFiles(e.dataTransfer.files); }
-function handleFiles(files) {
-    const container = document.getElementById('filePreviews');
-    [...files].forEach((f, i) => {
-        uploadedFiles.push(f);
-        const div = document.createElement('div'); div.className = 'file-preview';
-        if (f.type.startsWith('image/')) { const img = document.createElement('img'); img.src = URL.createObjectURL(f); div.appendChild(img); }
-        else { div.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:11px;color:rgba(255,255,255,0.5);padding:8px;word-break:break-all">${f.name}</div>`; }
-        const btn = document.createElement('button'); btn.className = 'remove-btn'; btn.textContent = '×';
-        btn.onclick = (e) => { e.stopPropagation(); div.remove(); };
-        div.appendChild(btn); container.appendChild(div);
-    });
-}
-
-function toggleWitness() { document.getElementById('witnessFields').classList.toggle('open'); }
-function updateSubmitState() {
-    document.getElementById('nextBtn').disabled = currentStep === 3 && !document.getElementById('consentCheck').checked;
-}
-
-function submitReport() {
-    if (!document.getElementById('consentCheck').checked) return;
-    const btn = document.getElementById('nextBtn');
-    btn.innerHTML = '<div style="width:20px;height:20px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;display:inline-block;animation:spin .6s linear infinite;vertical-align:middle;margin-right:8px"></div> Submitting...';
-    btn.disabled = true;
-    const formData = {
-        incident_type: selectedType,
-        date_time: document.getElementById('date_time').value,
-        location: document.getElementById('location').value,
-        description: document.getElementById('description').value,
-        severity: document.getElementById('severity').value,
-        anonymous: document.getElementById('anonCheck').checked
-    };
-    if (!formData.anonymous) {
-        formData.first_name = document.getElementById('first_name').value;
-        formData.last_name = document.getElementById('last_name').value;
-        formData.phone = document.getElementById('phone').value;
-        formData.email = document.getElementById('email').value;
+  function validate() {
+    if (step === 1 && !signedIn && !$('anonCheck').checked) return 'Please sign in, or switch on anonymous reporting.';
+    if (step === 2) {
+      if (!type) return 'Choose the type of incident.';
+      if (!$('date_time').value) return 'Add when it happened. An estimate is fine.';
+      if (!$('location').value.trim()) return 'Add where it happened.';
+      if (!$('description').value.trim()) return 'Add a short description.';
     }
-    fetch('../report.php', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-    })
-    .then(r => r.json())
-    .then(data => {
-        document.getElementById('formCard').style.display = 'none';
-        document.getElementById('successScreen').style.display = 'block';
-        if (data.report_id) document.getElementById('reportId').textContent = `Report ID: #${data.report_id}`;
-        gsap.from('.success-screen', { scale: 0.9, opacity: 0, duration: 0.6, ease: 'back.out(1.7)' });
-    })
-    .catch(() => {
-        document.getElementById('formCard').style.display = 'none';
-        document.getElementById('successScreen').style.display = 'block';
-        gsap.from('.success-screen', { scale: 0.9, opacity: 0, duration: 0.6, ease: 'back.out(1.7)' });
-    });
-}
+    if (step === 3 && !$('consentCheck').checked) return 'Please confirm the statement above to submit.';
+    return '';
+  }
 
-// Init
-document.addEventListener('DOMContentLoaded', () => {
-    const style = document.createElement('style');
-    style.textContent = '@keyframes spin{to{transform:rotate(360deg)}}';
-    document.head.appendChild(style);
-    updateStepper();
-    gsap.from('.secure-badge', { y: -10, opacity: 0, duration: 0.6, delay: 0.2 });
-    gsap.from('#pageTitle', { y: 30, opacity: 0, duration: 0.8, delay: 0.3 });
-    gsap.from('.trust-item', { y: 15, opacity: 0, stagger: 0.1, duration: 0.5, delay: 0.5 });
-    gsap.from('.form-card', { y: 40, opacity: 0, duration: 0.8, delay: 0.6 });
-    window.addEventListener('scroll', () => {
-        document.querySelector('.glass-nav').classList.toggle('nav--scrolled', window.scrollY > 60);
+  $('nextBtn').addEventListener('click', () => {
+    const problem = validate();
+    if (problem) { showErr(problem); return; }
+    clearErr();
+    if (step === 3) { submit(); return; }
+    step += 1;
+    render();
+  });
+  $('backBtn').addEventListener('click', () => { clearErr(); step -= 1; render(); });
+
+  $('anonCheck').addEventListener('change', (e) => { $('personalFields').hidden = e.target.checked; clearErr(); });
+
+  $('typeGrid').addEventListener('click', (e) => {
+    const b = e.target.closest('.type-opt');
+    if (!b) return;
+    type = b.dataset.val;
+    document.querySelectorAll('.type-opt').forEach((o) => o.setAttribute('aria-checked', String(o === b)));
+  });
+  $('sevTabs').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-sev]');
+    if (!b) return;
+    severity = b.dataset.sev;
+    document.querySelectorAll('[data-sev]').forEach((o) => { o.classList.toggle('active', o === b); o.setAttribute('aria-checked', String(o === b)); });
+  });
+  $('description').addEventListener('input', (e) => { $('charCount').textContent = `${e.target.value.length} / 1000`; });
+
+  $('useLoc').addEventListener('click', () => {
+    if (!navigator.geolocation) { showToast('This browser cannot share location.', 'warning'); return; }
+    navigator.geolocation.getCurrentPosition((p) => {
+      $('location').value = `${p.coords.latitude.toFixed(6)}, ${p.coords.longitude.toFixed(6)}`;
+    }, () => showToast('Location access was blocked. You can type the place instead.', 'warning'));
+  });
+
+  const MAX = 5 * 1024 * 1024;
+  const OK_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'application/pdf'];
+  function addFiles(list) {
+    [...list].forEach((f) => {
+      if (!OK_TYPES.includes(f.type)) { showToast(`${f.name}: only JPG, PNG, GIF or PDF.`, 'error'); return; }
+      if (f.size > MAX) { showToast(`${f.name} is over 5 MB.`, 'error'); return; }
+      files.push(f);
     });
-});
+    renderFiles();
+  }
+  function renderFiles() {
+    const host = $('fileList');
+    host.textContent = '';
+    files.forEach((f, i) => {
+      const row = document.createElement('div');
+      row.className = 'file-row';
+      const name = document.createElement('span');
+      name.className = 'truncate';
+      name.style.flex = '1';
+      name.textContent = f.name;
+      const rm = document.createElement('button');
+      rm.type = 'button';
+      rm.className = 'btn btn-ghost btn-icon';
+      rm.style.cssText = 'width:28px;height:28px';
+      rm.setAttribute('aria-label', `Remove ${f.name}`);
+      rm.innerHTML = SS.icon('x');
+      rm.addEventListener('click', () => { files.splice(i, 1); renderFiles(); });
+      row.append(name, rm);
+      host.appendChild(row);
+    });
+  }
+  $('fileInput').addEventListener('change', (e) => { addFiles(e.target.files); e.target.value = ''; });
+  const drop = $('dropZone');
+  ['dragenter', 'dragover'].forEach((t) => drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.add('over'); }));
+  ['dragleave', 'drop'].forEach((t) => drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.remove('over'); }));
+  drop.addEventListener('drop', (e) => addFiles(e.dataTransfer.files));
+
+  async function submit() {
+    const btn = $('nextBtn');
+    const anon = $('anonCheck').checked;
+    const form = new FormData();
+    form.append('incident_type', type);
+    form.append('date_time', $('date_time').value);
+    form.append('location', $('location').value.trim());
+    form.append('severity', severity);
+
+    // Extra details have no database column, so they travel in the description.
+    let text = $('description').value.trim();
+    const extras = [];
+    if (!anon) {
+      const name = `${$('first_name').value.trim()} ${$('last_name').value.trim()}`.trim();
+      if (name) extras.push(`Name: ${name}`);
+      if ($('phone').value.trim()) extras.push(`Phone: ${$('phone').value.trim()}`);
+      if ($('email').value.trim()) extras.push(`Email: ${$('email').value.trim()}`);
+    }
+    if ($('witness_name').value.trim() || $('witness_contact').value.trim()) {
+      extras.push(`Witness: ${$('witness_name').value.trim()} ${$('witness_contact').value.trim()}`.trim());
+    }
+    if (extras.length) text += `\n\n${extras.join('\n')}`;
+    form.append('description', text);
+    if (anon) form.append('is_anonymous', '1');
+    files.forEach((f) => form.append('evidence[]', f));
+
+    busy(btn, true, 'Submitting');
+    try {
+      const d = await post(`${BASE}api/incidents/create.php`, form);
+      // Only a confirmed save reaches this screen.
+      $('reportForm').hidden = true;
+      $('stepper').hidden = true;
+      $('successCard').hidden = false;
+      $('reportId').textContent = `Report ID: ${d.report_id}`;
+      $('successNote').textContent = anon
+        ? 'Keep this ID. Because the report is anonymous, it is the only way to refer to it later.'
+        : 'You can follow it from your dashboard.';
+      $('successDash').hidden = anon;
+      if (!reduced) gsap.from('#successCard', { scale: 0.94, opacity: 0, duration: 0.6, ease: 'back.out(1.7)' });
+      window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
+    } catch (err) {
+      busy(btn, false);
+      showErr(`Your report was not saved. ${err.message}`);
+    }
+  }
+}());
 </script>
 </body>
 </html>

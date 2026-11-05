@@ -2,6 +2,15 @@
 header('Content-Type: application/json');
 
 try {
+    require_once __DIR__ . '/../app/middleware/session_bootstrap.php';
+    configure_session_storage();
+    session_start();
+    if (empty($_SESSION['user_id'])) {
+        throw new Exception('Please sign in again.');
+    }
+    $sessionUser = (int)$_SESSION['user_id'];
+    $isAdmin = !empty($_SESSION['is_admin']) ? 1 : 0;
+
     require_once __DIR__ . '/../app/models/mysqli_db.php';
 
     if (!$conn) {
@@ -14,12 +23,12 @@ try {
     }
     $id = $data['id'];
 
-    $sql = "UPDATE incidents SET status='resolved' WHERE id=? AND status='pending'";
+    $sql = "UPDATE incidents SET status='resolved' WHERE id=? AND status='pending' AND (user_id=? OR ?=1)";
     $stmt = $conn->prepare($sql);
     if (!$stmt) {
         throw new Exception('Failed to prepare SQL statement');
     }
-    $stmt->bind_param("i", $id);
+    $stmt->bind_param("iii", $id, $sessionUser, $isAdmin);
 
     if ($stmt->execute()) {
         if ($stmt->affected_rows > 0) {

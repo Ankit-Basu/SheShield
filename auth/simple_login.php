@@ -25,7 +25,7 @@ if (!isset($conn) || $conn->connect_error) {
     exit;
 }
 
-$stmt = $conn->prepare("SELECT id, first_name, last_name, email, password, phone FROM users WHERE email = ? LIMIT 1");
+$stmt = $conn->prepare("SELECT u.id, u.first_name, u.last_name, u.email, u.password, u.phone, CASE WHEN a.id IS NOT NULL THEN 1 ELSE 0 END AS is_admin FROM users u LEFT JOIN admins a ON a.user_id = u.id WHERE u.email = ? LIMIT 1");
 $stmt->bind_param("s", $email);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -39,7 +39,7 @@ if ($row = $result->fetch_assoc()) {
         $_SESSION['last_name'] = $row['last_name'];
         $_SESSION['email'] = $row['email'];
         $_SESSION['phone'] = $row['phone'] ?? '';
-        $_SESSION['is_admin'] = false;
+        $_SESSION['is_admin'] = (bool)$row['is_admin'];
 
         http_response_code(200);
         echo json_encode([

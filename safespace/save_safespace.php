@@ -28,7 +28,7 @@ try {
     $center_lng = $lng_sum / count($coordinates);
 
     // Insert into database
-    $stmt = $conn->prepare("INSERT INTO safe_spaces (latitude, longitude, description, time_active, created_at) VALUES (?, ?, ?, ?, NOW())");
+    $stmt = $conn->prepare("INSERT INTO safe_spaces (latitude, longitude, description, time_active) VALUES (?, ?, ?, ?)");
     $stmt->bind_param("ddsi", 
         $center_lat,
         $center_lng,

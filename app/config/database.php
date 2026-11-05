@@ -193,7 +193,7 @@ class Database {
 
         $this->conn->exec("CREATE TABLE IF NOT EXISTS walk_requests (
             walk_id VARCHAR(50) PRIMARY KEY,
-            escort_id VARCHAR(20) NOT NULL,
+            escort_id VARCHAR(20) NULL,
             user_id INT NULL,
             pickup_location VARCHAR(255) NOT NULL,
             destination VARCHAR(255) NOT NULL,
@@ -259,6 +259,31 @@ class Database {
             if ($dbConfig['driver'] === 'pgsql') {
                 $dsn = "pgsql:host={$dbConfig['host']};port={$dbConfig['port']};dbname={$dbConfig['db']};";
             } else {
+                $dsn = "mysql:host={$dbConfig['host']};port={$dbConfig['port']};dbname={$dbConfig['db']};charset=utf8mb4";
+            }
+
+            $options = array(
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_EMULATE_PREPARES => false
+            );
+
+            require_once __DIR__ . '/../../database/schema_guard.php';
+            $marker = ss_schema_marker($dbConfig['driver'], __FILE__, $dbConfig['db']);
+
+            // Fast path: the schema has already been applied by this version of the code.
+            if (is_file($marker)) {
+                try {
+                    $this->conn = new PDO($dsn, $dbConfig['user'], $dbConfig['pass'], $options);
+                    if ($this->conn->query("SELECT 1 FROM users LIMIT 1") !== false) {
+                        return $this->conn;
+                    }
+                } catch (PDOException $e) {
+                    // The database or table is gone: fall through and rebuild it.
+                    $this->conn = null;
+                }
+            }
+
+            if ($dbConfig['driver'] !== 'pgsql') {
                 $serverDsn = "mysql:host={$dbConfig['host']};port={$dbConfig['port']};charset=utf8mb4";
                 $serverConn = new PDO(
                     $serverDsn,
@@ -270,20 +295,11 @@ class Database {
                     "CREATE DATABASE IF NOT EXISTS " . $this->quoteIdentifier($dbConfig['db']) .
                     " CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
                 );
-                $dsn = "mysql:host={$dbConfig['host']};port={$dbConfig['port']};dbname={$dbConfig['db']};charset=utf8mb4";
             }
-            
-            $this->conn = new PDO(
-                $dsn,
-                $dbConfig['user'],
-                $dbConfig['pass'],
-                array(
-                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                    PDO::ATTR_EMULATE_PREPARES => false
-                )
-            );
 
+            $this->conn = new PDO($dsn, $dbConfig['user'], $dbConfig['pass'], $options);
             $this->ensureSchema($dbConfig['driver']);
+            @touch($marker);
 
             return $this->conn;
         } catch(PDOException $e) {

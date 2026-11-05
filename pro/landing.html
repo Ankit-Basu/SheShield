@@ -1,476 +1,304 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-base="../">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SheShield - Empowering Women's Safety</title>
-    <meta name="description" content="SheShield - 24/7 emergency support, real-time tracking, and incident reporting for women's safety.">
-    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
-    <link rel="stylesheet" href="css/premium.css?v=5">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <!-- GSAP + ScrollTrigger -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-    <!-- Lenis Smooth Scroll -->
-    <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
-    <!-- VanillaTilt -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
-    <!-- Alpine.js (chatbot) -->
-    <script defer src="https://unpkg.com/alpinejs@3.13.3/dist/cdn.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SheShield · No one walks home alone</title>
+  <meta name="description" content="SheShield is a campus safety platform for women: one-tap SOS, walk companions, confidential reporting and a live safety map.">
+  <meta name="theme-color" content="#170d17">
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <script>try{document.documentElement.dataset.theme=localStorage.getItem('ss-theme')||'dawn'}catch(e){}</script>
+  <link rel="preload" href="../fonts/Clash%20Display/Fonts/WEB/fonts/ClashDisplay-Semibold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../public/css/glass.css?v=11">
+  <link rel="stylesheet" href="../public/css/landing.css?v=11">
 </head>
 <body>
+<div class="ss-backdrop" aria-hidden="true"></div>
 
-<!-- Page Loader Curtain -->
-<div id="loader">
-    <div style="position:relative;display:flex;align-items:center;justify-content:center">
-        <svg width="80" height="88" viewBox="0 0 100 110" fill="none" style="position:relative;z-index:1">
-            <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#e91e8c"/><stop offset="100%" stop-color="#7c3aed"/></linearGradient></defs>
-            <path d="M50 6 L88 22 L88 56 Q88 80 50 96 Q12 80 12 56 L12 22 Z" fill="url(#lg)"/>
-            <circle cx="50" cy="40" r="13" stroke="white" stroke-width="2.8"/>
-            <line x1="50" y1="53" x2="50" y2="74" stroke="white" stroke-width="2.8" stroke-linecap="round"/>
-            <line x1="41" y1="65" x2="59" y2="65" stroke="white" stroke-width="2.8" stroke-linecap="round"/>
-            <polyline points="46,32 50,26 54,32" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<header class="site-nav glass glass-blur" id="siteNav">
+  <a href="landing.html" class="brand" aria-label="SheShield home">
+    <svg class="brand-mark" viewBox="0 0 100 110" fill="none" aria-hidden="true"><defs><linearGradient id="ssLogo" x1="0" y1="0" x2="1" y2="1"><stop stop-color="var(--primary)"/><stop offset="1" stop-color="var(--accent)"/></linearGradient></defs><path d="M50 6 88 22v34q0 24-38 40Q12 80 12 56V22Z" fill="url(#ssLogo)"/><circle cx="50" cy="40" r="12" stroke="#1d121b" stroke-width="5"/><path d="M50 52v21M41 64h18" stroke="#1d121b" stroke-width="5" stroke-linecap="round"/></svg>
+    SheShield
+  </a>
+  <nav class="site-links" aria-label="Page sections">
+    <a href="#walk">How it works</a>
+    <a href="#services">Services</a>
+    <a href="#about">About</a>
+    <a href="#helplines">Helplines</a>
+  </nav>
+  <div class="site-actions">
+    <div class="theme-picker hide-sm" role="group" aria-label="Theme">
+      <button class="theme-swatch" data-set="dawn" aria-label="Sunset Horizon theme" title="Sunset Horizon"></button>
+      <button class="theme-swatch" data-set="cosmic" aria-label="Cosmic Night theme" title="Cosmic Night"></button>
+      <button class="theme-swatch" data-set="solar" aria-label="Solar Dusk theme" title="Solar Dusk"></button>
+    </div>
+    <a href="login.html" class="btn btn-ghost hide-sm">Log in</a>
+    <button class="btn btn-sos" data-sos><svg class="i" aria-hidden="true"><use href="../public/icons.svg#siren"/></svg> SOS</button>
+  </div>
+</header>
+
+<main>
+  <!-- ═══ HERO ═══ -->
+  <section class="hero" id="top">
+    <div class="hero-copy" id="heroCopy">
+      <div class="sunclock hero-clock" data-sunclock></div>
+      <h1 class="display hero-title" data-split data-delay="0.1"><span class="ln">No one walks</span> <span class="ln text-gradient">home alone.</span></h1>
+      <p class="hero-sub" data-reveal>SheShield puts help one tap away. Find a walking companion, call for help with your location ready to send, and report what happened in confidence.</p>
+      <div class="row wrap hero-cta" data-reveal>
+        <a href="signup.html" class="btn btn-primary btn-lg" data-magnet>Get started <svg class="i" aria-hidden="true"><use href="../public/icons.svg#arrow-right"/></svg></a>
+        <a href="report.html" class="btn btn-outline btn-lg" data-magnet>Report an incident</a>
+      </div>
+    </div>
+
+    <div class="hero-stage" id="heroStage" aria-hidden="true">
+      <span class="orb" data-orb="-22" style="width:250px;height:250px;right:0;top:0"></span>
+      <span class="orb orb-b" data-orb="30" style="width:170px;height:170px;left:-2%;bottom:6%"></span>
+      <div class="pass glass glass-frost" id="passCard">
+        <div class="pass-main">
+          <div class="row-between"><span class="eyebrow">Walk pass</span><span class="badge badge-good"><span class="dot dot-live"></span>On the way</span></div>
+          <div class="pass-route">
+            <div><span class="eyebrow">From</span><b class="display">Main Gate</b></div>
+            <svg class="i pass-arrow"><use href="../public/icons.svg#arrow-right"/></svg>
+            <div><span class="eyebrow">To</span><b class="display">Girls Hostel</b></div>
+          </div>
+          <div class="pass-meta">
+            <div><span class="eyebrow">Walker</span><span>Assigned</span></div>
+            <div><span class="eyebrow">Start</span><span>21:40</span></div>
+            <div><span class="eyebrow">Location</span><span>Shared</span></div>
+          </div>
+        </div>
+        <div class="pass-stub">
+          <svg class="i"><use href="../public/icons.svg#shield-check"/></svg>
+          <span class="mono xs">WALK-0847</span>
+        </div>
+      </div>
+
+      <div class="float-card glass glass-frost" id="floatSos">
+        <span class="mini-beacon"><svg class="i"><use href="../public/icons.svg#siren"/></svg></span>
+        <div><b>SOS ready</b><span class="xs muted">Works without signing in</span></div>
+      </div>
+      <div class="float-card glass glass-frost" id="floatLoc">
+        <span class="icon-tile" style="width:36px;height:36px;font-size:16px"><svg class="i"><use href="../public/icons.svg#locate-fixed"/></svg></span>
+        <div><b>31.2533, 75.7050</b><span class="xs muted">Ready to send</span></div>
+      </div>
+    </div>
+
+    <a href="#walk" class="scroll-cue" aria-label="Scroll to how it works"><svg class="i"><use href="../public/icons.svg#arrow-down"/></svg></a>
+  </section>
+
+  <!-- ═══ MARQUEE ═══ -->
+  <section class="marquee" aria-hidden="true">
+    <div class="marquee-row" data-speed="-1"><div class="marquee-track">
+      <span>One-tap SOS</span><i>✦</i><span>Walk with us</span><i>✦</i><span>Safe spaces</span><i>✦</i><span>Confidential reports</span><i>✦</i><span>Safety map</span><i>✦</i>
+    </div></div>
+    <div class="marquee-row is-outline" data-speed="1"><div class="marquee-track">
+      <span>112 emergency</span><i>✦</i><span>1091 women's helpline</span><i>✦</i><span>100 police</span><i>✦</i><span>Share your location</span><i>✦</i>
+    </div></div>
+  </section>
+
+  <!-- ═══ THE WALK: scroll-drawn route ═══ -->
+  <section class="walk" id="walk">
+    <div class="walk-sticky">
+      <span class="eyebrow">How it works</span>
+      <h2 class="display section-title" data-split="scroll">One walk, <span class="text-gradient">night to dawn.</span></h2>
+      <div class="walk-map glass" aria-hidden="true">
+        <img class="walk-sat" src="images/lpu-satellite.jpg" alt="" loading="lazy" decoding="async">
+        <svg viewBox="0 0 420 420" id="walkSvg" fill="none">
+          <path class="walk-ghost" d="M52 372 C120 372 110 268 188 262 C276 256 318 296 350 232 C382 168 262 158 214 136 C166 114 196 56 300 48"/>
+          <path class="walk-line" id="walkLine" pathLength="1" d="M52 372 C120 372 110 268 188 262 C276 256 318 296 350 232 C382 168 262 158 214 136 C166 114 196 56 300 48"/>
+          <g class="walk-stops">
+            <circle class="stop" cx="52" cy="372" r="8"/><circle class="stop" cx="188" cy="262" r="8"/><circle class="stop" cx="350" cy="232" r="8"/><circle class="stop" cx="300" cy="48" r="8"/>
+          </g>
+          <g id="walkDot"><circle r="18" class="dot-halo"/><circle r="8" class="dot-core"/></g>
         </svg>
-        <svg width="160" height="176" viewBox="0 0 100 110" fill="none" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);animation:loaderPulse 2.5s infinite">
-            <circle cx="50" cy="55" r="58" fill="none" stroke="url(#lg)" stroke-width="1" opacity="0.3"/>
-        </svg>
+      </div>
     </div>
-</div>
-<style>@keyframes loaderPulse{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:0.3}50%{transform:translate(-50%,-50%) scale(1.15);opacity:0.1}}</style>
+    <ol class="walk-steps">
+      <li class="walk-step glass spot" data-step>
+        <span class="step-no mono">01</span>
+        <h3 class="display">Set up your circle</h3>
+        <p>Create an account and add the person you would want told first. It takes about a minute, and it is ready before you need it.</p>
+      </li>
+      <li class="walk-step glass spot" data-step>
+        <span class="step-no mono">02</span>
+        <h3 class="display">Plan the way home</h3>
+        <p>Check the safety map, find a safe space on your route, or request a walking companion for the stretch you would rather not do alone.</p>
+      </li>
+      <li class="walk-step glass spot" data-step>
+        <span class="step-no mono">03</span>
+        <h3 class="display">If it feels wrong, tap</h3>
+        <p>SOS opens instantly, with no sign-in. Call 112 in one tap, and send your exact location over WhatsApp or SMS to anyone you trust.</p>
+      </li>
+      <li class="walk-step glass spot" data-step>
+        <span class="step-no mono">04</span>
+        <h3 class="display">Be heard afterwards</h3>
+        <p>Report what happened with your name or without it, use a template if the words are hard to find, and follow the case until it is closed.</p>
+      </li>
+    </ol>
+  </section>
 
-<!-- Custom Cursor -->
-<div id="cursor"></div>
-<div id="cursor-follower"></div>
-
-<!-- Scroll Progress Bar -->
-<div id="scrollProgress"></div>
-
-<!-- â•â•â• NAVBAR â•â•â• -->
-<nav class="glass-nav"><div class="nav-scroll-progress" id="navProgress"></div>
-    <div class="nav-inner">
-        <a href="landing.html" class="logo" id="navLogo">
-            <img src="../assets/logo.svg" alt="SheShield" class="nav-logo-icon" style="height:36px;width:auto;transition:height 0.3s ease">
-            <span class="auth-logo-wordmark" style="font-family:'Clash Display',sans-serif;font-size:1.4rem;font-weight:700;letter-spacing:-0.03em"><span style="color:#fff">She</span><span style="background:linear-gradient(135deg,#e91e8c,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Shield</span></span>
-        </a>
-        <div class="nav-links">
-            <a href="#hero">Home</a>
-            <a href="#about">About Us</a>
-            <a href="#features">Services</a>
-            <a href="#how-it-works">How It Works</a>
-            <a href="#contact">Emergency</a>
+  <!-- ═══ SOS DEMO: scroll drives the phone ═══ -->
+  <section class="demo" id="demo">
+    <div class="demo-sticky">
+      <div class="demo-copy">
+        <span class="eyebrow">See it work</span>
+        <h2 class="display section-title">What one tap <span class="text-gradient">does.</span></h2>
+        <ol class="demo-steps" id="demoSteps">
+          <li class="on"><span class="mono">1</span><div><h3>Tap SOS</h3><p>It sits on every page, even before you sign in.</p></div></li>
+          <li><span class="mono">2</span><div><h3>Call straight away</h3><p>Calling 112 never waits for GPS.</p></div></li>
+          <li><span class="mono">3</span><div><h3>Your exact spot is ready</h3><p>Coordinates and a map link, prepared for you.</p></div></li>
+          <li><span class="mono">4</span><div><h3>You choose who gets it</h3><p>Send it by WhatsApp or SMS. Nothing goes out without your tap.</p></div></li>
+        </ol>
+      </div>
+      <div class="demo-stage" aria-hidden="true">
+        <span class="orb" data-orb="-40" style="width:300px;height:300px;right:-3%;top:2%"></span>
+        <span class="orb orb-b" data-orb="46" style="width:190px;height:190px;left:0;bottom:4%"></span>
+        <div class="phone glass glass-frost">
+          <div class="phone-bar"><span>21:40</span><span class="row" style="gap:4px"><svg class="i" aria-hidden="true"><use href="../public/icons.svg#signal"/></svg><svg class="i" aria-hidden="true"><use href="../public/icons.svg#wifi"/></svg><svg class="i" aria-hidden="true"><use href="../public/icons.svg#battery-full"/></svg></span></div>
+          <div class="screen" data-screen="1">
+            <p class="eyebrow">Walking home</p>
+            <div class="big-sos"><span class="ring"></span><span class="ring r2"></span><span class="core"><svg class="i" aria-hidden="true"><use href="../public/icons.svg#siren"/></svg><b>SOS</b></span></div>
+            <p class="small muted">Tap once</p>
+          </div>
+          <div class="screen" data-screen="2">
+            <div class="radar"><i></i><i></i><i></i><span><svg class="i" aria-hidden="true"><use href="../public/icons.svg#locate-fixed"/></svg></span></div>
+            <b class="display" style="font-size:22px">Finding you</b>
+            <span class="btn btn-sos btn-block" style="margin-top:auto"><svg class="i" aria-hidden="true"><use href="../public/icons.svg#phone-call"/></svg> Call 112 now</span>
+            <span class="btn btn-outline btn-block"><svg class="i" aria-hidden="true"><use href="../public/icons.svg#phone"/></svg> Women's helpline 1091</span>
+          </div>
+          <div class="screen" data-screen="3">
+            <div class="mini-map"><img src="images/lpu-satellite.jpg" alt="" loading="lazy" decoding="async"><span class="mini-pin"></span></div>
+            <div class="coords"><div><span class="eyebrow">Lat</span><b>31.25330</b></div><div><span class="eyebrow">Lng</span><b>75.70400</b></div></div>
+            <span class="btn btn-block phone-wa" style="margin-top:auto"><svg class="i" aria-hidden="true"><use href="../public/icons.svg#message-circle"/></svg> Send on WhatsApp</span>
+            <span class="btn btn-outline btn-block"><svg class="i" aria-hidden="true"><use href="../public/icons.svg#message-square"/></svg> Send by SMS</span>
+          </div>
+          <div class="screen" data-screen="4">
+            <div class="chat-top"><span class="avatar" style="width:34px;height:34px;font-size:14px">M</span><b>Mom</b></div>
+            <div class="bubble"><b>SOS. I need help.</b><br>My location: maps.google.com/?q=31.2533,75.7040<div class="ticks">21:41 <svg class="i" aria-hidden="true"><use href="../public/icons.svg#check-check"/></svg></div></div>
+            <div class="bubble in">Calling you now. Stay on the line.</div>
+          </div>
         </div>
-        <div class="nav-actions">
-            <a href="login.html" class="btn-premium btn-outline btn-sm">Log In</a>
-            <a href="report.html" class="btn-premium btn-sm magnetic-btn">Report Now</a>
-        </div>
+      </div>
     </div>
-</nav>
+  </section>
 
-<!-- â•â•â• HERO â•â•â• -->
-<section class="hero hero-section" id="hero">
-    <!-- Background Layers -->
-    <div class="mesh-blob blob-1"></div>
-    <div class="mesh-blob blob-2"></div>
-    <div class="mesh-blob blob-3"></div>
-    <div class="mesh-blob blob-4"></div>
-    <div id="noise"></div>
-    <div class="hero-dots"></div>
-    <div class="hero-image-shell">
-        <div class="hero-image-layer hero-illustration"></div>
+  <!-- ═══ SERVICES BENTO ═══ -->
+  <section class="section" id="services">
+    <span class="eyebrow">Services</span>
+    <h2 class="display section-title" data-split="scroll">Everything for <span class="text-gradient">the way home.</span></h2>
+    <div class="grid g-bento bento">
+      <span class="orb" data-orb="-60" style="width:340px;height:340px;left:34%;top:-3%"></span>
+      <span class="orb orb-b" data-orb="70" style="width:240px;height:240px;right:-3%;bottom:20%"></span>
+      <span class="orb" data-orb="-30" style="width:170px;height:170px;left:-3%;bottom:6%"></span>
+      <a href="#top" data-sos class="glass glass-frost spot lift bento-card span-5 is-sos" data-reveal>
+        <div class="viz viz-sos" aria-hidden="true"><span class="ring"></span><span class="ring r2"></span><span class="core"><svg class="i"><use href="../public/icons.svg#siren"/></svg></span></div>
+        <h3>SOS, in one tap</h3>
+        <p>Calls first, GPS second. Your location is ready to send to anyone you trust.</p>
+      </a>
+      <a href="../views/pages/map.php" class="glass glass-frost spot lift bento-card span-7" data-reveal>
+        <div class="viz viz-map" aria-hidden="true"><img src="images/lpu-satellite.jpg" alt="" loading="lazy" decoding="async"><i style="left:41%;top:44%"></i><i style="left:58%;top:62%"></i><i style="left:49%;top:27%"></i><em style="left:33%;top:68%"></em><em style="left:68%;top:35%"></em></div>
+        <h3>Safety map</h3>
+        <p>Campus landmarks alongside the incidents reported around them, so you can choose your route.</p>
+      </a>
+      <a href="../views/pages/walkwithus.php" class="glass glass-frost spot lift bento-card span-4" data-reveal>
+        <div class="viz viz-icon" aria-hidden="true"><svg class="i"><use href="../public/icons.svg#footprints"/></svg></div>
+        <h3>Walk with us</h3>
+        <p>Request a companion for your route, or volunteer to walk with someone else.</p>
+      </a>
+      <a href="report.html" class="glass glass-frost spot lift bento-card span-4" data-reveal>
+        <div class="viz viz-toggle" aria-hidden="true"><span>Name</span><span class="toggle-demo"></span><span>Anonymous</span></div>
+        <h3>Confidential reports</h3>
+        <p>File with your name or anonymously, and attach photos or documents as evidence.</p>
+      </a>
+      <a href="../views/pages/safespace.php" class="glass glass-frost spot lift bento-card span-4" data-reveal>
+        <div class="viz viz-icon" aria-hidden="true"><svg class="i"><use href="../public/icons.svg#shield-check"/></svg></div>
+        <h3>Safe spaces</h3>
+        <p>See places others have marked as safe, and add ones you know.</p>
+      </a>
+      <a href="../views/pages/analytics.php" class="glass glass-frost spot lift bento-card span-6" data-reveal>
+        <div class="viz viz-bars" aria-hidden="true"><i style="--h:34%"></i><i style="--h:58%"></i><i style="--h:42%"></i><i style="--h:76%"></i><i style="--h:52%"></i><i style="--h:92%"></i><i style="--h:66%"></i></div>
+        <h3>Analytics</h3>
+        <p>See where your reports stand, by status, type and time.</p>
+      </a>
+      <a href="../views/pages/templates.php" class="glass glass-frost spot lift bento-card span-6" data-reveal>
+        <div class="viz viz-lines" aria-hidden="true"><i></i><i></i><i></i></div>
+        <h3>Complaint templates</h3>
+        <p>Guided prompts for harassment, stalking, cybercrime and POSH complaints, for when the words are hard to find.</p>
+      </a>
     </div>
+  </section>
 
-    <!-- LAYER 3 â€” Background Watermark -->
-    <div class="hero-bg-text" aria-hidden="true">SheShield</div>
-
-    <!-- LAYER 4 â€” Floating Stat Chips (left side) -->
-    <div class="stat-chip chip-1"><i class="fas fa-shield-heart"></i> <strong>1,240</strong>&nbsp;incidents reported this month</div>
-    <div class="stat-chip chip-2"><span class="chip-blink"></span> Real-time location shared</div>
-    <div class="stat-chip chip-3"><span class="chip-check">&#10003;</span> <strong>98%</strong>&nbsp;response rate</div>
-
-    <!-- LAYER 4b â€” Right-side Floating Chips -->
-    <div class="stat-chip chip-r1"><i class="fas fa-people-group"></i> <strong>3,200+</strong>&nbsp;walk buddies active</div>
-    <div class="stat-chip chip-r2"><span class="chip-blink"></span> Live tracking enabled</div>
-    <div class="stat-chip chip-r3"><span class="chip-check">&#10003;</span> <strong>500+</strong>&nbsp;safe spaces verified</div>
-
-    <!-- HERO CONTENT (center) -->
-    <div class="hero-content">
-        <div class="hero-text-block">
-        <!-- LAYER 1 â€” Badge Pill -->
-        <div class="hero-badge">
-            <span class="badge-dot"></span>
-            24/7 Active Protection
-        </div>
-
-        <!-- LAYER 2 â€” Two-Line Headline -->
-        <h1 class="hero-headline" aria-label="Empowering Women's Safety">
-            <span class="headline-line headline-line-1">
-                <span class="word-wrap"><span class="word-inner">Empowering</span></span>
-            </span>
-            <span class="headline-line headline-line-2">
-                <span class="word-wrap"><span class="word-inner outline-text">Women's</span></span>
-                <span class="word-wrap"><span class="word-inner gradient-fill">Safety</span></span>
-            </span>
-        </h1>
-
-        <div class="hero-morph-line">
-            <span class="morph-prefix">Built for</span>
-            <span class="morph-viewport" id="morphWords">
-                <span class="morph-current">every woman.</span>
-            </span>
-        </div>
-
-        <div class="hero-glow-line"></div>
-
-        <div class="hero-ticker-wrap">
-            <div class="ticker-fade-left"></div>
-            <div class="ticker-track">
-                <div class="ticker-inner" id="ticker">
-                    <div class="ticker-group">
-                        <span class="tick-item"><span class="tick-dot"></span>Empowering Women</span>
-                        <span class="tick-sep">&#10022;</span>
-                        <span class="tick-item"><span class="tick-dot"></span>24/7 Protection</span>
-                        <span class="tick-sep">&#10022;</span>
-                        <span class="tick-item"><span class="tick-dot"></span>Real-time Safety</span>
-                        <span class="tick-sep">&#10022;</span>
-                        <span class="tick-item"><span class="tick-dot"></span>SOS Alerts</span>
-                        <span class="tick-sep">&#10022;</span>
-                        <span class="tick-item"><span class="tick-dot"></span>Safe Spaces</span>
-                        <span class="tick-sep">&#10022;</span>
-                        <span class="tick-item"><span class="tick-dot"></span>Walk With Us</span>
-                        <span class="tick-sep">&#10022;</span>
-                    </div>
-                    <div class="ticker-group" aria-hidden="true">
-                        <span class="tick-item"><span class="tick-dot"></span>Empowering Women</span>
-                        <span class="tick-sep">&#10022;</span>
-                        <span class="tick-item"><span class="tick-dot"></span>24/7 Protection</span>
-                        <span class="tick-sep">&#10022;</span>
-                        <span class="tick-item"><span class="tick-dot"></span>Real-time Safety</span>
-                        <span class="tick-sep">&#10022;</span>
-                        <span class="tick-item"><span class="tick-dot"></span>SOS Alerts</span>
-                        <span class="tick-sep">&#10022;</span>
-                        <span class="tick-item"><span class="tick-dot"></span>Safe Spaces</span>
-                        <span class="tick-sep">&#10022;</span>
-                        <span class="tick-item"><span class="tick-dot"></span>Walk With Us</span>
-                        <span class="tick-sep">&#10022;</span>
-                    </div>
-                </div>
-            </div>
-            <div class="ticker-fade-right"></div>
-        </div>
-
-        <!-- Subtitle -->
-        <p class="hero-sub">24/7 emergency support, real-time tracking, and incident reporting designed to keep women safer anytime and anywhere.</p>
-
-        <!-- Buttons -->
-        <div class="hero-buttons">
-            <a href="signup.html" class="btn-premium magnetic-btn btn-get-started">
-                <i class="fas fa-shield-heart"></i> Get Started
-            </a>
-            <a href="#features" class="btn-premium btn-outline">
-                <i class="fas fa-play"></i> Learn More
-            </a>
-        </div>
-
-        <!-- LAYER 6 â€” Scroll Indicator -->
-        <div class="scroll-hint">
-            <div class="scroll-mouse"><div class="scroll-wheel"></div></div>
-            <span>Scroll to explore</span>
-        </div>
-        </div>
+  <!-- ═══ ABOUT + LIVE COUNTS ═══ -->
+  <section class="section about" id="about">
+    <span class="orb orb-b" data-orb="-50" style="width:220px;height:220px;right:-2%;bottom:-6%"></span>
+    <div class="about-img glass" data-reveal>
+      <img src="images/about-dawn-1200.jpg" alt="A person standing under a starry night sky as dawn breaks on the horizon" decoding="async" id="aboutImg">
     </div>
-</section>
+    <div class="about-copy">
+      <span class="eyebrow">About</span>
+      <h2 class="display section-title" data-split="scroll">Built on campus, <span class="text-gradient">for campus.</span></h2>
+      <p class="muted" data-reveal>SheShield is a student-built project. It started with a simple observation: when you feel unsafe, you should not have to work out who to call, where you are, or how to explain it. Those answers should already be on your screen.</p>
+      <div class="live glass glass-frost" id="liveStats" data-reveal hidden>
+        <div class="row-between" style="grid-column:1/-1"><span class="eyebrow">Live from our database</span><span class="badge badge-good"><span class="dot dot-live"></span>Live</span></div>
+        <div><b class="display" data-stat="reports">0</b><span class="small muted">Reports filed</span></div>
+        <div><b class="display" data-stat="resolved">0</b><span class="small muted">Resolved</span></div>
+        <div><b class="display" data-stat="safe_spaces">0</b><span class="small muted">Safe spaces</span></div>
+      </div>
+    </div>
+  </section>
 
-<!-- â•â•â• STATS â•â•â• -->
-<section class="stats-section">
-    <div class="stats-grid">
-        <div class="stat-item">
-            <div class="stat-number count-up" data-target="10000" data-suffix="+">0</div>
-            <div class="stat-label">Women Protected</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-number count-up" data-target="98" data-suffix="%">0</div>
-            <div class="stat-label">Emergency Response Rate</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-number count-up" data-target="500" data-suffix="+">0</div>
-            <div class="stat-label">Verified Safe Spaces</div>
-        </div>
+  <!-- ═══ HELPLINES ═══ -->
+  <section class="section" id="helplines">
+    <span class="eyebrow">Save these now</span>
+    <h2 class="display section-title" data-split="scroll">Helplines, <span class="text-gradient">one tap away.</span></h2>
+    <div class="grid g-3">
+      <a href="tel:112" class="glass spot lift helpline" data-reveal><b class="display">112</b><span>National emergency</span><svg class="i" aria-hidden="true"><use href="../public/icons.svg#phone"/></svg></a>
+      <a href="tel:1091" class="glass spot lift helpline" data-reveal><b class="display">1091</b><span>Women's helpline</span><svg class="i" aria-hidden="true"><use href="../public/icons.svg#phone"/></svg></a>
+      <a href="tel:100" class="glass spot lift helpline" data-reveal><b class="display">100</b><span>Police</span><svg class="i" aria-hidden="true"><use href="../public/icons.svg#phone"/></svg></a>
     </div>
-</section>
+  </section>
 
-<!-- ════ SAFETY SERVICES ════ -->
-<section id="features" style="padding:6rem 2rem;background:var(--dark);position:relative;overflow:hidden">
-    <div class="features-bg-glow"></div>
-    <div style="max-width:1280px;margin:0 auto;position:relative;z-index:1">
-        <div class="section-heading">
-            <h2 class="scramble-text" data-value="SAFETY SERVICES">SAFETY SERVICES</h2>
-            <div class="heading-line"></div>
-            <p>Comprehensive tools to protect, report, and connect.</p>
-        </div>
-        <div class="honeycomb-grid">
-            <div class="hex-wrap">
-                <div class="hex-inner">
-                    <div class="hex-icon"><i class="fas fa-file-shield"></i></div>
-                    <h3>Incident Reporting</h3>
-                    <p>Quick and secure system to report incidents with photo and location evidence.</p>
-                </div>
-            </div>
-            <div class="hex-wrap">
-                <div class="hex-inner">
-                    <div class="hex-icon"><i class="fas fa-map-location-dot"></i></div>
-                    <h3>Safety Heat Map</h3>
-                    <p>Real-time area safety analysis with interactive heat mapping powered by community data.</p>
-                </div>
-            </div>
-            <div class="hex-wrap">
-                <div class="hex-inner">
-                    <div class="hex-icon"><i class="fas fa-people-group"></i></div>
-                    <h3>Walk With Us</h3>
-                    <p>Connect with verified companions for safer travel. Never walk alone again.</p>
-                </div>
-            </div>
-            <div class="hex-wrap">
-                <div class="hex-inner">
-                    <div class="hex-icon"><i class="fas fa-triangle-exclamation"></i></div>
-                    <h3>SOS Alert System</h3>
-                    <p>One-tap emergency alerts to contacts and authorities with live GPS sharing.</p>
-                </div>
-            </div>
-            <div class="hex-wrap">
-                <div class="hex-inner">
-                    <div class="hex-icon"><i class="fas fa-chart-line"></i></div>
-                    <h3>Safety Analytics</h3>
-                    <p>Track and analyze safety patterns with detailed insights and community intelligence dashboards.</p>
-                </div>
-            </div>
-            <div class="hex-wrap">
-                <div class="hex-inner">
-                    <div class="hex-icon"><i class="fas fa-location-crosshairs"></i></div>
-                    <h3>Safe Spaces</h3>
-                    <p>Find verified safe locations and women-friendly businesses nearby.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+  <!-- ═══ CTA ═══ -->
+  <div class="cta-wrap">
+  <span class="orb" data-orb="-40" style="width:260px;height:260px;left:-2%;top:-14%"></span>
+  <span class="orb orb-b" data-orb="30" style="width:170px;height:170px;right:-4%;bottom:-8%"></span>
+  <section class="cta glass glass-frost spot" data-reveal>
+    <h2 class="display" data-split="scroll">Set it up before you need it.</h2>
+    <p class="muted">A minute now means one less thing to think about later.</p>
+    <a href="signup.html" class="btn btn-primary btn-lg" data-magnet>Create your account <svg class="i" aria-hidden="true"><use href="../public/icons.svg#arrow-right"/></svg></a>
+  </section>
+  </div>
+</main>
 
-<section id="how-it-works" style="padding:6rem 2rem;background:linear-gradient(180deg,var(--dark),#0a0a18);position:relative;overflow:hidden">
-    <div style="max-width:1100px;margin:0 auto;position:relative;z-index:1">
-        <div class="section-heading">
-            <h2 class="scramble-text" data-value="HOW IT WORKS">HOW IT WORKS</h2>
-            <div class="heading-line"></div>
-            <p>Get protected in 4 simple steps.</p>
-        </div>
-        <div class="timeline-wrap">
-            <div class="timeline-line"></div>
-            <div class="timeline-step">
-                <div class="timeline-node"><span class="timeline-num">01</span><div class="timeline-pulse"></div></div>
-                <div class="timeline-content"><h3>Set Up Safety Network</h3><p>Register and add emergency contacts, safe locations, and trusted walk buddies to your profile.</p></div>
-            </div>
-            <div class="timeline-step">
-                <div class="timeline-node"><span class="timeline-num">02</span><div class="timeline-pulse"></div></div>
-                <div class="timeline-content"><h3>Configure Safety Features</h3><p>Set up SOS triggers, enable real-time tracking, and customize your safety alert preferences.</p></div>
-            </div>
-            <div class="timeline-step">
-                <div class="timeline-node"><span class="timeline-num">03</span><div class="timeline-pulse"></div></div>
-                <div class="timeline-content"><h3>Use Safety Tools</h3><p>Access heat maps, find walk buddies, and report incidents in real-time from anywhere.</p></div>
-            </div>
-            <div class="timeline-step">
-                <div class="timeline-node"><span class="timeline-num">04</span><div class="timeline-pulse"></div></div>
-                <div class="timeline-content"><h3>Emergency Response</h3><p>Get immediate help from emergency contacts, authorities, and nearby verified safe spaces.</p></div>
-            </div>
-        </div>
+<footer class="footer">
+  <div class="footer-grid">
+    <div>
+      <p class="muted small" style="max-width:34ch">Campus safety for women, built by students. In an emergency, call 112.</p>
+      <p class="small" style="margin-top:10px"><a href="mailto:help@sheshield.com" class="link">help@sheshield.com</a></p>
     </div>
-</section>
-
-<!-- â•â•â• ABOUT â•â•â• -->
-<section id="about" class="about-section">
-    <!-- Marquee -->
-    <div class="marquee-wrap">
-        <div class="marquee-track">
-            <span>SAFETY &middot; EMPOWERMENT &middot; 24/7 SUPPORT &middot; REPORT &middot; PROTECT &middot; SHIELD &middot; SAFETY &middot; EMPOWERMENT &middot; 24/7 SUPPORT &middot; REPORT &middot; PROTECT &middot; SHIELD &middot;&nbsp;</span>
-            <span>SAFETY &middot; EMPOWERMENT &middot; 24/7 SUPPORT &middot; REPORT &middot; PROTECT &middot; SHIELD &middot; SAFETY &middot; EMPOWERMENT &middot; 24/7 SUPPORT &middot; REPORT &middot; PROTECT &middot; SHIELD &middot;&nbsp;</span>
-        </div>
-    </div>
-    <div class="about-grid">
-        <div class="about-text">
-            <h2>About SheShield</h2>
-            <p>We are dedicated to creating a safer environment for women through innovative technology solutions. Our platform provides real-time emergency response and a support network to ensure women's safety anywhere, anytime.</p>
-            <a href="aboutnew.html" class="btn-premium magnetic-btn">
-                Learn More <i class="fas fa-arrow-right" style="margin-left:6px"></i>
-            </a>
-        </div>
-        <div class="about-image-wrap">
-            <img src="images/desktop-women.jpg" alt="Women supporting each other" loading="lazy">
-            <div class="floating-badge">
-                <div class="pulse-dot"></div>
-                <span>24/7 Active</span>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- â•â•â• AI CHATBOT â•â•â• -->
-<div x-data="{
-    isOpen: false, userInput: '', selectedLanguage: 'en',
-    messages: [{ id:1, type:'bot', text:'Hello! I\'m your SheShield AI assistant. How can I help you today?', options:['I need immediate help','Legal information','Emotional support','Report an incident'] }],
-    processUserInput(input) {
-        input = input.toLowerCase();
-        let t='', o=['Emergency help','Legal support','Emotional support','Report incident'];
-        if(input.includes('emergency')||input.includes('help')||input.includes('danger')){t='I understand you need urgent assistance. Please call 1091 immediately or use our SOS feature.';o=['Yes, guide me','No, I\'ll call','Safety tips','Contact someone'];}
-        else if(input.includes('legal')||input.includes('rights')){t='You have the right to file an FIR at any police station. Want specific guidance?';o=['Rights as a woman','How to file FIR','Legal aid contacts','Workplace rights'];}
-        else if(input.includes('emotional')||input.includes('support')||input.includes('talk')){t='I\'m here to support you. Your feelings are valid. Connect with a counselor?';o=['Connect counselor','Self-care tips','Support groups','Coping strategies'];}
-        else if(input.includes('report')||input.includes('incident')){t='I can help you report an incident. Anonymous or with contact details?';o=['Anonymous report','Detailed report','Evidence guidelines','Track report'];}
-        else{t='How can I assist you today?';}
-        return{text:t,options:o};
-    }
-}" class="fixed bottom-6 right-6 z-50 flex flex-col items-end">
-    <button @click="isOpen=!isOpen" class="chat-btn text-white rounded-full p-4 shadow-lg transition-all mb-2" style="background:linear-gradient(135deg,#e91e8c,#7c3aed);box-shadow:0 0 30px rgba(233,30,140,0.35)">
-        <svg x-show="!isOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
-        <svg x-show="isOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-    </button>
-    <div x-show="isOpen" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-90"
-         class="rounded-2xl shadow-2xl w-96 max-w-[calc(100vw-2rem)] mb-4 overflow-hidden" style="background:rgba(13,13,20,0.95);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.08)" @click.away="isOpen=false">
-        <div style="background:linear-gradient(135deg,#e91e8c,#7c3aed)" class="text-white p-4">
-            <h3 style="font-family:'Clash Display',sans-serif;font-size:1.1rem">SheShield AI</h3>
-            <p style="font-size:0.8rem;opacity:0.7">24/7 Support & Guidance</p>
-        </div>
-        <div class="h-72 overflow-y-auto p-4 space-y-3" id="chat-messages" style="scrollbar-width:thin">
-            <template x-for="msg in messages" :key="msg.id">
-                <div :class="{'flex justify-end':msg.type==='user','flex justify-start':msg.type==='bot'}">
-                    <div :style="msg.type==='user'?'background:linear-gradient(135deg,#e91e8c,#7c3aed)':'background:rgba(255,255,255,0.06)'" class="rounded-xl px-4 py-2.5 max-w-[85%]" style="font-size:0.88rem;color:#e8e8e8">
-                        <p x-text="msg.text"></p>
-                        <template x-if="msg.type==='bot'&&msg.options">
-                            <div class="mt-2 space-y-1">
-                                <template x-for="opt in msg.options" :key="opt">
-                                    <button @click="userInput=opt;$nextTick(()=>{messages.push({id:Date.now(),type:'user',text:opt});const r=processUserInput(opt);messages.push({id:Date.now()+1,type:'bot',text:r.text,options:r.options})})"
-                                        class="block w-full text-left text-xs rounded-lg px-3 py-1.5 transition-all" style="color:#e91e8c;border:1px solid rgba(233,30,140,0.15)" onmouseover="this.style.background='rgba(233,30,140,0.08)'" onmouseout="this.style.background='transparent'">
-                                        <span x-text="opt"></span>
-                                    </button>
-                                </template>
-                            </div>
-                        </template>
-                    </div>
-                </div>
-            </template>
-        </div>
-        <div class="p-3" style="border-top:1px solid rgba(255,255,255,0.06)">
-            <div class="flex gap-2">
-                <input type="text" x-model="userInput" @keydown.enter="if(userInput.trim()){messages.push({id:Date.now(),type:'user',text:userInput});const r=processUserInput(userInput);messages.push({id:Date.now()+1,type:'bot',text:r.text,options:r.options});userInput='';}" placeholder="Type your message..." class="flex-1 rounded-xl px-4 py-2 text-sm" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#e8e8e8;outline:none;font-family:'Satoshi',sans-serif">
-                <button @click="if(userInput.trim()){messages.push({id:Date.now(),type:'user',text:userInput});const r=processUserInput(userInput);messages.push({id:Date.now()+1,type:'bot',text:r.text,options:r.options});userInput='';}" class="rounded-xl px-4 py-2 text-white" style="background:linear-gradient(135deg,#e91e8c,#7c3aed)">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- â•â•â• FOOTER â•â•â• -->
-<footer id="contact" class="premium-footer">
-    <div class="footer-gradient-line"></div>
-    <div class="footer-grid">
-        <div class="footer-col">
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-                <img src="../assets/logo.svg" alt="SheShield" style="height:32px">
-                <span style="font-family:'Clash Display',sans-serif;font-size:1.2rem;font-weight:700;letter-spacing:-0.03em"><span style="color:#fff">She</span><span style="background:linear-gradient(135deg,#e91e8c,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Shield</span></span>
-            </div>
-            <p style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:16px;font-family:'Satoshi',sans-serif">Empowering women's safety</p>
-            <p><i class="fas fa-phone" style="color:var(--rose);margin-right:8px"></i> Women Helpline: 1091</p>
-            <p><i class="fas fa-phone" style="color:var(--rose);margin-right:8px"></i> Police: 100</p>
-            <p><i class="fas fa-envelope" style="color:var(--rose);margin-right:8px"></i> help@sheshield.com</p>
-        </div>
-        <div class="footer-col">
-            <h3>Quick Links</h3>
-            <a href="#">Safety Tips</a>
-            <a href="#">Support Services</a>
-            <a href="#">Community</a>
-            <a href="#">Resources</a>
-        </div>
-        <div class="footer-col">
-            <h3>Platform</h3>
-            <a href="login.html">Login</a>
-            <a href="signup.html">Sign Up</a>
-            <a href="report.html">Report Incident</a>
-            <a href="#about">About Us</a>
-        </div>
-        <div class="footer-col">
-            <h3>Connect With Us</h3>
-            <div style="display:flex;gap:1rem;margin-top:0.5rem">
-                <a href="#" style="font-size:1.4rem"><i class="fab fa-facebook"></i></a>
-                <a href="#" style="font-size:1.4rem"><i class="fab fa-twitter"></i></a>
-                <a href="#" style="font-size:1.4rem"><i class="fab fa-instagram"></i></a>
-                <a href="#" style="font-size:1.4rem"><i class="fab fa-linkedin"></i></a>
-            </div>
-        </div>
-        <div class="footer-bottom">
-        <p>&copy; 2024 SheShield - Created for Women's Safety | All Rights Reserved</p>
-    </div>
+    <nav aria-label="Platform"><span class="eyebrow">Platform</span><a href="login.html">Log in</a><a href="signup.html">Sign up</a><a href="report.html">Report an incident</a></nav>
+    <nav aria-label="On this page"><span class="eyebrow">Explore</span><a href="#walk">How it works</a><a href="#services">Services</a><a href="#about">About</a><a href="#helplines">Helplines</a></nav>
+  </div>
+  <div class="footer-mark display" aria-hidden="true">SheShield</div>
+  <p class="xs muted" style="text-align:center">© <span id="year">2026</span> SheShield. All rights reserved. Campus imagery &copy; Esri, Maxar.</p>
 </footer>
-<!-- Chatbot Widget -->
-<div id="chatbot-toggle" onclick="toggleChat()" style="position:fixed;bottom:28px;right:28px;width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#e91e8c,#7c3aed);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 6px 28px rgba(233,30,140,0.35);z-index:9999;transition:transform 0.3s,box-shadow 0.3s" onmouseenter="this.style.transform='scale(1.1)'" onmouseleave="this.style.transform='scale(1)'">
-    <i class="fas fa-comment-dots" style="color:#fff;font-size:24px" id="chatIcon"></i>
-</div>
-<div id="chatbot-window" style="display:none;position:fixed;bottom:100px;right:28px;width:380px;max-height:520px;background:#13131f;border:1px solid rgba(255,255,255,0.08);border-radius:20px;z-index:9999;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.5);flex-direction:column">
-    <!-- Header -->
-    <div style="background:linear-gradient(135deg,#e91e8c,#7c3aed);padding:18px 20px;display:flex;align-items:center;gap:12px">
-        <div style="width:40px;height:40px;background:rgba(255,255,255,0.2);border-radius:12px;display:flex;align-items:center;justify-content:center"><i class="fas fa-shield-heart" style="color:#fff;font-size:18px"></i></div>
-        <div><div style="font-weight:700;color:#fff;font-size:15px">SheShield Assistant</div><div style="font-size:11px;color:rgba(255,255,255,0.7)"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#22c55e;margin-right:4px"></span>Online</div></div>
-        <div style="margin-left:auto;cursor:pointer;color:rgba(255,255,255,0.7);font-size:18px" onclick="toggleChat()"><i class="fas fa-xmark"></i></div>
-    </div>
-    <!-- Messages -->
-    <div id="chatMessages" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;max-height:320px;min-height:280px">
-        <div class="chat-msg bot-msg">Hi there! I'm your SheShield safety assistant. How can I help you today?</div>
-    </div>
-    <!-- Quick Replies -->
-    <div id="chatQuickReplies" style="padding:8px 16px 14px;display:flex;flex-wrap:wrap;gap:6px;border-top:1px solid rgba(255,255,255,0.06)">
-        <button class="chat-qr" onclick="askQuestion(this)">How do I report an incident?</button>
-        <button class="chat-qr" onclick="askQuestion(this)">How does SOS work?</button>
-        <button class="chat-qr" onclick="askQuestion(this)">What is Walk With Us?</button>
-        <button class="chat-qr" onclick="askQuestion(this)">Is my data safe?</button>
-        <button class="chat-qr" onclick="askQuestion(this)">Emergency contacts</button>
-        <button class="chat-qr" onclick="askQuestion(this)">Safe spaces nearby</button>
-    </div>
-</div>
-<style>
-#chatbot-window{font-family:'Satoshi',Segoe UI,sans-serif}
-.chat-msg{padding:12px 16px;border-radius:16px;font-size:13px;line-height:1.65;max-width:88%;animation:chatFadeIn 0.3s ease}
-.bot-msg{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.8);border-bottom-left-radius:4px;align-self:flex-start}
-.user-msg{background:linear-gradient(135deg,#e91e8c,#7c3aed);color:#fff;border-bottom-right-radius:4px;align-self:flex-end}
-.chat-qr{background:rgba(233,30,140,0.08);border:1px solid rgba(233,30,140,0.2);color:#f472b6;padding:6px 12px;border-radius:20px;font-size:11px;cursor:pointer;transition:all 0.2s;font-family:inherit}
-.chat-qr:hover{background:rgba(233,30,140,0.18);border-color:rgba(233,30,140,0.4)}
-@keyframes chatFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-#chatMessages::-webkit-scrollbar{width:4px}
-#chatMessages::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:4px}
-</style>
-<script>
-function toggleChat(){
-    const w=document.getElementById('chatbot-window');
-    const icon=document.getElementById('chatIcon');
-    if(w.style.display==='none'||!w.style.display){w.style.display='flex';icon.className='fas fa-xmark'}
-    else{w.style.display='none';icon.className='fas fa-comment-dots'}
-}
-const chatAnswers={
-    "How do I report an incident?":"You can report an incident by clicking 'Report Incident' from your dashboard. Fill in the location, incident type, and description. You can attach photos as evidence. All reports can be submitted anonymously if you prefer.",
-    "How does SOS work?":"Our SOS system sends an immediate emergency alert to your registered contacts and nearby authorities with your live GPS location. Just press the SOS button on your dashboard — it works with a single tap, even in silent mode.",
-    "What is Walk With Us?":"Walk With Us connects you with verified volunteer walkers who can accompany you on campus. Simply select your pickup and destination, choose a time, and a background-verified walker will be assigned to escort you safely.",
-    "Is my data safe?":"Absolutely. All your data is encrypted and stored securely. We never share personal information with third parties. Incident reports can be filed anonymously, and location data is only shared during active emergencies with your consent.",
-    "Emergency contacts":"You can manage your emergency contacts from the Settings page in your dashboard. Add up to 5 trusted contacts who will be notified instantly when you trigger an SOS alert. They'll receive your live location via SMS and email.",
-    "Safe spaces nearby":"Our Safe Spaces feature helps you locate verified women-friendly establishments, shelters, police stations, and hospitals near you. Open the Safe Spaces page from your dashboard to view an interactive map with directions and contact details."
-};
-function askQuestion(btn){
-    const q=btn.textContent;
-    const msgs=document.getElementById('chatMessages');
-    msgs.innerHTML+='<div class="chat-msg user-msg">'+q+'</div>';
-    msgs.scrollTop=msgs.scrollHeight;
-    setTimeout(()=>{
-        const a=chatAnswers[q]||"I'm sorry, I don't have information on that yet. Please contact our support team for help.";
-        msgs.innerHTML+='<div class="chat-msg bot-msg">'+a+'</div>';
-        msgs.scrollTop=msgs.scrollHeight;
-    },600);
-}
-</script>
 
-<!-- Premium Interactions -->
-<script src="js/premium.js?v=5"></script>
+<!-- Assistant: fixed answers about the product, not a live person -->
+<button class="chat-fab glass glass-blur" id="chatToggle" aria-expanded="false" aria-controls="chatPanel" aria-label="Open help assistant"><svg class="i" aria-hidden="true"><use href="../public/icons.svg#message-circle"/></svg></button>
+<section class="chat glass glass-blur" id="chatPanel" hidden aria-label="Help assistant">
+  <header class="row-between chat-head">
+    <div class="row"><span class="icon-tile" style="width:34px;height:34px;font-size:15px"><svg class="i" aria-hidden="true"><use href="../public/icons.svg#shield"/></svg></span><div><b>SheShield help</b><div class="xs muted">Quick answers. In danger? Use SOS.</div></div></div>
+    <button class="btn btn-ghost btn-icon" id="chatClose" aria-label="Close help assistant" style="width:34px;height:34px"><svg class="i" aria-hidden="true"><use href="../public/icons.svg#x"/></svg></button>
+  </header>
+  <div class="chat-log" id="chatLog" data-lenis-prevent aria-live="polite"><div class="msg bot">Hi. What can I help you with?</div></div>
+  <div class="chat-qr" id="chatQuick"></div>
+</section>
+
+<script src="../public/lib/gsap.min.js"></script>
+<script src="../public/lib/ScrollTrigger.min.js"></script>
+<script src="../public/lib/lenis.min.js"></script>
+<script src="../public/js/sheshield.js?v=11"></script>
+<script src="../public/js/landing.js?v=11"></script>
 </body>
 </html>

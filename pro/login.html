@@ -1,260 +1,69 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-base="../">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SheShield — Sign In</title>
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
-    <link rel="stylesheet" href="css/auth.css?v=3">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-    <script src="../js/firebase-config.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign in · SheShield</title>
+  <meta name="theme-color" content="#170d17">
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <script>try{document.documentElement.dataset.theme=localStorage.getItem('ss-theme')||'dawn'}catch(e){}</script>
+  <link rel="preload" href="../fonts/Clash%20Display/Fonts/WEB/fonts/ClashDisplay-Semibold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../public/css/glass.css?v=11">
 </head>
 <body>
-<div class="auth-page">
-    <!-- ═══ LEFT PANEL ═══ -->
-    <div class="auth-left">
-        <div class="blob b1"></div>
-        <div class="blob b2"></div>
-        <div class="blob b3"></div>
-        <div class="dot-grid"></div>
-        <div class="auth-left-content">
-            <div>
-                <a href="landing.html" class="auth-logo-link">
-                    <img src="../assets/logo.svg" alt="SheShield" style="height:28px">
-                    <span class="auth-logo-wordmark"><span class="she">She</span><span class="shield">Shield</span></span>
-                </a>
-                <a href="landing.html" class="back-link">&larr; Back to Home</a>
-            </div>
-            <div class="left-hero">
-                <h2>Your safety,<br><span class="grad">always on.</span></h2>
-                <p>Join thousands of women who trust SheShield for 24/7 protection and real-time emergency response.</p>
-            </div>
-            <div class="left-cards">
-                <div class="glass-stat-card">
-                    <div class="card-icon-box">
-                        <svg viewBox="0 0 24 24"><path d="M12 2L4 6v6c0 5.5 3.4 10.7 8 12 4.6-1.3 8-6.5 8-12V6l-8-4z"/></svg>
-                    </div>
-                    <div class="card-text">
-                        <strong>SOS Alert System</strong>
-                        <span>One-tap emergency alert</span>
-                    </div>
-                    <div class="pulse-green"></div>
-                </div>
-                <div class="glass-stat-card">
-                    <div class="card-icon-box muted">
-                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                    </div>
-                    <div class="card-text">
-                        <strong>98% Response Rate</strong>
-                        <span>Avg. 4 min response</span>
-                    </div>
-                </div>
-            </div>
-        </div>
+<div class="ss-backdrop" data-mode="calm" aria-hidden="true"></div>
+<div class="auth">
+  <section class="auth-story glass">
+    <a href="landing.html" class="brand">
+      <svg class="brand-mark" viewBox="0 0 100 110" fill="none" aria-hidden="true"><defs><linearGradient id="ssLogo" x1="0" y1="0" x2="1" y2="1"><stop stop-color="var(--primary)"/><stop offset="1" stop-color="var(--accent)"/></linearGradient></defs><path d="M50 6 88 22v34q0 24-38 40Q12 80 12 56V22Z" fill="url(#ssLogo)"/><circle cx="50" cy="40" r="12" stroke="#1d121b" stroke-width="5"/><path d="M50 52v21M41 64h18" stroke="#1d121b" stroke-width="5" stroke-linecap="round"/></svg>
+      SheShield
+    </a>
+    <div>
+      <h1 class="display" data-split>Welcome <span class="text-gradient">back.</span></h1>
+      <p data-reveal>Your map, your reports and your walk requests are all where you left them.</p>
     </div>
-
-    <!-- ═══ RIGHT PANEL ═══ -->
-    <div class="auth-right">
-        <!-- Mobile logo (hidden on desktop) -->
-        <div class="mobile-logo">
-            <a href="landing.html" class="auth-logo-link">
-                <img src="../assets/logo.svg" alt="SheShield" style="height:36px">
-                <span class="auth-logo-wordmark" style="font-size:1.5rem"><span class="she">She</span><span class="shield">Shield</span></span>
-            </a>
-        </div>
-
-        <!-- Tab Switch -->
-        <div class="tab-switch">
-            <a href="login.html" class="active">Sign In</a>
-            <a href="signup.html">Sign Up</a>
-        </div>
-
-        <h1>Welcome back</h1>
-        <p class="sub">Sign in to your SheShield account</p>
-
-        <form id="loginForm" onsubmit="return handleLogin(event)">
-            <!-- Email -->
-            <div class="field-group">
-                <label>Email address</label>
-                <div class="input-wrapper">
-                    <span class="input-icon"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2,4 12,13 22,4"/></svg></span>
-                    <input type="email" class="premium-input" placeholder="you@example.com" required>
-                </div>
-            </div>
-
-            <!-- Password -->
-            <div class="field-group">
-                <label>Password</label>
-                <div class="input-wrapper">
-                    <span class="input-icon"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
-                    <input type="password" id="loginPass" class="premium-input" placeholder="••••••••" required style="padding-right:46px">
-                    <button type="button" class="eye-toggle" onclick="togglePass('loginPass', this)">
-                        <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Remember / Forgot -->
-            <div class="remember-row">
-                <label class="custom-check">
-                    <input type="checkbox">
-                    <span class="check-box"></span>
-                    Remember me
-                </label>
-                <a href="#" class="forgot-link">Forgot password?</a>
-            </div>
-
-            <!-- Submit -->
-            <button type="submit" class="btn-auth" id="loginBtn">
-                <span class="btn-text">Sign In</span>
-            </button>
-        </form>
-
-        <!-- Divider -->
-        <div class="auth-divider"><span>or continue with</span></div>
-
-        <!-- Social Login -->
-        <div class="social-grid">
-            <button class="social-btn" id="googleSignIn">
-                <svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-                Google
-            </button>
-            <button class="social-btn">
-                <svg viewBox="0 0 24 24" fill="white"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
-                GitHub
-            </button>
-        </div>
-
-        <!-- Bottom link -->
-        <div class="auth-bottom">
-            Don't have an account? <a href="signup.html">Sign up</a>
-        </div>
+    <div class="auth-facts">
+      <div class="auth-fact" data-reveal><span class="icon-tile"><svg class="i" aria-hidden="true"><use href="../public/icons.svg#siren"/></svg></span><div><b>Need help now?</b><div class="small muted">SOS works without signing in.</div></div></div>
     </div>
+  </section>
+
+  <main class="auth-panel">
+    <div class="auth-card glass" data-reveal>
+      <div class="row-between" style="margin-bottom:18px">
+        <a href="landing.html" class="brand only-md" style="font-size:18px">SheShield</a>
+        <a href="landing.html" class="btn btn-ghost btn-sm hide-md"><svg class="i" aria-hidden="true"><use href="../public/icons.svg#arrow-left"/></svg> Home</a>
+        <button class="btn btn-sos" style="height:36px;font-size:13px;padding:0 14px" data-sos type="button"><svg class="i" aria-hidden="true"><use href="../public/icons.svg#siren"/></svg> SOS</button>
+      </div>
+      <div class="tabs" style="margin-bottom:20px"><a href="login.html" class="tab active" aria-current="page">Sign in</a><a href="signup.html" class="tab">Sign up</a></div>
+      <h2>Sign in</h2>
+      <p class="small muted" style="margin-bottom:20px">Use the email and password for your account.</p>
+      <div class="alert alert-danger" id="authError" role="alert" hidden style="margin-bottom:14px"><svg class="i" aria-hidden="true"><use href="../public/icons.svg#circle-alert"/></svg><div></div></div>
+
+      <form id="loginForm" class="form-grid" novalidate>
+        <div class="field">
+          <label class="label" for="loginEmail">Email</label>
+          <div class="input-wrap"><svg class="i" aria-hidden="true"><use href="../public/icons.svg#mail"/></svg><input class="input" type="email" id="loginEmail" autocomplete="email" placeholder="you@example.com" required></div>
+        </div>
+        <div class="field">
+          <div class="row-between"><label class="label" for="loginPass">Password</label><button type="button" class="xs muted" id="forgotLink" style="text-decoration:underline">Forgot password?</button></div>
+          <div class="input-wrap">
+            <svg class="i" aria-hidden="true"><use href="../public/icons.svg#lock"/></svg>
+            <input class="input" type="password" id="loginPass" autocomplete="current-password" placeholder="Your password" required style="padding-right:46px">
+            <button type="button" class="btn btn-ghost btn-icon input-end" data-eye="loginPass" style="width:34px;height:34px" aria-label="Show password"><svg class="i" aria-hidden="true"><use href="../public/icons.svg#eye"/></svg></button>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg btn-block" id="loginBtn">Sign in</button>
+      </form>
+
+      <div class="auth-split">or</div>
+      <button class="btn btn-outline btn-block" id="googleBtn" type="button"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg> Continue with Google</button>
+      <p class="small muted" style="text-align:center;margin-top:18px">New here? <a href="signup.html" style="color:var(--foreground);text-decoration:underline">Create an account</a></p>
+    </div>
+  </main>
 </div>
-
-<script>
-// Password toggle
-function togglePass(id, btn) {
-    const input = document.getElementById(id);
-    input.type = input.type === 'password' ? 'text' : 'password';
-}
-
-// Login handler
-function handleLogin(e) {
-    e.preventDefault();
-    const btn = document.getElementById('loginBtn');
-    btn.innerHTML = '<div style="width:20px;height:20px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite"></div>';
-    btn.disabled = true;
-
-    const form = document.getElementById('loginForm');
-    const email = form.querySelector('input[type="email"]').value;
-    const password = document.getElementById('loginPass').value;
-
-    // Always call PHP backend first to set session
-    fetch('../auth/simple_login.php', {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-    })
-    .then(r => r.json())
-    .then(data => {
-        if (data.status === 'success') {
-            window.location.href = '../views/pages/dashboard.php';
-        } else {
-            // PHP failed — try Firebase as fallback
-            if (typeof auth !== 'undefined' && auth.signInWithEmailAndPassword) {
-                auth.signInWithEmailAndPassword(email, password)
-                .then(async (cred) => {
-                    const user = cred.user;
-                    const idToken = await user.getIdToken();
-                    const sessionResponse = await fetch('../api/auth/firebase-login.php', {
-                        method: 'POST',
-                        credentials: 'same-origin',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ idToken, name: user.displayName || email, email: user.email, photo: user.photoURL })
-                    });
-                    const sessionData = await sessionResponse.json().catch(() => ({}));
-                    if (!sessionResponse.ok || sessionData.status !== 'success') {
-                        throw new Error(sessionData.message || 'Could not create PHP session');
-                    }
-                    window.location.href = sessionData.redirect || '../views/pages/dashboard.php';
-                })
-                .catch((err) => {
-                    btn.innerHTML = '<span class="btn-text">Sign In</span>';
-                    btn.disabled = false;
-                    alert(err.message || data.message || 'Invalid email or password');
-                });
-            } else {
-                btn.innerHTML = '<span class="btn-text">Sign In</span>';
-                btn.disabled = false;
-                alert(data.message || 'Login failed');
-            }
-        }
-    })
-    .catch(() => {
-        btn.innerHTML = '<span class="btn-text">Sign In</span>';
-        btn.disabled = false;
-        alert('Connection error');
-    });
-    return false;
-}
-
-
-// GSAP page load animation
-document.addEventListener('DOMContentLoaded', () => {
-    const style = document.createElement('style');
-    style.textContent = '@keyframes spin{to{transform:rotate(360deg)}}';
-    document.head.appendChild(style);
-
-    gsap.from('.auth-left', { x: -60, opacity: 0, duration: 1, ease: 'expo.out' });
-    gsap.from('.auth-right', { x: 60, opacity: 0, duration: 1, ease: 'expo.out', delay: 0.15 });
-    gsap.from('.field-group', { y: 20, opacity: 0, duration: 0.6, stagger: 0.08, ease: 'power3.out', delay: 0.4 });
-    gsap.from('.tab-switch', { y: -10, opacity: 0, duration: 0.5, delay: 0.3 });
-    gsap.from('.glass-stat-card', { x: -30, opacity: 0, duration: 0.8, stagger: 0.15, ease: 'expo.out', delay: 0.6 });
-
-    // Google Sign-In
-    document.getElementById('googleSignIn').addEventListener('click', async () => {
-        const btn = document.getElementById('googleSignIn');
-        btn.disabled = true;
-        btn.innerHTML = '<div style="width:18px;height:18px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:inline-block"></div> Signing in...';
-        
-        try {
-            const result = await auth.signInWithPopup(googleProvider);
-            const user = result.user;
-            console.log('Google Sign-In success:', user.displayName, user.email);
-            
-            // Send token to PHP backend to create session
-            const idToken = await user.getIdToken();
-            const sessionResponse = await fetch('../api/auth/firebase-login.php', {
-                method: 'POST',
-                credentials: 'same-origin',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ idToken, name: user.displayName, email: user.email, photo: user.photoURL })
-            });
-            const sessionData = await sessionResponse.json().catch(() => ({}));
-            if (!sessionResponse.ok || sessionData.status !== 'success') {
-                throw new Error(sessionData.message || 'Could not create PHP session');
-            }
-
-            window.location.href = sessionData.redirect || '../views/pages/dashboard.php';
-        } catch (err) {
-            console.error('Google Sign-In error:', err);
-            btn.disabled = false;
-            btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg> Google';
-            if (err.code !== 'auth/popup-closed-by-user') {
-                alert('Google Sign-In failed: ' + err.message);
-            }
-        }
-    });
-});
-</script>
+<script src="../public/lib/gsap.min.js"></script>
+<script src="../public/lib/ScrollTrigger.min.js"></script>
+<script src="../public/js/sheshield.js?v=11"></script>
+<script src="js/auth.js?v=11"></script>
 </body>
 </html>

@@ -87,7 +87,7 @@ The platform features a fully responsive design powered by custom fonts (Clash D
       <td>
         • HTML5 / CSS3<br>
         • Vanilla JS (ES6+)<br>
-        • TailwindCSS<br>
+        • Glass design system (tweakcn tokens, shadcn/ui anatomy)<br>
         • Custom Fonts (Clash Display, Satoshi)<br>
         • Glassmorphism Design System<br>
       </td>
@@ -104,7 +104,7 @@ The platform features a fully responsive design powered by custom fonts (Clash D
         • VanillaTilt.js<br>
         • PHPMailer (SMTP)<br>
         • Geolocation API<br>
-        • Font Awesome 6.5<br>
+        • Lucide icons<br>
       </td>
       <td>
         • Docker & Docker Compose<br>
@@ -558,18 +558,19 @@ SheShield/
 │               └── datasources/datasource.yml
 ├── pro/                            # Premium landing page
 │   ├── landing.html                # Main landing page (glassmorphic UI + chatbot)
-│   ├── css/premium.css             # Design system (1300+ lines)
-│   └── js/premium.js               # GSAP animations, morph text, interactions
+│   ├── report.html, login.html, signup.html
+│   └── js/auth.js                  # Sign in and sign up (Firebase loads on demand)
 ├── views/pages/                    # Dashboard pages (PHP)
 │   ├── dashboard.php               # Main dashboard
 │   ├── report.php                  # Incident reporting form
 │   ├── walkwithus.php              # Walk request + volunteer registration
 │   ├── analytics.php               # Safety analytics & insights
+│   ├── _layout.php                 # Shared dashboard shell and login guard
 │   ├── sidebar.php                 # Navigation sidebar component
-│   ├── settings.php                # User settings
-│   └── toast.php                   # Toast notification component
+│   └── settings.php                # Profile, password and theme
 ├── PHPMailer/                      # PHPMailer library
-├── public/css/                     # Dashboard CSS (dashboard.css)
+├── public/                         # css/glass.css, css/landing.css, js/sheshield.js, js/landing.js,
+│                                   # icons.svg, lib/ (local GSAP, Lenis, Leaflet: npm run build:vendor)
 ├── screenshots/                    # Application & DevOps screenshots
 ├── database/                       # Database schema & connection
 ├── fonts/                          # Custom fonts (Clash Display, Satoshi)

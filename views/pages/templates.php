@@ -1,125 +1,77 @@
 <?php
-require_once __DIR__ . '/../../app/middleware/session_bootstrap.php';
-configure_session_storage();
-session_start();
-require_once __DIR__ . '/../../app/models/mysqli_db.php';
-$user_id = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 0;
-$activePage = 'templates';
-$today = strtoupper(date('l, F j'));
+require __DIR__ . '/_layout.php';
+require __DIR__ . '/_templates_data.php';
 
-$templates = [
-  ['id'=>1,'cat'=>'Harassment','color'=>'rose','title'=>'Workplace Harassment Complaint','desc'=>'Formal complaint template for reporting workplace harassment including verbal abuse, inappropriate behavior, or hostile work environment.'],
-  ['id'=>2,'cat'=>'Stalking','color'=>'violet','title'=>'Stalking Incident Report','desc'=>'Detailed template for documenting stalking behavior patterns, evidence collection, and requesting protective orders.'],
-  ['id'=>3,'cat'=>'Cybercrime','color'=>'blue','title'=>'Online Harassment Report','desc'=>'Template for reporting cyberbullying, doxxing, revenge porn, or other forms of digital harassment and abuse.'],
-  ['id'=>4,'cat'=>'Harassment','color'=>'rose','title'=>'Street Harassment Report','desc'=>'Report catcalling, following, or threatening behavior in public spaces. Includes witness statement sections.'],
-  ['id'=>5,'cat'=>'Domestic','color'=>'red','title'=>'Domestic Violence Report','desc'=>'Confidential template for documenting domestic abuse with safety planning resources and legal aid contacts.'],
-  ['id'=>6,'cat'=>'Campus','color'=>'green','title'=>'Campus Safety Complaint','desc'=>'Template for reporting safety issues on campus including poor lighting, broken locks, or unsafe areas.'],
-  ['id'=>7,'cat'=>'Stalking','color'=>'violet','title'=>'Digital Stalking Documentation','desc'=>'Track and document digital surveillance, unwanted contact, GPS tracking, and social media monitoring.'],
-  ['id'=>8,'cat'=>'Harassment','color'=>'rose','title'=>'Sexual Harassment (POSH)','desc'=>'Formal complaint under POSH Act with ICC filing template, evidence checklist, and timeline documentation.'],
-  ['id'=>9,'cat'=>'Cybercrime','color'=>'blue','title'=>'Social Media Abuse Report','desc'=>'Report abusive messages, fake profiles, impersonation, or targeted hate on social media platforms.'],
-];
+$cats = array_values(array_unique(array_column($SS_TEMPLATES, 'cat')));
+$badge = ['Harassment' => 'badge-primary', 'Stalking' => 'badge-info', 'Cybercrime' => 'badge-warn', 'Domestic' => 'badge-danger', 'Campus' => 'badge-good'];
+
+ss_page_open('templates', 'Templates', 'Complaint templates');
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Templates — SheShield</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
-    <link rel="stylesheet" href="../../public/css/dashboard.css?v=3">
-</head>
-<body class="dash-body">
-<div class="dash-layout">
-  <?php include __DIR__ . '/sidebar.php'; ?>
-  <div class="dash-content">
-    <?php include __DIR__.'/blobs.php'; ?>
-    <div class="dash-topbar">
-      <div>
-        <div class="topbar-date"><?= $today ?> — TEMPLATES</div>
-        <h1 class="topbar-title">Complaint <span class="gradient-text">Templates</span></h1>
-        <p style="font-size:13px;color:rgba(255,255,255,0.4);margin-top:4px">Pre-built templates for faster, more effective reporting</p>
+<section class="row-between wrap" data-reveal>
+  <div class="tabs" role="tablist" aria-label="Filter templates">
+    <button class="tab active" data-filter="all" role="tab" aria-selected="true">All</button>
+    <?php foreach ($cats as $cat): ?><button class="tab" data-filter="<?= e($cat) ?>" role="tab" aria-selected="false"><?= e($cat) ?></button><?php endforeach; ?>
+  </div>
+  <div class="input-wrap" style="width:min(100%,280px)">
+    <?= icon('search') ?><input class="input" id="tplSearch" type="search" placeholder="Search templates" aria-label="Search templates">
+  </div>
+</section>
+<section class="grid g-3" id="tplGrid">
+  <?php foreach ($SS_TEMPLATES as $t): ?>
+    <article class="glass card spot tpl" data-cat="<?= e($t['cat']) ?>" data-title="<?= e(strtolower($t['title'] . ' ' . $t['desc'])) ?>" data-reveal style="display:flex;flex-direction:column;gap:10px">
+      <span><span class="badge <?= $badge[$t['cat']] ?? '' ?>"><?= e($t['cat']) ?></span></span>
+      <h3 style="font-size:17px"><?= e($t['title']) ?></h3>
+      <p class="small muted" style="flex:1"><?= e($t['desc']) ?></p>
+      <div class="row">
+        <button class="btn btn-outline btn-sm" data-preview="<?= (int)$t['id'] ?>">Preview</button>
+        <a class="btn btn-primary btn-sm" style="flex:1" href="report.php?template=<?= (int)$t['id'] ?>">Use template <?= icon('arrow-right') ?></a>
       </div>
-      <div class="topbar-right"><a href="report.php" class="btn-report">+ New Report</a></div>
-    </div>
-    <div class="dash-inner">
-      <!-- Filters -->
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px">
-        <div class="filter-bar">
-          <button class="filter-pill active" onclick="filterCards('all',this)">All</button>
-          <button class="filter-pill" onclick="filterCards('Harassment',this)">Harassment</button>
-          <button class="filter-pill" onclick="filterCards('Stalking',this)">Stalking</button>
-          <button class="filter-pill" onclick="filterCards('Cybercrime',this)">Cybercrime</button>
-          <button class="filter-pill" onclick="filterCards('Domestic',this)">Domestic</button>
-          <button class="filter-pill" onclick="filterCards('Campus',this)">Campus</button>
-        </div>
-        <div class="search-bar" style="width:200px">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" placeholder="Search templates..." id="templateSearch" oninput="searchCards(this.value)">
-        </div>
-      </div>
+    </article>
+  <?php endforeach; ?>
+</section>
+<div class="empty" id="tplEmpty" hidden><?= icon('search') ?><span>No templates match that search.</span></div>
 
-      <!-- Template Grid -->
-      <div class="grid-3" id="templateGrid">
-        <?php foreach ($templates as $t): ?>
-        <div class="template-card" data-cat="<?= $t['cat'] ?>" data-title="<?= strtolower($t['title']) ?>">
-          <span class="tag-pill <?= $t['color'] ?>"><?= $t['cat'] ?></span>
-          <h4 style="font-size:15px;font-weight:600"><?= $t['title'] ?></h4>
-          <p class="clamp-3" style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.6"><?= $t['desc'] ?></p>
-          <div style="display:flex;gap:8px;margin-top:auto;padding-top:8px">
-            <button class="btn-secondary" style="flex:0" onclick="previewTemplate('<?= addslashes($t['title']) ?>','<?= addslashes($t['desc']) ?>')">Preview</button>
-            <a href="report.php?template=<?= $t['id'] ?>" class="btn-primary" style="flex:1;text-align:center;text-decoration:none">Use Template →</a>
-          </div>
-        </div>
-        <?php endforeach; ?>
-      </div>
+<div class="dialog" id="tplDialog" role="dialog" aria-modal="true" aria-labelledby="tplTitle">
+  <div class="dialog-card wide glass glass-blur">
+    <button class="btn btn-ghost btn-icon dialog-close" data-dialog-close aria-label="Close preview"><?= icon('x') ?></button>
+    <span class="eyebrow">Template preview</span>
+    <h2 id="tplTitle" style="font-size:22px;margin:6px 40px 12px 0"></h2>
+    <pre id="tplBody" style="font-family:inherit;white-space:pre-wrap;color:var(--muted-foreground);margin-bottom:18px"></pre>
+    <div class="row" style="justify-content:flex-end">
+      <button class="btn btn-outline" data-dialog-close>Close</button>
+      <a class="btn btn-primary" id="tplUse" href="report.php">Use this template <?= icon('arrow-right') ?></a>
     </div>
   </div>
 </div>
-
-<!-- Modal -->
-<div class="modal-overlay" id="previewModal">
-  <div class="modal-card">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-      <h2 style="font-size:18px;font-weight:700">Template Preview</h2>
-      <button onclick="closeModal()" style="background:none;border:none;color:rgba(255,255,255,0.5);font-size:24px;cursor:pointer">×</button>
-    </div>
-    <div id="modalBody" style="font-size:13px;color:rgba(255,255,255,0.6);line-height:1.8;margin-bottom:24px"></div>
-    <div style="display:flex;gap:10px;justify-content:flex-end">
-      <button class="btn-secondary" onclick="closeModal()">Close</button>
-      <a href="report.php" class="btn-primary" style="text-decoration:none">Use This Template →</a>
-    </div>
-  </div>
-</div>
-
+<?php ob_start(); ?>
 <script>
-function filterCards(cat, btn) {
-  document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
-  btn.classList.add('active');
-  document.querySelectorAll('.template-card').forEach(c => {
-    const show = cat === 'all' || c.dataset.cat === cat;
-    c.style.opacity = show ? '1' : '0';
-    c.style.transform = show ? 'scale(1)' : 'scale(0.95)';
-    setTimeout(() => { c.style.display = show ? '' : 'none'; }, 200);
+const TEMPLATES = <?= json_encode(array_column($SS_TEMPLATES, null, 'id'), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP) ?>;
+let tplCat = 'all';
+const applyFilter = () => {
+  const q = document.getElementById('tplSearch').value.trim().toLowerCase();
+  let shown = 0;
+  document.querySelectorAll('.tpl').forEach((c) => {
+    const match = (tplCat === 'all' || c.dataset.cat === tplCat) && c.dataset.title.includes(q);
+    c.style.display = match ? 'flex' : 'none';
+    if (match) shown += 1;
   });
-}
-function searchCards(q) {
-  q = q.toLowerCase();
-  document.querySelectorAll('.template-card').forEach(c => {
-    c.style.display = c.dataset.title.includes(q) ? '' : 'none';
-  });
-}
-function previewTemplate(title, desc) {
-  document.getElementById('modalBody').innerHTML = '<h3 style="font-size:16px;font-weight:600;color:#fff;margin-bottom:12px">'+title+'</h3><p>'+desc+'</p><br><p style="color:rgba(255,255,255,0.3)">Full template content with form fields, legal references, and submission guidelines will be auto-populated when you use this template.</p>';
-  document.getElementById('previewModal').classList.add('active');
-}
-function closeModal() { document.getElementById('previewModal').classList.remove('active'); }
-document.querySelectorAll('.template-card').forEach((c,i) => {
-  c.style.opacity = '0'; c.style.transform = 'translateY(20px)';
-  c.style.transition = 'all 0.4s ease ' + (i*0.07) + 's';
-  setTimeout(() => { c.style.opacity = '1'; c.style.transform = 'translateY(0)'; }, 100);
+  document.getElementById('tplEmpty').hidden = shown > 0;
+  ScrollTrigger.refresh();
+};
+document.querySelectorAll('[data-filter]').forEach((b) => b.addEventListener('click', () => {
+  document.querySelectorAll('[data-filter]').forEach((x) => { x.classList.toggle('active', x === b); x.setAttribute('aria-selected', String(x === b)); });
+  tplCat = b.dataset.filter;
+  applyFilter();
+}));
+document.getElementById('tplSearch').addEventListener('input', applyFilter);
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-preview]');
+  if (!b) return;
+  const t = TEMPLATES[b.dataset.preview];
+  document.getElementById('tplTitle').textContent = t.title;
+  document.getElementById('tplBody').textContent = t.body;
+  document.getElementById('tplUse').href = 'report.php?template=' + t.id;
+  SS.dialog.open('tplDialog');
 });
 </script>
-<?php include __DIR__.'/toast.php'; ?>
-</body>
-</html>
+<?php ss_page_close('templates', ob_get_clean()); ?>

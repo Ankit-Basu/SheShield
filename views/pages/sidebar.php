@@ -1,132 +1,103 @@
 <?php
-// Shared sidebar component for all dashboard pages
-// Usage: $activePage = 'dashboard'; include __DIR__ . '/sidebar.php';
-if (!isset($activePage)) $activePage = '';
+// Shared sidebar, included by ss_page_open() where $activePage and $conn are in scope.
+$firstName = trim((string)($_SESSION['first_name'] ?? ''));
+$lastName = trim((string)($_SESSION['last_name'] ?? ''));
+$userEmail = (string)($_SESSION['email'] ?? '');
+$sessionUserId = (int)($_SESSION['user_id'] ?? 0);
 
-// Get user data from session (set during login via Session::set)
-$firstName = isset($_SESSION['first_name']) ? trim(htmlspecialchars($_SESSION['first_name'])) : '';
-$lastName = isset($_SESSION['last_name']) ? trim(htmlspecialchars($_SESSION['last_name'])) : '';
-$userEmail = isset($_SESSION['email']) ? htmlspecialchars($_SESSION['email']) : '';
-
-// Fallback: if session is empty but user_id exists, load from DB
-if (empty($firstName) && isset($_SESSION['user_id']) && isset($conn) && !$conn->connect_error) {
-    $_uid = (int)$_SESSION['user_id'];
-    $_ur = @$conn->query("SELECT first_name, last_name, full_name, email FROM users WHERE id = $_uid LIMIT 1");
-    if ($_ur && $_urow = $_ur->fetch_assoc()) {
-        $firstName = htmlspecialchars($_urow['first_name'] ?? '');
-        $lastName = htmlspecialchars($_urow['last_name'] ?? '');
-        if ($firstName === '' && !empty($_urow['full_name'])) {
-            $parts = explode(' ', trim($_urow['full_name']), 2);
-            $firstName = htmlspecialchars($parts[0] ?? '');
-            $lastName = htmlspecialchars($parts[1] ?? $lastName);
-        }
-        $userEmail = htmlspecialchars($_urow['email'] ?? '');
-        // Fix session for subsequent page loads
-        $_SESSION['first_name'] = htmlspecialchars_decode($firstName);
-        $_SESSION['last_name'] = htmlspecialchars_decode($lastName);
-        $_SESSION['email'] = $_urow['email'] ?? '';
-    }
-}
-
-$userName = (!empty($firstName) || !empty($lastName)) ? trim("$firstName $lastName") : 'User';
-$userInitial = !empty($firstName) ? strtoupper($firstName[0]) : 'U';
-
-// Profile image: try session first (set during login), then try handler
-$profileImage = isset($_SESSION['profile_image']) ? $_SESSION['profile_image'] : null;
-if (!$profileImage && isset($_SESSION['user_id'])) {
-    $_pih = __DIR__ . '/../../includes/profile_image_handler.php';
-    if (file_exists($_pih)) {
-        @include_once $_pih;
-        if (function_exists('getProfileImage')) {
-            $profileImage = @getProfileImage($_SESSION['user_id']);
-            if ($profileImage) {
-                $_SESSION['profile_image'] = $profileImage;
+// Fallback: if the session has no name, load it once from the database.
+if ($firstName === '' && $sessionUserId > 0 && isset($conn) && !$conn->connect_error) {
+    $stmt = $conn->prepare('SELECT first_name, last_name, full_name, email FROM users WHERE id = ? LIMIT 1');
+    if ($stmt) {
+        $stmt->bind_param('i', $sessionUserId);
+        $stmt->execute();
+        $row = $stmt->get_result()->fetch_assoc();
+        $stmt->close();
+        if ($row) {
+            $firstName = trim((string)($row['first_name'] ?? ''));
+            $lastName = trim((string)($row['last_name'] ?? ''));
+            if ($firstName === '' && !empty($row['full_name'])) {
+                $parts = explode(' ', trim($row['full_name']), 2);
+                $firstName = $parts[0] ?? '';
+                $lastName = $parts[1] ?? $lastName;
             }
+            $userEmail = (string)($row['email'] ?? '');
+            $_SESSION['first_name'] = $firstName;
+            $_SESSION['last_name'] = $lastName;
+            $_SESSION['email'] = $userEmail;
         }
     }
 }
-$profileImageSrc = $profileImage;
-if ($profileImageSrc && !preg_match('/^(https?:|data:)/i', $profileImageSrc)) {
-    $profileImageSrc = '../../' . ltrim($profileImageSrc, '/');
+
+$displayName = trim("$firstName $lastName") ?: 'Member';
+$initial = strtoupper(substr($firstName ?: 'M', 0, 1));
+
+$profileImage = $_SESSION['profile_image'] ?? null;
+if (!$profileImage && $sessionUserId > 0) {
+    $handler = __DIR__ . '/../../includes/profile_image_handler.php';
+    if (file_exists($handler)) {
+        include_once $handler;
+        if (function_exists('getProfileImage')) {
+            $profileImage = @getProfileImage($sessionUserId);
+            if ($profileImage) $_SESSION['profile_image'] = $profileImage;
+        }
+    }
+}
+if ($profileImage && !preg_match('/^(https?:|data:)/i', $profileImage)) {
+    $profileImage = '../../' . ltrim($profileImage, '/');
 }
 
-// Get pending report count for badge
 $pendingCount = 0;
-if (isset($conn) && !$conn->connect_error && isset($_SESSION['user_id'])) {
-    $uid = (int)$_SESSION['user_id'];
-    $r = @$conn->query("SELECT COUNT(*) as c FROM incidents WHERE user_id = $uid AND status='pending'");
-    if ($r) $pendingCount = (int)mysqli_fetch_assoc($r)['c'];
+if ($sessionUserId > 0 && isset($conn) && !$conn->connect_error) {
+    $r = $conn->query("SELECT COUNT(*) AS c FROM incidents WHERE user_id = $sessionUserId AND status = 'pending'");
+    if ($r) $pendingCount = (int)$r->fetch_assoc()['c'];
 }
+
+$navGroups = [
+    'Main' => [
+        ['dashboard', 'Home', 'house'],
+        ['report', 'Reports', 'file-text'],
+        ['analytics', 'Analytics', 'chart-column'],
+        ['map', 'Safety map', 'map'],
+    ],
+    'Services' => [
+        ['safespace', 'Safe spaces', 'shield-check'],
+        ['walkwithus', 'Walk with us', 'footprints'],
+        ['templates', 'Templates', 'files'],
+    ],
+];
 ?>
-<aside class="dash-sidebar" id="dashSidebar">
-  <a href="../../pro/landing.html" class="sidebar-logo" aria-label="Go to SheShield landing page">
-    <div class="logo-mark">
-      <svg viewBox="0 0 100 110" fill="none"><path d="M50 6 L88 22 L88 56 Q88 80 50 96 Q12 80 12 56 L12 22 Z" fill="none" stroke="#fff" stroke-width="4"/><circle cx="50" cy="40" r="10" stroke="#fff" stroke-width="2.5" fill="none"/><line x1="50" y1="50" x2="50" y2="68" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg>
-      <div class="live-badge"><div class="live-dot"></div></div>
-    </div>
-    <div>
-      <div class="logo-name">SheShield</div>
-      <div class="logo-sub">Safety Dashboard</div>
-    </div>
-  </a>
-
-  <nav style="flex:1">
-    <div class="nav-section-label">MAIN</div>
-    <a href="dashboard.php" class="nav-item <?= $activePage==='dashboard'?'active':'' ?>">
-      <i class="fa-solid fa-house"></i><span>Home</span>
+<aside class="side glass" id="dashSidebar" aria-label="Main navigation">
+  <div class="side-brand">
+    <a href="../../pro/landing.html" class="brand" aria-label="SheShield home">
+      <svg class="brand-mark" viewBox="0 0 100 110" fill="none" aria-hidden="true"><defs><linearGradient id="ssLogo" x1="0" y1="0" x2="1" y2="1"><stop stop-color="var(--primary)"/><stop offset="1" stop-color="var(--accent)"/></linearGradient></defs><path d="M50 6 88 22v34q0 24-38 40Q12 80 12 56V22Z" fill="url(#ssLogo)"/><circle cx="50" cy="40" r="12" stroke="#1d121b" stroke-width="5"/><path d="M50 52v21M41 64h18" stroke="#1d121b" stroke-width="5" stroke-linecap="round"/></svg>
+      SheShield
     </a>
-    <a href="report.php" class="nav-item <?= $activePage==='report'?'active':'' ?>">
-      <i class="fa-solid fa-file-alt"></i><span>Reports</span>
-      <?php if ($pendingCount > 0): ?><span class="nav-badge"><?=$pendingCount?></span><?php endif; ?>
-    </a>
-    <a href="analytics.php" class="nav-item <?= $activePage==='analytics'?'active':'' ?>">
-      <i class="fa-solid fa-chart-bar"></i><span>Analytics</span>
-    </a>
-    <a href="map.php" class="nav-item <?= $activePage==='map'?'active':'' ?>">
-      <i class="fa-solid fa-map-location-dot"></i><span>Map</span>
-    </a>
-
-    <div class="nav-section-label">SERVICES</div>
-    <a href="safespace.php" class="nav-item <?= $activePage==='safespace'?'active':'' ?>">
-      <i class="fa-solid fa-shield-heart"></i><span>Safe Space</span>
-    </a>
-    <a href="walkwithus.php" class="nav-item <?= $activePage==='walkwithus'?'active':'' ?>">
-      <i class="fa-solid fa-person-walking"></i><span>Walk With Us</span>
-    </a>
-    <a href="templates.php" class="nav-item <?= $activePage==='templates'?'active':'' ?>">
-      <i class="fa-solid fa-file-lines"></i><span>Templates</span>
-    </a>
-
-    <div class="nav-section-label">ACCOUNT</div>
-    <a href="settings.php" class="nav-item <?= $activePage==='settings'?'active':'' ?>">
-      <i class="fa-solid fa-gear"></i><span>Settings</span>
-    </a>
-    <a href="../../auth/logout.php" class="nav-item">
-      <i class="fa-solid fa-right-from-bracket"></i><span>Logout</span>
-    </a>
+  </div>
+  <nav class="side-nav">
+    <?php foreach ($navGroups as $label => $links): ?>
+      <div class="side-label"><?= e($label) ?></div>
+      <?php foreach ($links as [$slug, $text, $ico]): ?>
+        <a href="<?= $slug ?>.php" class="side-link <?= $activePage === $slug ? 'active' : '' ?>" <?= $activePage === $slug ? 'aria-current="page"' : '' ?>>
+          <?= icon($ico) ?><span><?= e($text) ?></span>
+          <?php if ($slug === 'report' && $pendingCount > 0): ?><span class="side-count" title="Pending reports"><?= $pendingCount ?></span><?php endif; ?>
+        </a>
+      <?php endforeach; ?>
+    <?php endforeach; ?>
+    <div class="side-label">Account</div>
+    <?php if (!empty($_SESSION['is_admin'])): ?><a href="../../admin/index.php" class="side-link"><?= icon('badge-check') ?><span>Admin</span></a><?php endif; ?>
+    <a href="settings.php" class="side-link <?= $activePage === 'settings' ? 'active' : '' ?>"><?= icon('settings') ?><span>Settings</span></a>
+    <a href="../../auth/logout.php" class="side-link"><?= icon('log-out') ?><span>Log out</span></a>
   </nav>
-
-  <button class="sidebar-sos" onclick="window.location.href='../../pro/report.html'">
-    <div class="sos-dot"></div>
-    <span>SOS Emergency</span>
-  </button>
-
-  <div class="sidebar-user">
-    <div class="user-avatar">
-      <?php if ($profileImageSrc): ?>
-        <img src="<?= htmlspecialchars($profileImageSrc) ?>" alt="<?= $userName ?>">
-      <?php else: ?>
-        <?= $userInitial ?>
-      <?php endif; ?>
-    </div>
-    <div style="flex:1;min-width:0">
-      <div class="user-name"><?= $userName ?></div>
-      <div class="user-status"><?= !empty($userEmail) ? $userEmail : 'Active member' ?></div>
-    </div>
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+  <div class="side-foot">
+    <a href="settings.php" class="side-user">
+      <span class="avatar">
+        <?php if ($profileImage): ?><img src="<?= e($profileImage) ?>" alt="" loading="lazy"><?php else: ?><?= e($initial) ?><?php endif; ?>
+      </span>
+      <span style="min-width:0">
+        <b><?= e($displayName) ?></b>
+        <small><?= e($userEmail ?: 'Member') ?></small>
+      </span>
+    </a>
   </div>
 </aside>
-
-<button class="mobile-toggle" id="mobileToggle" onclick="document.getElementById('dashSidebar').classList.toggle('open')">
-  <i class="fa-solid fa-bars"></i>
-</button>
