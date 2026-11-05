@@ -1,8 +1,10 @@
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "sheshield";
+// Docker Compose, Kubernetes and Helm set these. XAMPP uses the defaults.
+$servername = getenv('DB_HOST') ?: 'localhost';
+$username = getenv('DB_USER') ?: 'root';
+$password = getenv('DB_PASS') !== false ? getenv('DB_PASS') : '';
+$dbname = getenv('DB_NAME') ?: 'sheshield';
+$dbport = (int)(getenv('DB_PORT') ?: 3306);
 
 function mysqli_column_exists($conn, $table, $column) {
     $stmt = $conn->prepare(
@@ -230,9 +232,9 @@ function ensure_mysqli_schema($conn) {
 }
 
 function get_mysqli_connection() {
-    global $servername, $username, $password, $dbname;
+    global $servername, $username, $password, $dbname, $dbport;
 
-    $conn = new mysqli($servername, $username, $password);
+    $conn = new mysqli($servername, $username, $password, '', $dbport);
     if ($conn->connect_error) {
         die("Connection failed: " . $conn->connect_error);
     }

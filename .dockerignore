@@ -1,0 +1,42 @@
+# Docker reads this from the build context, which is the repository root
+# (GitHub Actions, Jenkins and docker-compose all build from there).
+
+# Version control and tooling
+.git
+.github
+.husky
+.vscode
+.idea
+node_modules
+vendor
+package.json
+package-lock.json
+.eslintrc.js
+commitlint.config.js
+
+# Secrets and machine-local config: supply these at runtime, never bake them in
+.env
+.env.*
+*.pem
+*.key
+app/config/config.php
+app/config/email_config.php
+
+# Runtime data (the image creates empty folders for these)
+uploads
+logs
+tmp
+
+# Not needed to serve the site
+docs
+screenshots
+scripts
+*.md
+
+# Infrastructure, except the Apache site config the Dockerfile copies in
+infrastructure
+!infrastructure/apache.conf
+
+# Repository metadata
+.gitignore
+.dockerignore

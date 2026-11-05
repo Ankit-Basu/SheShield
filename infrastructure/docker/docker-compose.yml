@@ -1,17 +1,19 @@
 # SheShield - Docker Compose
-# Local development environment with PHP + MySQL
-
-version: '3.8'
+# Local development environment with PHP + MySQL.
+# Run from the repository root:
+#   docker compose -f infrastructure/docker/docker-compose.yml up -d --build
 
 services:
   # PHP/Apache Application
   app:
     build:
-      context: .
-      dockerfile: Dockerfile
+      # The image needs the whole repository, not just this folder.
+      context: ../..
+      dockerfile: infrastructure/docker/Dockerfile
     container_name: sheshield-app
     ports:
-      - "8080:80"
+      # Override with APP_PORT if 8080 is taken, e.g. APP_PORT=8095
+      - "${APP_PORT:-8080}:80"
     environment:
       - DB_HOST=db
       - DB_NAME=sheshield
@@ -21,8 +23,8 @@ services:
       db:
         condition: service_healthy
     volumes:
-      - ./uploads:/var/www/html/uploads
-      - ./logs:/var/www/html/logs
+      - ../../uploads:/var/www/html/uploads
+      - ../../logs:/var/www/html/logs
     networks:
       - sheshield-network
     restart: unless-stopped
@@ -37,8 +39,8 @@ services:
     ports:
       - "3307:3306"
     volumes:
+      # No init script: the app creates and upgrades its own tables on the first request.
       - db_data:/var/lib/mysql
-      - ./sql/complete_database_schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
     networks:
       - sheshield-network
     healthcheck:
