@@ -1,56 +1,109 @@
-# Welcome to your Expo app 👋
+<div align="center">
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+# SheShield Mobile
 
-## Get started
+**Campus safety for women at LPU, in your pocket.**
+Hold-to-send SOS with live location, a walking companion on request, confidential incident reports that work offline, and a satellite map of campus.
 
-1. Install dependencies
+React Native · Expo SDK 58 · TypeScript · Expo Router · TanStack Query · Zustand · Reanimated 4
 
-   ```bash
-   npm install
-   ```
+</div>
 
-2. Start the app
+<p align="center">
+  <img src="docs/screenshots/welcome.jpg" width="200" alt="Welcome screen">
+  <img src="docs/screenshots/home.jpg" width="200" alt="Home dashboard">
+  <img src="docs/screenshots/sos.jpg" width="200" alt="Hold-to-send SOS">
+  <img src="docs/screenshots/sos-sent.jpg" width="200" alt="SOS sent with location">
+</p>
+<p align="center">
+  <img src="docs/screenshots/map.jpg" width="200" alt="Campus safety map">
+  <img src="docs/screenshots/walks.jpg" width="200" alt="Walk With Us">
+  <img src="docs/screenshots/report.jpg" width="200" alt="Report an incident">
+  <img src="docs/screenshots/profile.jpg" width="200" alt="Profile and themes">
+</p>
 
-   ```bash
-   npx expo start
-   ```
+## What it does
 
-In the output, you'll find options to open the app in a
+| Feature | How it works |
+|---|---|
+| **Hold-to-send SOS** | Always one tap away in the middle of the tab bar. Hold for 1.6 s while a ring fills with rising haptic ticks, so a pocket tap never sends an alert. Uses the last known location instantly, then a fresh GPS fix within 8 s, sends it to the backend, and offers Call 112, call or text your emergency contact, or share a Google Maps link. If sending fails, every fallback still works. |
+| **Walk With Us** | Choose pickup, destination and time from campus landmarks. The server assigns a verified walker who is on duty. Walks update optimistically: cancel shows at once and rolls back if the server refuses. |
+| **Incident reports** | Type, severity, time, landmark or GPS location, up to 3 photos from the camera or gallery, and a fully anonymous option. **Works offline:** with no signal the report is saved on the phone and sent automatically when the connection returns. |
+| **Campus map** | Esri satellite or street tiles with the official OpenStreetMap campus outline, landmarks and safe spaces. Runs Leaflet in a WebView, so the installed app needs no map API key. Tap a landmark to walk from it or report there. |
+| **Dashboard** | Live IST clock with next sunrise or sunset at LPU, your report numbers, active walk, latest reports and one-tap helplines. Pull to refresh everywhere. |
+| **Themes** | The website's three tweakcn themes (Sunset Horizon, Cosmic Night, Solar Dusk), saved between launches. |
+| **Secure sign-in** | Email and password exchange for a random token stored in the Android Keystore / iOS Keychain (`expo-secure-store`). The server keeps only a SHA-256 hash and revokes it on sign-out. |
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Tech stack
 
-You can start developing by editing the files inside the **src/app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- **Expo SDK 58 / React Native 0.88 / React 19** with the New Architecture and the React Compiler
+- **Expo Router**: file-based routes, protected route groups, modal and full-screen modal screens
+- **TanStack Query**: server state, caching, pull-to-refresh, optimistic updates
+- **Zustand**: auth, theme, toast and offline-queue stores (theme persisted with AsyncStorage)
+- **Reanimated 4**: UI-thread animations (aurora, SOS ring, tab bar, press feedback, list entry)
+- **react-native-svg** (gradients, SOS progress ring), **expo-linear-gradient**, **expo-blur** (iOS tab bar)
+- **expo-location, expo-image-picker, expo-haptics, expo-secure-store, expo-clipboard**, NetInfo, WebView
+- **Lucide** icons, **Clash Display** + **Plus Jakarta Sans** + **JetBrains Mono** fonts
+- Backend: the [SheShield](https://github.com/Ankit-Basu/SheShield) PHP + MySQL API, deployed on Render and Vercel
 
-## Get a fresh project
+## Project structure
 
-When you're ready, run:
-
-```bash
-npm run reset-project
+```
+src/
+  app/                       Expo Router: every file is a screen
+    _layout.tsx              fonts, providers, auth-guarded stacks, offline sync
+    welcome.tsx login.tsx signup.tsx         signed-out screens
+    (tabs)/_layout.tsx       custom glass tab bar with the SOS button
+    (tabs)/index.tsx map.tsx walks.tsx profile.tsx
+    sos.tsx                  full-screen emergency flow
+    report.tsx reports.tsx   new report (modal) and history
+  components/                Glass, Button, Field, Aurora, HoldToSend, CampusMap, GlassTabBar…
+  lib/
+    api.ts                   fetch wrapper: base URL, bearer token, timeouts, honest errors
+    auth.ts                  token in SecureStore, Zustand store
+    queries.ts               TanStack Query hooks and mutations
+    offline.ts               offline report queue + NetInfo auto-retry
+    theme.ts                 three themes, fonts, glass tokens
+    campus.ts format.ts lpu-boundary.ts
 ```
 
-This command will move the starter code to the **example** directory and create a blank **src/app** directory where you can start developing.
+## Run it
 
-### Other setup steps
+```bash
+npm install
+npx expo start
+```
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+Scan the QR code with a development build of the app, or press `w` for the web preview. The app talks to the live backend by default. To use a local XAMPP backend instead, start with `EXPO_PUBLIC_API_URL=http://<your-computer-ip>:8088/sheshield/`.
 
-## Learn more
+```bash
+npx tsc --noEmit   # type check
+npx expo lint      # lint (React Compiler rules included)
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+## Build an APK for your phone
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+Builds run on Expo's servers; nothing heavy runs on your computer.
 
-## Join the community
+```bash
+npx eas-cli@latest login
+npx eas-cli@latest build -p android --profile preview
+```
 
-Join our community of developers creating universal apps.
+When it finishes, open the link it prints on your Android phone (or scan its QR code), download the APK and install it. Android will ask you to allow installs from your browser the first time.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Backend endpoints used
+
+| Endpoint | Purpose |
+|---|---|
+| `POST api/auth/login.php`, `signup.php` with `client: "mobile"` | Returns a sign-in token |
+| `POST api/auth/logout.php` | Revokes the token |
+| `GET api/user/me.php` | Profile, dashboard numbers, latest reports, active walk |
+| `GET api/incidents/mine.php` · `POST api/incidents/create.php` | Your reports · new report with photos |
+| `GET api/walks/mine.php` · `POST create_request.php`, `cancel_request.php` | Walks |
+| `POST api/emergency/alert.php` | SOS with location |
+| `GET api/safespaces/list.php` · `POST api/user/update_profile.php` | Map safe spaces · emergency contact |
+
+## Credits
+
+Campus outline © OpenStreetMap contributors (ODbL). Imagery © Esri, Maxar. Clash Display from Fontshare (see `assets/fonts/LICENSE-FontShare.txt`).
