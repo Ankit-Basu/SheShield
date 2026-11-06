@@ -218,13 +218,41 @@ main { overflow-x: clip; }
 .cta { position: relative; padding: clamp(40px, 7vw, 90px) 20px; text-align: center; display: grid; justify-items: center; gap: 14px; }
 .cta > h2 { font-size: clamp(38px, 6.2vw, 88px); max-width: 15ch; }
 .cta > .btn { margin-top: 8px; }
-.footer { width: min(calc(100% - 32px), 1240px); margin: 0 auto; padding: clamp(50px, 7vw, 80px) 0 26px; }
-.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 26px; }
-.footer nav { display: grid; gap: 7px; align-content: start; font-size: 14px; }
-.footer nav a { color: var(--muted-foreground); width: fit-content; }
-.footer nav a:hover { color: var(--foreground); }
-.footer-mark { font-size: clamp(56px, 18.4vw, 262px); line-height: 1; letter-spacing: -0.03em; text-align: center; margin: 28px 0 10px; background: linear-gradient(180deg, oklch(1 0 0 / 0.26), oklch(1 0 0 / 0.02)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-@media (max-width: 620px) { .footer-grid { grid-template-columns: 1fr 1fr; } .footer-grid > div { grid-column: 1 / -1; } }
+.footer { position: relative; width: min(calc(100% - 32px), 1240px); margin: 0 auto; padding: clamp(56px, 8vw, 96px) 0 0; overflow: hidden; }
+/* Frosted panel; the wordmark sits partly beneath it, so its lower edge shows through the glass. */
+.footer-panel { z-index: 1; padding: clamp(24px, 3.4vw, 40px); border-radius: 28px; }
+.footer-grid { display: grid; grid-template-columns: minmax(0, 1.7fr) repeat(3, minmax(0, 1fr)); gap: clamp(22px, 3vw, 40px); }
+.footer-brand { display: grid; gap: 14px; align-content: start; }
+.footer-brand .brand { width: fit-content; }
+.footer-brand > p { max-width: 40ch; line-height: 1.65; }
+.footer-contact { display: flex; flex-wrap: wrap; gap: 8px; }
+.footer-pill { display: inline-flex; align-items: center; gap: 7px; height: 34px; padding: 0 13px; border-radius: 99px; font-size: 13px; font-weight: 500; color: var(--muted-foreground); background: oklch(1 0 0 / 0.05); box-shadow: inset 0 0 0 1px var(--glass-line-soft); transition: color 0.2s, background-color 0.2s, box-shadow 0.2s; }
+.footer-pill .i { width: 14px; height: 14px; }
+.footer-pill:hover { color: var(--foreground); background: oklch(1 0 0 / 0.09); box-shadow: inset 0 0 0 1px var(--glass-line); }
+.footer-col { display: grid; gap: 4px; align-content: start; font-size: 14px; }
+.footer-col .eyebrow { margin-bottom: 8px; }
+.footer-col a { position: relative; width: fit-content; padding: 4px 0; color: var(--muted-foreground); transition: color 0.2s; }
+.footer-col a::after { content: ''; position: absolute; left: 0; right: 0; bottom: 2px; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform 0.3s var(--ease); }
+.footer-col a:hover { color: var(--foreground); }
+.footer-col a:hover::after { transform: scaleX(1); }
+.footer-help a { display: grid; grid-template-columns: 46px auto; align-items: baseline; gap: 10px; }
+.footer-help a::after { display: none; }
+.footer-help b { font-family: var(--font-display); font-size: 17px; font-weight: 600; color: var(--primary); letter-spacing: 0.01em; }
+.footer-help a:hover span { color: var(--foreground); }
+.footer-bottom { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-top: clamp(26px, 3.4vw, 38px); padding-top: 18px; border-top: 1px solid var(--glass-line-soft); }
+.footer-top { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 500; color: var(--muted-foreground); transition: color 0.2s; }
+.footer-top .i { width: 15px; height: 15px; rotate: 180deg; transition: translate 0.3s var(--ease); }
+.footer-top:hover { color: var(--foreground); }
+.footer-top:hover .i { translate: 0 -3px; }
+.footer-mark { position: relative; z-index: 0; font-size: clamp(64px, 19vw, 280px); line-height: 0.8; letter-spacing: -0.035em; text-align: center; margin: -0.36em 0 0; padding-bottom: 0.04em; user-select: none;
+  background: linear-gradient(180deg, color-mix(in oklab, var(--primary) 70%, white) 0%, color-mix(in oklab, var(--accent) 45%, transparent) 46%, transparent 92%);
+  -webkit-background-clip: text; background-clip: text; color: transparent; opacity: 0.5; }
+@media (max-width: 980px) { .footer-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .footer-brand { grid-column: 1 / -1; } }
+@media (max-width: 620px) {
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .footer-help { grid-column: 1 / -1; }
+  .footer-bottom { flex-direction: column; align-items: flex-start; }
+}
 
 /* ─── Assistant ──────────────────────────────────────────────────── */
 .chat-fab { position: fixed; right: 18px; bottom: 18px; z-index: 65; width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; font-size: 22px; transition: transform 0.3s var(--ease); }

@@ -11,7 +11,7 @@
   "rewrites": [
     {
       "source": "/:dir(api|views|admin|uploads)/:path*",
-      "destination": "https://sheshield.onrender.com/:dir/:path*"
+      "destination": "https://sheshield-y9jp.onrender.com/:dir/:path*"
     }
   ],
   "headers": [

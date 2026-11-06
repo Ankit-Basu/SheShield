@@ -10,8 +10,8 @@
   <script>try{document.documentElement.dataset.theme=localStorage.getItem('ss-theme')||'dawn'}catch(e){}</script>
   <link rel="preload" href="../public/fonts/ClashDisplay-Semibold.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="../public/fonts/Satoshi-Variable.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="../public/css/glass.css?v=15">
-  <link rel="stylesheet" href="../public/css/landing.css?v=15">
+  <link rel="stylesheet" href="../public/css/glass.css?v=16">
+  <link rel="stylesheet" href="../public/css/landing.css?v=16">
 </head>
 <body>
 <div class="ss-backdrop" aria-hidden="true"></div>
@@ -272,16 +272,46 @@
 </main>
 
 <footer class="footer">
-  <div class="footer-grid">
-    <div>
-      <p class="muted small" style="max-width:34ch">Campus safety for women, built by students. In an emergency, call 112.</p>
-      <p class="small" style="margin-top:10px"><a href="mailto:help@sheshield.com" class="link">help@sheshield.com</a></p>
+  <div class="footer-panel glass glass-frost">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="landing.html" class="brand" aria-label="SheShield home">
+          <svg class="brand-mark" viewBox="0 0 100 110" fill="none" aria-hidden="true"><path d="M50 6 88 22v34q0 24-38 40Q12 80 12 56V22Z" fill="url(#ssLogo)"/><circle cx="50" cy="40" r="12" stroke="#1d121b" stroke-width="5"/><path d="M50 52v21M41 64h18" stroke="#1d121b" stroke-width="5" stroke-linecap="round"/></svg>
+          SheShield
+        </a>
+        <p class="muted small">Campus safety for women at LPU, built by students. One tap for help, a walking companion, and a calm way to report what happened.</p>
+        <div class="footer-contact">
+          <a href="mailto:help@sheshield.com" class="footer-pill"><svg class="i" aria-hidden="true"><use href="../public/icons.svg#mail"/></svg>help@sheshield.com</a>
+          <a href="https://github.com/Ankit-Basu/SheShield" class="footer-pill" target="_blank" rel="noopener">Source on GitHub<svg class="i" aria-hidden="true"><use href="../public/icons.svg#arrow-up-right"/></svg></a>
+        </div>
+      </div>
+      <nav class="footer-col" aria-label="Platform">
+        <span class="eyebrow">Platform</span>
+        <a href="signup.html">Create an account</a>
+        <a href="login.html">Log in</a>
+        <a href="report.html">Report an incident</a>
+        <a href="../views/pages/map.php">Campus safety map</a>
+      </nav>
+      <nav class="footer-col" aria-label="On this page">
+        <span class="eyebrow">Explore</span>
+        <a href="#walk">How it works</a>
+        <a href="#services">Services</a>
+        <a href="#about">About</a>
+        <a href="#helplines">Helplines</a>
+      </nav>
+      <div class="footer-col footer-help">
+        <span class="eyebrow">Help, any hour</span>
+        <a href="tel:112"><b>112</b><span>National emergency</span></a>
+        <a href="tel:1091"><b>1091</b><span>Women's helpline</span></a>
+        <a href="tel:100"><b>100</b><span>Police</span></a>
+      </div>
     </div>
-    <nav aria-label="Platform"><span class="eyebrow">Platform</span><a href="login.html">Log in</a><a href="signup.html">Sign up</a><a href="report.html">Report an incident</a></nav>
-    <nav aria-label="On this page"><span class="eyebrow">Explore</span><a href="#walk">How it works</a><a href="#services">Services</a><a href="#about">About</a><a href="#helplines">Helplines</a></nav>
+    <div class="footer-bottom">
+      <p class="xs muted">© <span id="year">2026</span> SheShield · Lovely Professional University, Phagwara · Campus imagery © Esri, Maxar</p>
+      <a href="#top" class="footer-top">Back to top<svg class="i" aria-hidden="true"><use href="../public/icons.svg#arrow-down"/></svg></a>
+    </div>
   </div>
   <div class="footer-mark display" aria-hidden="true">SheShield</div>
-  <p class="xs muted" style="text-align:center">© <span id="year">2026</span> SheShield. All rights reserved. Campus imagery &copy; Esri, Maxar.</p>
 </footer>
 
 <!-- Assistant: fixed answers about the product, not a live person -->
@@ -298,7 +328,7 @@
 <script src="../public/lib/gsap.min.js"></script>
 <script src="../public/lib/ScrollTrigger.min.js"></script>
 <script src="../public/lib/lenis.min.js"></script>
-<script src="../public/js/sheshield.js?v=15"></script>
-<script src="../public/js/landing.js?v=15"></script>
+<script src="../public/js/sheshield.js?v=16"></script>
+<script src="../public/js/landing.js?v=16"></script>
 </body>
 </html>
