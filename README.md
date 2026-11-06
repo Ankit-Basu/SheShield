@@ -444,7 +444,11 @@ docker compose -f infrastructure/docker/docker-compose.yml up -d --build
 
 The site is at http://localhost:8080, and phpMyAdmin at http://localhost:8081. If port 8080 is taken, set `APP_PORT` first, for example `APP_PORT=8095`.
 
-The app reads `DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASS` and `DB_PORT` from the environment, which Docker Compose, Kubernetes and Helm all set. Without them it falls back to the XAMPP defaults. Email config is never baked into the image: mount `app/config/email_config.php` into the container to enable confirmation emails.
+The app reads `DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASS` and `DB_PORT` from the environment, which Docker Compose, Kubernetes and Helm all set. Without them it falls back to the XAMPP defaults. Set `DB_SSL=true` for hosted MySQL that requires encryption. Email config is never baked into the image: set `BREVO_API_KEY` or the `SMTP_*` variables (see [the deploy guide](docs/DEPLOY_RENDER_VERCEL.md#environment-variables-the-app-reads)), or mount `app/config/email_config.php`.
+
+### Deploy for free (Render + Vercel)
+
+`render.yaml` and `vercel.json` deploy the PHP app on Render's free plan, a free Aiven MySQL database, and the public pages on Vercel. Follow the step-by-step guide: **[docs/DEPLOY_RENDER_VERCEL.md](docs/DEPLOY_RENDER_VERCEL.md)**.
 
 To make someone an admin, add their user id to the `admins` table, then have them sign in again:
 
@@ -453,6 +457,7 @@ INSERT INTO admins (user_id) VALUES (1);
 ```
 
 ### More guides
+- [Free deploy: Render + Vercel](docs/DEPLOY_RENDER_VERCEL.md)
 - [Full DevOps stack setup](docs/SETUP.md)
 - [Email setup](docs/EMAIL_SETUP.md)
 - [Firebase and Google sign-in](docs/FIREBASE_SETUP.md)

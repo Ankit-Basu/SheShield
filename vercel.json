@@ -1,0 +1,27 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "",
+  "buildCommand": "node scripts/vercel-build.js",
+  "outputDirectory": "vercel-dist",
+  "redirects": [
+    { "source": "/", "destination": "/pro/landing.html", "permanent": false },
+    { "source": "/index.php", "destination": "/pro/landing.html", "permanent": false }
+  ],
+  "rewrites": [
+    {
+      "source": "/:dir(api|views|admin|uploads)/:path*",
+      "destination": "https://sheshield.onrender.com/:dir/:path*"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/:dir(api|views|admin|uploads)/:path*",
+      "headers": [{ "key": "x-vercel-enable-rewrite-caching", "value": "0" }]
+    },
+    {
+      "source": "/public/(fonts|lib|images)/:path*",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=604800" }]
+    }
+  ]
+}

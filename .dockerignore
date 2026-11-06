@@ -28,6 +28,10 @@ logs
 tmp
 
 # Not needed to serve the site
+vercel-dist
+vercel.json
+.vercelignore
+render.yaml
 docs
 screenshots
 scripts

@@ -1,0 +1,15 @@
+# Only pro/, public/ and the build script are needed on Vercel (see vercel.json).
+api
+admin
+app
+views
+database
+infrastructure
+docs
+screenshots
+uploads
+logs
+tmp
+vendor
+node_modules
+*.php

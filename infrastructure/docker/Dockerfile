@@ -24,6 +24,10 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     gd \
     zip
 
+# Production PHP settings: errors go to the container log, never to the browser
+RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini" \
+    && printf 'upload_max_filesize = 10M\npost_max_size = 25M\n' > "$PHP_INI_DIR/conf.d/sheshield.ini"
+
 # Enable Apache modules
 RUN a2enmod rewrite headers
 
