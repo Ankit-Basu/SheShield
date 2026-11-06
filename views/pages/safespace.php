@@ -62,7 +62,7 @@ ss_page_open('safespace', 'Safe spaces', 'Safe spaces', '', $head);
 <script src="../../public/lib/leaflet.js"></script>
 <script src="../../public/lib/leaflet.draw.js"></script>
 <script src="../../public/js/locations.js"></script>
-<script src="../../public/js/lpu-campus.js"></script>
+<script src="../../public/js/lpu-campus.js?v=2"></script>
 <script src="../../public/js/campus-map.js"></script>
 <script>
 const { map, addLandmarks } = CampusMap.create('safeMap');
