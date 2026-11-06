@@ -20,7 +20,7 @@ Visitors only ever see the Vercel address, so sign-in cookies work without any c
 
 | Limit | Effect | Fix |
 |---|---|---|
-| Render sleeps after 15 minutes idle | The next request takes up to a minute | Render Starter instance (about $7/month) |
+| Render sleeps after 15 minutes idle | The next request takes up to a minute | The keep-awake workflow (below), or a Render Starter instance (about $7/month) |
 | Render's disk is wiped on every deploy or restart | Uploaded evidence and profile photos disappear, and everyone is signed out | Paid instance plus a persistent disk mounted at `/var/www/html/uploads` |
 | Render's free plan blocks SMTP (ports 25, 465, 587) | Gmail/SMTP email can't send | Use Brevo (below), which sends over HTTPS |
 | Aiven free MySQL: 1 GB storage | Plenty for a demo | Paid Aiven plan |
@@ -71,7 +71,7 @@ Skip this if you don't need confirmation emails. Everything else works without i
 
 ## 4. Put Vercel in front (optional, recommended)
 
-1. If the Render address is **not** exactly `https://sheshield.onrender.com`, edit `vercel.json` in the repository and replace that address with yours (it appears once), then commit and push.
+1. `vercel.json` forwards to `https://sheshield-y9jp.onrender.com`. If your Render address is different, replace it there (it appears once) and in `.github/workflows/keep-awake.yml`, then commit and push.
 2. Sign up at https://vercel.com with GitHub → **Add New** → **Project** → import `SheShield`.
 3. Leave the settings as they are (`vercel.json` sets the build) and click **Deploy**.
 4. Open the address Vercel gives you, for example `https://sheshield.vercel.app`. It redirects to the landing page.
@@ -87,6 +87,15 @@ Vercel only receives the static pages and assets (`scripts/vercel-build.js` copi
    ```bash
    D:\xampp\mysql\bin\mysql.exe --ssl -h <aiven host> -P <aiven port> -u avnadmin -p defaultdb -e "INSERT INTO admins (user_id) SELECT id FROM users WHERE email='you@example.com'"
    ```
+
+## Keeping the app awake
+
+`.github/workflows/keep-awake.yml` calls `/api/public_stats.php` every 10 minutes, so Render never reaches its 15-minute sleep timer and the Aiven database sees regular use. It runs on GitHub's free Actions minutes for public repositories.
+
+- One always-on free service uses about 744 of Render's 750 free hours a month, so keep only one free service running in the workspace.
+- GitHub sometimes delays scheduled runs at busy times, so an occasional cold start can still happen. For a stricter check, also add a free monitor at https://uptimerobot.com pointing at the same URL every 5 minutes.
+- GitHub pauses schedules in repositories with no commits for 60 days. Re-enable it from the **Actions** tab.
+- To run it by hand: **Actions** → **Keep Render awake** → **Run workflow**.
 
 ## Optional: verify the database certificate
 

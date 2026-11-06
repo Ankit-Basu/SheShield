@@ -1,0 +1,35 @@
+name: Keep Render awake
+
+# Render's free plan puts the app to sleep after 15 minutes without requests,
+# and the next visitor waits about a minute. This pings it every 10 minutes.
+# The stats endpoint also queries MySQL, so the Aiven database stays active too.
+#
+# One always-on free service uses about 744 of Render's 750 free hours a month.
+# GitHub can delay scheduled runs at busy times, and pauses schedules in repos
+# with no commits for 60 days (re-enable them from the Actions tab).
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: keep-awake
+  cancel-in-progress: true
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      APP_URL: ${{ vars.RENDER_URL || 'https://sheshield-y9jp.onrender.com' }}
+    steps:
+      - name: Ping the app and database
+        run: |
+          code=$(curl -s -o response.txt -w '%{http_code}' --max-time 120 \
+                 --retry 3 --retry-delay 10 --retry-all-errors \
+                 "$APP_URL/api/public_stats.php")
+          echo "HTTP $code: $(head -c 200 response.txt)"
+          test "$code" = 200
