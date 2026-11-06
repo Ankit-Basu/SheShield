@@ -411,6 +411,45 @@ input[type='range'].slider { width: 100%; accent-color: var(--primary); height: 
 
 /* ─── Marketing nav ──────────────────────────────────────────────── */
 .site-nav { position: fixed; top: 14px; left: 50%; translate: -50% 0; z-index: 70; width: min(calc(100% - 28px), 1240px); display: flex; align-items: center; gap: 14px; height: 62px; padding: 0 12px 0 18px; border-radius: 22px; }
+/* Clear glass: a thin tint, so whatever scrolls beneath (photos, the map, the
+   aurora) shows through blurred and brightened, like light through a pane.
+   One 62px strip, so the backdrop filter stays cheap. */
+.site-nav.glass-blur {
+  background:
+    linear-gradient(180deg, oklch(1 0 0 / 0.16), oklch(1 0 0 / 0.03) 55%, oklch(1 0 0 / 0.07)),
+    oklch(0.18 0.02 345 / 0.16);
+  -webkit-backdrop-filter: blur(14px) saturate(1.9) brightness(1.08);
+  backdrop-filter: blur(14px) saturate(1.9) brightness(1.08);
+  border-color: oklch(1 0 0 / 0.34) oklch(1 0 0 / 0.14) oklch(1 0 0 / 0.08) oklch(1 0 0 / 0.22);
+  box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.3), inset 0 -1px 0 oklch(1 0 0 / 0.05), 0 8px 28px -14px oklch(0 0 0 / 0.45);
+  transition: background-color 0.35s var(--ease), box-shadow 0.35s var(--ease), top 0.35s var(--ease);
+}
+/* Once the page moves, a touch more body and depth so links stay readable over busy content. */
+.site-nav.glass-blur.is-scrolled {
+  top: 10px;
+  background:
+    linear-gradient(180deg, oklch(1 0 0 / 0.14), oklch(1 0 0 / 0.025) 55%, oklch(1 0 0 / 0.06)),
+    oklch(0.18 0.02 345 / 0.3);
+  box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.3), inset 0 -1px 0 oklch(1 0 0 / 0.05), 0 18px 40px -16px oklch(0 0 0 / 0.6);
+}
+/* Reflections: a soft highlight that slides across the pane as the page scrolls,
+   and a bright edge along the top. Pure CSS, driven by the scroll position. */
+.site-nav.glass-blur::before,
+.site-nav.glass-blur::after { content: ''; position: absolute; inset: -1px; border-radius: inherit; pointer-events: none; }
+.site-nav.glass-blur::after {
+  background: linear-gradient(90deg, transparent 6%, oklch(1 0 0 / 0.55) 35%, oklch(1 0 0 / 0.2) 62%, transparent 94%) top / 100% 1px no-repeat;
+}
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .site-nav.glass-blur::before {
+      background: linear-gradient(105deg, transparent 38%, oklch(1 0 0 / 0.1) 46%, oklch(1 0 0 / 0.17) 50%, oklch(1 0 0 / 0.1) 54%, transparent 62%) 0 0 / 300% 100% no-repeat;
+      animation: nav-sheen linear both;
+      animation-timeline: scroll(root);
+    }
+  }
+}
+@keyframes nav-sheen { from { background-position: 100% 0; } to { background-position: 0% 0; } }
+.ss-lite .site-nav.glass-blur::before { animation: none; background: none; }
 .brand { display: inline-flex; align-items: center; gap: 10px; font-family: var(--font-display); font-size: 21px; letter-spacing: -0.005em; }
 .brand-mark { width: 30px; height: 33px; flex: none; }
 .site-links { display: flex; gap: 2px; margin-inline: auto; }

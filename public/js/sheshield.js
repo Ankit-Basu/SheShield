@@ -370,6 +370,19 @@
     }
   }
 
+  /* ─── Marketing nav: thicker glass once the page has moved ──────── */
+  const siteNav = document.querySelector('.site-nav');
+  if (siteNav && 'IntersectionObserver' in window) {
+    // A 1px marker at the top of the page: no scroll listener at all.
+    const marker = document.createElement('div');
+    marker.setAttribute('aria-hidden', 'true');
+    marker.style.cssText = 'position:absolute;top:24px;left:0;width:1px;height:1px;pointer-events:none';
+    document.body.prepend(marker);
+    new IntersectionObserver(([entry]) => {
+      siteNav.classList.toggle('is-scrolled', !entry.isIntersecting);
+    }).observe(marker);
+  }
+
   /* ─── Spotlight: one delegated listener, writes only to the hovered card ─ */
   if (window.matchMedia('(hover: hover)').matches && !reduced) {
     let card = null; let ev = null; let queued = false; let lastX = -1; let lastY = -1;
