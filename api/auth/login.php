@@ -1,8 +1,7 @@
 <?php
 // Simple, bulletproof login handler using mysqli (same as dashboard)
 require_once __DIR__ . '/../../app/middleware/session_bootstrap.php';
-configure_session_storage();
-session_start();
+ss_session_start();
 header("Content-Type: application/json; charset=UTF-8");
 
 require_once __DIR__ . '/../../app/models/mysqli_db.php';
@@ -41,17 +40,23 @@ if ($row = $result->fetch_assoc()) {
         $_SESSION['phone'] = $row['phone'] ?? '';
         $_SESSION['is_admin'] = (bool)$row['is_admin'];
 
-        http_response_code(200);
-        echo json_encode([
+        $payload = [
             "status" => "success",
             "message" => "Login successful",
             "user" => [
-                "id" => $row['id'],
+                "id" => (int)$row['id'],
                 "first_name" => $row['first_name'],
                 "last_name" => $row['last_name'],
-                "email" => $row['email']
+                "email" => $row['email'],
+                "is_admin" => (bool)$row['is_admin']
             ]
-        ]);
+        ];
+        // The mobile app signs in with a token instead of the session cookie.
+        if (($data->client ?? '') === 'mobile') {
+            $payload["token"] = ss_issue_token((int)$row['id'], $data->device ?? 'mobile');
+        }
+        http_response_code(200);
+        echo json_encode($payload);
     } else {
         http_response_code(401);
         echo json_encode(["status" => "error", "message" => "Invalid password"]);

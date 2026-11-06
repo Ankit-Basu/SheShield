@@ -1,8 +1,7 @@
 <?php
 // Shared guard for account endpoints: starts the session, returns JSON, requires login.
 require_once __DIR__ . '/../../app/middleware/session_bootstrap.php';
-configure_session_storage();
-session_start();
+ss_session_start();
 header('Content-Type: application/json; charset=UTF-8');
 
 function ss_user_respond($code, $status, $message, $extra = []) {

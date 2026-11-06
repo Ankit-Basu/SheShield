@@ -3,8 +3,7 @@ header('Content-Type: application/json');
 
 try {
     require_once __DIR__ . '/../../app/middleware/session_bootstrap.php';
-    configure_session_storage();
-    session_start();
+    ss_session_start();
     if (empty($_SESSION['user_id'])) {
         throw new Exception('Please sign in again.');
     }

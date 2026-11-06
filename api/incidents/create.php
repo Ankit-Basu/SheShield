@@ -1,7 +1,6 @@
 <?php
 require_once __DIR__ . '/../../app/middleware/session_bootstrap.php';
-configure_session_storage();
-session_start();
+ss_session_start();
 header("Content-Type: application/json; charset=UTF-8");
 
 $cfgPath = __DIR__ . '/../../app/config/database.php';

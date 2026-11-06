@@ -1,15 +1,7 @@
 <?php
 require_once __DIR__ . '/../../app/middleware/session_bootstrap.php';
-configure_session_storage();
-session_start();
+ss_session_start();
 header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: POST");
-header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
-
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-error_log("Starting signup process...");
 
 $cfgPath = __DIR__ . '/../../app/config/database.php';
 $modelPath = __DIR__ . '/../../app/models/User.php';
@@ -103,6 +95,10 @@ try {
             "last_name" => $user->last_name,
             "profile_image" => null
         );
+        // The mobile app signs in with a token instead of the session cookie.
+        if (($data->client ?? '') === 'mobile') {
+            $response["token"] = ss_issue_token((int)$user->id, $data->device ?? 'mobile');
+        }
         http_response_code(201);
     } else {
         throw new Exception("Unable to create user");
