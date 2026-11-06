@@ -8,7 +8,7 @@ This document explains how to set up email functionality for the SheShield appli
 1. Navigate to the `config` directory
 2. Copy the `email_config.example.php` file to create a new file named `email_config.php`:
    ```
-   cp config/email_config.example.php config/email_config.php
+   cp app/config/email_config.example.php app/config/email_config.php
    ```
 3. Open the newly created `email_config.php` file in your preferred editor
 4. Fill in your SMTP credentials:
@@ -28,3 +28,7 @@ If you're using Gmail, you'll need to:
 
 ## Security Note
 The `email_config.php` file is included in `.gitignore` to prevent accidentally committing your credentials to the repository. Never commit files containing sensitive information like passwords or API keys.
+
+## Hosted deployments (Render, Docker, Kubernetes)
+
+There, set environment variables instead of creating `email_config.php`. `BREVO_API_KEY` sends over HTTPS, which works on Render's free plan where SMTP is blocked; the `SMTP_*` variables send over SMTP. See [the deploy guide](DEPLOY_RENDER_VERCEL.md#environment-variables-the-app-reads).

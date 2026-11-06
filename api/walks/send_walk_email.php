@@ -1,11 +1,6 @@
 <?php
 require_once __DIR__ . '/../../app/models/mysqli_db.php';
-require_once __DIR__ . '/../../app/lib/PHPMailer/Exception.php';
-require_once __DIR__ . '/../../app/lib/PHPMailer/PHPMailer.php';
-require_once __DIR__ . '/../../app/lib/PHPMailer/SMTP.php';
-
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
+require_once __DIR__ . '/../../app/helpers/mailer.php';
 
 header('Content-Type: application/json');
 
@@ -60,32 +55,7 @@ function sheshieldEmailTemplate($title, $greeting, $bodyContent, $ctaText = '', 
 }
 
 function sendMail($to, $toName, $subject, $htmlBody) {
-    $emailConfig = __DIR__ . '/../../app/config/email_config.php';
-    if (!file_exists($emailConfig)) {
-        return ['sent' => false, 'error' => 'Email config not found'];
-    }
-    require_once $emailConfig;
-    
-    $mail = new PHPMailer(true);
-    try {
-        $mail->SMTPDebug = 0;
-        $mail->isSMTP();
-        $mail->Host = SMTP_HOST;
-        $mail->SMTPAuth = true;
-        $mail->Username = SMTP_USERNAME;
-        $mail->Password = SMTP_PASSWORD;
-        $mail->SMTPSecure = SMTP_ENCRYPTION === 'tls' ? PHPMailer::ENCRYPTION_STARTTLS : PHPMailer::ENCRYPTION_SMTPS;
-        $mail->Port = SMTP_PORT;
-        $mail->setFrom(DEFAULT_FROM_EMAIL, DEFAULT_FROM_NAME);
-        $mail->addAddress($to, $toName);
-        $mail->isHTML(true);
-        $mail->Subject = $subject;
-        $mail->Body = $htmlBody;
-        $mail->send();
-        return ['sent' => true];
-    } catch (Exception $e) {
-        return ['sent' => false, 'error' => $mail->ErrorInfo];
-    }
+    return ss_send_mail($to, $toName, $subject, $htmlBody);
 }
 
 try {
@@ -143,7 +113,7 @@ try {
             "Hi {$userName}, your walk request has been received and a verified walker will be assigned shortly.",
             $bodyContent,
             'View Dashboard',
-            'http://localhost/sheshield/views/pages/walkwithus.php'
+            ss_app_url() . 'views/pages/walkwithus.php'
         );
 
         $result = sendMail($userEmail, $userName, "Walk Request Confirmed - {$walkId} - SheShield", $html);
@@ -183,7 +153,7 @@ try {
             "Hi {$userName}, thank you for volunteering as a SheShield walker! Your registration has been confirmed.",
             $bodyContent,
             'Open Dashboard',
-            'http://localhost/sheshield/views/pages/walkwithus.php'
+            ss_app_url() . 'views/pages/walkwithus.php'
         );
 
         $result = sendMail($userEmail, $userName, "Walker Registration Confirmed - SheShield", $html);

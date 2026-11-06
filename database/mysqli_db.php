@@ -1,10 +1,7 @@
 <?php
-// Docker Compose, Kubernetes and Helm set these. XAMPP uses the defaults.
-$servername = getenv('DB_HOST') ?: 'localhost';
-$username = getenv('DB_USER') ?: 'root';
-$password = getenv('DB_PASS') !== false ? getenv('DB_PASS') : '';
-$dbname = getenv('DB_NAME') ?: 'sheshield';
-$dbport = (int)(getenv('DB_PORT') ?: 3306);
+require_once __DIR__ . '/db_env.php';
+$dbConfig = ss_db_env();
+$dbname = $dbConfig['db'];
 
 function mysqli_column_exists($conn, $table, $column) {
     $stmt = $conn->prepare(
@@ -232,9 +229,9 @@ function ensure_mysqli_schema($conn) {
 }
 
 function get_mysqli_connection() {
-    global $servername, $username, $password, $dbname, $dbport;
+    global $dbConfig, $dbname;
 
-    $conn = new mysqli($servername, $username, $password, '', $dbport);
+    $conn = ss_mysqli_connect($dbConfig);
     if ($conn->connect_error) {
         die("Connection failed: " . $conn->connect_error);
     }

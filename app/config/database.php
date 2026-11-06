@@ -13,15 +13,9 @@ class Database {
                 'driver' => 'pgsql'
             ];
         }
-        // Docker Compose, Kubernetes and Helm set these. XAMPP uses the defaults.
-        return [
-            'host' => getenv('DB_HOST') ?: 'localhost',
-            'db'   => getenv('DB_NAME') ?: 'sheshield',
-            'user' => getenv('DB_USER') ?: 'root',
-            'pass' => getenv('DB_PASS') !== false ? getenv('DB_PASS') : '',
-            'port' => (int)(getenv('DB_PORT') ?: 3306),
-            'driver' => 'mysql'
-        ];
+        // DB_HOST, DB_NAME, DB_USER, DB_PASS, DB_PORT, DB_SSL; XAMPP uses the defaults.
+        require_once __DIR__ . '/../../database/db_env.php';
+        return ss_db_env() + ['driver' => 'mysql'];
     }
     public $conn;
 
@@ -263,10 +257,11 @@ class Database {
                 $dsn = "mysql:host={$dbConfig['host']};port={$dbConfig['port']};dbname={$dbConfig['db']};charset=utf8mb4";
             }
 
+            $ssl = $dbConfig['driver'] === 'mysql' ? ss_pdo_ssl_options($dbConfig) : array();
             $options = array(
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_EMULATE_PREPARES => false
-            );
+            ) + $ssl;
 
             require_once __DIR__ . '/../../database/schema_guard.php';
             $marker = ss_schema_marker($dbConfig['driver'], __FILE__, $dbConfig['db']);
@@ -290,7 +285,7 @@ class Database {
                     $serverDsn,
                     $dbConfig['user'],
                     $dbConfig['pass'],
-                    array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION)
+                    array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION) + $ssl
                 );
                 $serverConn->exec(
                     "CREATE DATABASE IF NOT EXISTS " . $this->quoteIdentifier($dbConfig['db']) .

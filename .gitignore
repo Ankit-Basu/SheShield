@@ -52,3 +52,5 @@ aws-credentials.txt
 # Python cache
 __pycache__/
 *.pyc
+vercel-dist/
+.vercel

@@ -1,0 +1,45 @@
+# Render Blueprint: Dashboard > New > Blueprint, pick this repository.
+# Render asks for every value marked "sync: false" when you create it.
+# Full walkthrough: docs/DEPLOY_RENDER_VERCEL.md
+services:
+  - type: web
+    name: sheshield
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./infrastructure/docker/Dockerfile
+    dockerContext: .
+    healthCheckPath: /pro/landing.html
+    envVars:
+      # Apache in the image listens on port 80
+      - key: PORT
+        value: "80"
+
+      # MySQL, for example a free Aiven for MySQL service
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        sync: false
+      - key: DB_NAME
+        value: defaultdb
+      - key: DB_USER
+        sync: false
+      - key: DB_PASS
+        sync: false
+      # Hosted MySQL only accepts encrypted connections
+      - key: DB_SSL
+        value: "true"
+
+      # Public address of the site, used in email links.
+      # Your Vercel address if you use Vercel in front, otherwise this service's address.
+      - key: APP_URL
+        sync: false
+
+      # Email through Brevo's HTTPS API (Render's free plan blocks SMTP).
+      # Leave BREVO_API_KEY empty to run without email.
+      - key: BREVO_API_KEY
+        sync: false
+      - key: MAIL_FROM_EMAIL
+        sync: false
+      - key: MAIL_FROM_NAME
+        value: SheShield
