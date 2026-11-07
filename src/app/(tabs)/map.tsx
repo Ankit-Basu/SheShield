@@ -1,3 +1,4 @@
+import { BlurTargetView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
 import * as Location from 'expo-location';
 import { router } from 'expo-router';
@@ -13,6 +14,7 @@ import { Glass } from '@/components/Glass';
 import { TAB_BAR_SPACE } from '@/components/Screen';
 import { T } from '@/components/Text';
 import { toast } from '@/components/Toast';
+import { useRegisterBlurTarget } from '@/lib/blur';
 import { landmarks } from '@/lib/campus';
 import { useSafeSpaces } from '@/lib/queries';
 import { status, useTheme } from '@/lib/theme';
@@ -49,6 +51,7 @@ export default function MapScreen() {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const map = useRef<MapHandle>(null);
+  const blurTarget = useRegisterBlurTarget();
   const [layer, setLayer] = useState<'satellite' | 'streets'>('satellite');
   const [selected, setSelected] = useState<string | null>(null);
   const [locating, setLocating] = useState(false);
@@ -86,7 +89,9 @@ export default function MapScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.base }}>
-      <CampusMap ref={map} onSelect={choose} />
+      <BlurTargetView ref={blurTarget} style={StyleSheet.absoluteFill}>
+        <CampusMap ref={map} onSelect={choose} />
+      </BlurTargetView>
 
       <View style={[styles.top, { top: insets.top + 10 }]} pointerEvents="box-none">
         <Glass radius={20} strong style={[styles.title, overMap]}>

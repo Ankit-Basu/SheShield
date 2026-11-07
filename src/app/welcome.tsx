@@ -8,6 +8,7 @@ import { Aurora } from '@/components/Aurora';
 import { Logo } from '@/components/bits';
 import { Button } from '@/components/Button';
 import { Glass } from '@/components/Glass';
+import { GradientText } from '@/components/GradientText';
 import { T } from '@/components/Text';
 import { useTheme } from '@/lib/theme';
 
@@ -41,12 +42,12 @@ export default function Welcome() {
             </View>
           </Animated.View>
           <Animated.View entering={FadeInDown.delay(200).duration(800)}>
-            <T variant="display" style={{ fontSize: 50, lineHeight: 50 }}>
-              No one walks{'\n'}
-              <T variant="display" color={theme.primary} style={{ fontSize: 50, lineHeight: 50 }}>
-                home alone.
-              </T>
+            <T variant="display" style={{ fontSize: 50, lineHeight: 54 }}>
+              No one walks
             </T>
+            <GradientText variant="display" style={{ fontSize: 50, lineHeight: 54 }}>
+              home alone.
+            </GradientText>
           </Animated.View>
           <Animated.View entering={FadeInDown.delay(320).duration(800)}>
             <T muted style={{ fontSize: 16, lineHeight: 24 }}>

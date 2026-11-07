@@ -7,6 +7,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Avatar, Badge, Empty, IconTile, SectionHeader } from '@/components/bits';
 import { CountUp } from '@/components/CountUp';
 import { Glass } from '@/components/Glass';
+import { GradientText } from '@/components/GradientText';
 import { ReportRow } from '@/components/ReportRow';
 import { Skeleton } from '@/components/Skeleton';
 import { Screen } from '@/components/Screen';
@@ -71,26 +72,32 @@ export default function Home() {
       </Animated.View>
 
       <Animated.View entering={reveal(1)}>
-        <T variant="display">
-          {greeting()}
-          {name || isLoading ? ',' : '.'}
+        <Glass radius={30} strong style={styles.hero} tint={[theme.primary + '30', 'rgba(255,255,255,0.03)']}>
+          <T variant="display">
+            {greeting()}
+            {name || isLoading ? ',' : '.'}
+          </T>
           {name ? (
-            <T variant="display" color={theme.primary}>
-              {'\n'}
-              {name}.
-            </T>
+            <GradientText variant="display">{name}.</GradientText>
+          ) : isLoading ? (
+            <Skeleton width={150} height={38} radius={12} style={{ marginTop: 4 }} />
           ) : null}
-        </T>
-        {isLoading && !name ? <Skeleton width={150} height={36} radius={12} style={{ marginTop: 6 }} /> : null}
-        <T muted style={{ marginTop: 8 }}>
-          {isLoading
-            ? 'Getting your day ready…'
-            : error
-              ? 'Could not reach SheShield. Pull down to try again.'
-              : data && data.stats.pending > 0
-                ? `You have ${data.stats.pending} report${data.stats.pending === 1 ? '' : 's'} waiting on review.`
-                : 'Nothing is waiting on you right now.'}
-        </T>
+          <T muted style={{ marginTop: 10 }}>
+            {isLoading
+              ? 'Getting your day ready…'
+              : error
+                ? 'Could not reach SheShield. Pull down to try again.'
+                : data && data.stats.pending > 0
+                  ? `You have ${data.stats.pending} report${data.stats.pending === 1 ? '' : 's'} waiting on review.`
+                  : 'Nothing is waiting on you right now.'}
+          </T>
+          <View style={styles.ready}>
+            <View style={[styles.readyDot, { backgroundColor: status.good }]} />
+            <T variant="small" style={{ flex: 1 }}>
+              SOS is ready. Hold the red button for 2 seconds.
+            </T>
+          </View>
+        </Glass>
       </Animated.View>
 
       {queued > 0 && (
@@ -193,6 +200,9 @@ export default function Home() {
 const styles = StyleSheet.create({
   header: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   clock: { flexDirection: 'row', alignItems: 'center', gap: 7, alignSelf: 'flex-start', paddingHorizontal: 11, height: 30, borderRadius: 99, backgroundColor: 'rgba(0,0,0,0.25)' },
+  hero: { padding: 20, gap: 0 },
+  ready: { flexDirection: 'row', alignItems: 'center', gap: 9, marginTop: 16, paddingVertical: 10, paddingHorizontal: 12, borderRadius: 14, backgroundColor: 'rgba(0,0,0,0.22)' },
+  readyDot: { width: 8, height: 8, borderRadius: 4 },
   banner: { flexDirection: 'row', alignItems: 'center', gap: 10, padding: 14 },
   walk: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 15 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },

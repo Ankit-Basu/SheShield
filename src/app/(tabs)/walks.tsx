@@ -8,6 +8,7 @@ import Animated, { FadeInDown, LinearTransition } from 'react-native-reanimated'
 import { Badge, Chip, Empty, IconTile, SectionHeader } from '@/components/bits';
 import { Button } from '@/components/Button';
 import { Glass } from '@/components/Glass';
+import { GradientText } from '@/components/GradientText';
 import { Screen } from '@/components/Screen';
 import { T } from '@/components/Text';
 import { toast } from '@/components/Toast';
@@ -74,11 +75,11 @@ export default function Walks() {
       <Animated.View entering={FadeInDown.springify().damping(18)}>
         <T variant="eyebrow">Walk With Us</T>
         <T variant="display" style={{ fontSize: 36, lineHeight: 40 }}>
-          Never walk{'\n'}
-          <T variant="display" color={theme.primary} style={{ fontSize: 36, lineHeight: 40 }}>
-            alone.
-          </T>
+          Never walk
         </T>
+        <GradientText variant="display" style={{ fontSize: 36, lineHeight: 40 }}>
+          alone.
+        </GradientText>
         <T muted style={{ marginTop: 6 }}>
           A verified student walker meets you and stays with you to your destination.
         </T>

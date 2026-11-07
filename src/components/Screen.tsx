@@ -1,7 +1,9 @@
+import { BlurTargetView } from 'expo-blur';
 import { ReactNode } from 'react';
 import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { useRegisterBlurTarget } from '@/lib/blur';
 import { useTheme } from '@/lib/theme';
 
 import { Aurora } from './Aurora';
@@ -21,9 +23,11 @@ type Props = {
 export function Screen({ children, scroll = true, refreshing, onRefresh, tabs = true, padded = true }: Props) {
   const insets = useSafeAreaInsets();
   const theme = useTheme();
+  const blurTarget = useRegisterBlurTarget();
   const pad = { paddingTop: insets.top + 12, paddingBottom: (tabs ? TAB_BAR_SPACE : 24) + insets.bottom, paddingHorizontal: padded ? 18 : 0 };
   return (
-    <View style={styles.fill}>
+    // Everything here is what the floating tab bar blurs on Android.
+    <BlurTargetView ref={blurTarget} style={styles.fill}>
       <Aurora />
       {scroll ? (
         <ScrollView
@@ -40,7 +44,7 @@ export function Screen({ children, scroll = true, refreshing, onRefresh, tabs = 
       ) : (
         <View style={[styles.fill, pad]}>{children}</View>
       )}
-    </View>
+    </BlurTargetView>
   );
 }
 

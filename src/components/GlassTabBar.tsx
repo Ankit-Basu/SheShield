@@ -8,6 +8,7 @@ import { Platform, Pressable, StyleSheet, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withRepeat, withSequence, withSpring, withTiming } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { useBlurTarget } from '@/lib/blur';
 import { glass, useTheme } from '@/lib/theme';
 
 import { T } from './Text';
@@ -67,6 +68,7 @@ function SosButton() {
 
 export function GlassTabBar({ state, emitter, navigateToTab }: TabBarProps) {
   const insets = useSafeAreaInsets();
+  const blurTarget = useBlurTarget((s) => s.target);
   const routes = state.routes;
   const half = Math.ceil(routes.length / 2);
   // Same contract as the built-in tab bar: announce the press, then switch unless a screen cancelled it.
@@ -86,6 +88,13 @@ export function GlassTabBar({ state, emitter, navigateToTab }: TabBarProps) {
       <View style={styles.bar}>
         {Platform.OS === 'ios' ? (
           <BlurView intensity={45} tint="dark" style={StyleSheet.absoluteFill} />
+        ) : blurTarget ? (
+          // Real frosted glass on Android 12+: blurs the focused screen's content.
+          // Older Android versions skip the blur and keep the tinted fill below.
+          <>
+            <View style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(20,12,18,0.42)' }]} />
+            <BlurView blurTarget={blurTarget} blurMethod="dimezisBlurViewSdk31Plus" intensity={60} tint="dark" style={StyleSheet.absoluteFill} />
+          </>
         ) : (
           <View style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(24,14,22,0.86)' }]} />
         )}
