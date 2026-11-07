@@ -8,6 +8,7 @@ import { Avatar, Badge, Empty, IconTile, SectionHeader } from '@/components/bits
 import { CountUp } from '@/components/CountUp';
 import { Glass } from '@/components/Glass';
 import { ReportRow } from '@/components/ReportRow';
+import { Skeleton } from '@/components/Skeleton';
 import { Screen } from '@/components/Screen';
 import { T } from '@/components/Text';
 import { helplines } from '@/lib/campus';
@@ -61,20 +62,26 @@ export default function Home() {
           </View>
         </View>
         <Pressable onPress={() => router.navigate('/profile')} accessibilityLabel="Your profile">
-          <Avatar uri={absoluteUrl(data?.user.photo)} name={`${data?.user.first_name ?? ''} ${data?.user.last_name ?? ''}`} size={44} />
+          {data ? (
+            <Avatar uri={absoluteUrl(data.user.photo)} name={`${data.user.first_name} ${data.user.last_name}`} size={44} />
+          ) : (
+            <Skeleton width={44} height={44} radius={22} />
+          )}
         </Pressable>
       </Animated.View>
 
       <Animated.View entering={reveal(1)}>
         <T variant="display">
           {greeting()}
-          {name ? ',\n' : '.'}
+          {name || isLoading ? ',' : '.'}
           {name ? (
             <T variant="display" color={theme.primary}>
+              {'\n'}
               {name}.
             </T>
           ) : null}
         </T>
+        {isLoading && !name ? <Skeleton width={150} height={36} radius={12} style={{ marginTop: 6 }} /> : null}
         <T muted style={{ marginTop: 8 }}>
           {isLoading
             ? 'Getting your day ready…'
@@ -148,7 +155,7 @@ export default function Home() {
                 </T>
                 <s.icon size={16} color={s.color} />
               </View>
-              <CountUp value={s.value} />
+              {data ? <CountUp value={s.value} /> : <Skeleton width={46} height={34} style={{ marginVertical: 2 }} />}
             </Glass>
           </Animated.View>
         ))}

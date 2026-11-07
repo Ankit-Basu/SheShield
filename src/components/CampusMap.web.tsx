@@ -19,6 +19,7 @@ export const CampusMap = forwardRef<MapHandle, { onSelect?: (name: string) => vo
     setSafeSpaces: (items) => ss()?.safe(items),
     setLayer: (layer) => ss()?.layer(layer),
     recenter: () => ss()?.home(),
+    focus: (name) => ss()?.focus(name),
   }));
 
   useEffect(() => {

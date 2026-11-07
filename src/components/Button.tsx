@@ -52,7 +52,7 @@ export function Button({ label, onPress, variant = 'primary', icon, loading, dis
           ) : (
             <>
               {icon}
-              <T variant="label" color={fg} style={{ fontSize: size === 'lg' ? 16 : 15 }}>
+              <T variant="label" color={fg} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8} style={{ fontSize: size === 'lg' ? 16 : 15, flexShrink: 1 }}>
                 {label}
               </T>
             </>
@@ -64,6 +64,6 @@ export function Button({ label, onPress, variant = 'primary', icon, loading, dis
 }
 
 const styles = StyleSheet.create({
-  base: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 9, paddingHorizontal: 22, overflow: 'hidden' },
+  base: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingHorizontal: 18, overflow: 'hidden' },
   ghost: { backgroundColor: glass.fill, borderWidth: 1, borderColor: glass.line, borderTopColor: glass.lineTop },
 });

@@ -1,6 +1,6 @@
 import * as Haptics from 'expo-haptics';
 import { useLocalSearchParams } from 'expo-router';
-import { ArrowDown, Clock, Footprints, MapPin, Navigation, Phone, Route } from 'lucide-react-native';
+import { ArrowUpDown, Clock, Footprints, MapPin, Navigation, Phone, Route } from 'lucide-react-native';
 import { useState } from 'react';
 import { Linking, Pressable, StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown, LinearTransition } from 'react-native-reanimated';
@@ -33,6 +33,7 @@ export default function Walks() {
   const params = useLocalSearchParams<{ from?: string }>();
   const [from, setFrom] = useState<string | null>(params.from ?? null);
   const [to, setTo] = useState<string | null>(null);
+  const [editing, setEditing] = useState<'from' | 'to'>(params.from ? 'to' : 'from');
   const [minutes, setMinutes] = useState(0);
   const { data: walks, isLoading, refetch, isRefetching } = useWalks();
   const request = useRequestWalk();
@@ -42,7 +43,10 @@ export default function Walks() {
   const [lastFrom, setLastFrom] = useState(params.from);
   if (params.from !== lastFrom) {
     setLastFrom(params.from);
-    if (params.from) setFrom(params.from);
+    if (params.from) {
+      setFrom(params.from);
+      setEditing('to');
+    }
   }
 
   const submit = () => {
@@ -55,6 +59,7 @@ export default function Walks() {
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
           toast(r.message || 'Walk requested');
           setTo(null);
+          setEditing('to');
         },
         onError: (e) => toast(e.message, 'error'),
       },
@@ -81,34 +86,75 @@ export default function Walks() {
 
       <Animated.View entering={FadeInDown.delay(80).springify().damping(18)}>
         <Glass radius={28} strong style={{ padding: 16, gap: 14 }}>
-          <View style={styles.stepHead}>
-            <MapPin size={16} color={theme.primary} />
-            <T variant="label">From</T>
-            <T variant="small" muted style={{ marginLeft: 'auto' }}>
-              {from ?? 'Choose pickup'}
-            </T>
-          </View>
-          <View style={styles.chips}>
-            {landmarks.map((l) => (
-              <Chip key={l.name} label={l.name} selected={from === l.name} onPress={() => setFrom(l.name)} />
-            ))}
+          {/* Route: tap an end to edit it, pick a place below, swap with one tap. */}
+          <View style={styles.route}>
+            <View style={styles.routeLine}>
+              <View style={[styles.routeDot, { backgroundColor: theme.primary }]} />
+              <View style={styles.routeDash} />
+              <View style={[styles.routeDot, { backgroundColor: theme.accent }]} />
+            </View>
+            <View style={{ flex: 1, gap: 8 }}>
+              {(['from', 'to'] as const).map((end) => {
+                const value = end === 'from' ? from : to;
+                const on = editing === end;
+                return (
+                  <Pressable
+                    key={end}
+                    onPress={() => {
+                      Haptics.selectionAsync();
+                      setEditing(end);
+                    }}
+                    style={[styles.routeEnd, on && { borderColor: theme.primary, backgroundColor: theme.primary + '1c' }]}
+                    accessibilityRole="button"
+                    accessibilityLabel={`${end === 'from' ? 'Pickup' : 'Destination'}: ${value ?? 'not chosen'}`}>
+                    <T variant="eyebrow" style={{ fontSize: 9.5 }}>
+                      {end === 'from' ? 'From' : 'To'}
+                    </T>
+                    <T variant="label" color={value ? theme.foreground : theme.muted} numberOfLines={1}>
+                      {value ?? (end === 'from' ? 'Choose pickup' : 'Choose destination')}
+                    </T>
+                  </Pressable>
+                );
+              })}
+            </View>
+            <Pressable
+              onPress={() => {
+                Haptics.selectionAsync();
+                setFrom(to);
+                setTo(from);
+              }}
+              disabled={!from && !to}
+              style={[styles.swap, { opacity: from || to ? 1 : 0.4 }]}
+              accessibilityRole="button"
+              accessibilityLabel="Swap pickup and destination">
+              <ArrowUpDown size={18} color={theme.foreground} />
+            </Pressable>
           </View>
 
-          <View style={styles.arrow}>
-            <ArrowDown size={16} color={theme.muted} />
-          </View>
-
           <View style={styles.stepHead}>
-            <Navigation size={16} color={theme.accent} />
-            <T variant="label">To</T>
-            <T variant="small" muted style={{ marginLeft: 'auto' }}>
-              {to ?? 'Choose destination'}
-            </T>
+            {editing === 'from' ? <MapPin size={16} color={theme.primary} /> : <Navigation size={16} color={theme.accent} />}
+            <T variant="label">{editing === 'from' ? 'Where are you?' : 'Where are you going?'}</T>
           </View>
           <View style={styles.chips}>
-            {landmarks.map((l) => (
-              <Chip key={l.name} label={l.name} selected={to === l.name} onPress={() => setTo(l.name)} />
-            ))}
+            {landmarks.map((l) => {
+              const taken = editing === 'from' ? to === l.name : from === l.name;
+              return (
+                <Chip
+                  key={l.name}
+                  label={l.name}
+                  selected={(editing === 'from' ? from : to) === l.name}
+                  onPress={() => {
+                    if (taken) return toast('That is already the other end of your route.', 'error');
+                    if (editing === 'from') {
+                      setFrom(l.name);
+                      if (!to) setEditing('to');
+                    } else {
+                      setTo(l.name);
+                    }
+                  }}
+                />
+              );
+            })}
           </View>
 
           <View style={styles.stepHead}>
@@ -177,7 +223,12 @@ export default function Walks() {
 const styles = StyleSheet.create({
   stepHead: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  arrow: { alignItems: 'center', marginVertical: -4 },
+  route: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  routeLine: { alignItems: 'center', paddingVertical: 16 },
+  routeDot: { width: 11, height: 11, borderRadius: 6 },
+  routeDash: { width: 2, flex: 1, minHeight: 34, marginVertical: 4, backgroundColor: 'rgba(255,255,255,0.18)', borderRadius: 1 },
+  routeEnd: { paddingHorizontal: 14, paddingVertical: 9, borderRadius: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.12)', backgroundColor: 'rgba(0,0,0,0.2)', gap: 2 },
+  swap: { width: 42, height: 42, borderRadius: 21, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.08)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.12)' },
   walkTop: { flexDirection: 'row', alignItems: 'center', gap: 11 },
   walker: { flexDirection: 'row', alignItems: 'center', padding: 10, borderRadius: 12, backgroundColor: 'rgba(0,0,0,0.2)' },
   call: { flexDirection: 'row', alignItems: 'center', gap: 5 },

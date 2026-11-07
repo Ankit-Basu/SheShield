@@ -25,6 +25,7 @@ export const CampusMap = forwardRef<MapHandle, { onSelect?: (name: string) => vo
     setSafeSpaces: (items) => call(`window.ss && ss.safe(${JSON.stringify(items)})`),
     setLayer: (layer) => call(`window.ss && ss.layer(${JSON.stringify(layer)})`),
     recenter: () => call('window.ss && ss.home()'),
+    focus: (name) => call(`window.ss && ss.focus(${JSON.stringify(name)})`),
   }));
 
   const html = useMemo(() => buildMapHtml(theme), [theme]);
