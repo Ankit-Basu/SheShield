@@ -7,7 +7,7 @@ export default function TabsLayout() {
   const theme = useTheme();
   return (
     <Tabs
-      tabBar={(props) => <GlassTabBar {...(props as any)} />}
+      tabBar={(props) => <GlassTabBar {...props} />}
       screenOptions={{ headerShown: false, sceneStyle: { backgroundColor: theme.base }, animation: 'shift' }}>
       <Tabs.Screen name="index" />
       <Tabs.Screen name="map" />

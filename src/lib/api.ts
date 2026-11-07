@@ -46,9 +46,15 @@ export async function api<T = any>(path: string, { method, json, form, timeoutMs
     // The token was revoked or the account is gone: sign out locally.
     useAuth.getState().signOut();
   }
+  // Server faults (5xx) can carry internal details such as database hostnames; never show those.
+  if (res.status >= 500) {
+    throw new ApiError('SheShield is having trouble right now. Please try again in a minute.', res.status);
+  }
   const failed = !res.ok || body?.status === 'error' || body?.success === false;
   if (failed) {
-    throw new ApiError(body?.message || body?.error || `Something went wrong (${res.status}).`, res.status);
+    const message = String(body?.message || body?.error || `Something went wrong (${res.status}).`);
+    const internal = /SQLSTATE|mysqli|PDO|getaddrinfo|Database connection/i.test(message);
+    throw new ApiError(internal ? 'SheShield is having trouble right now. Please try again in a minute.' : message, res.status);
   }
   return body as T;
 }

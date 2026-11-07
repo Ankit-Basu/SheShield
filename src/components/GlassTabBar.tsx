@@ -1,9 +1,9 @@
 import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
-import { router } from 'expo-router';
+import { router, Tabs } from 'expo-router';
 import { Footprints, House, Map, Siren, UserRound } from 'lucide-react-native';
-import { useEffect } from 'react';
+import { ComponentProps, useEffect } from 'react';
 import { Platform, Pressable, StyleSheet, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withRepeat, withSequence, withSpring, withTiming } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -15,10 +15,9 @@ import { T } from './Text';
 const icons: Record<string, typeof House> = { index: House, map: Map, walks: Footprints, profile: UserRound };
 const labels: Record<string, string> = { index: 'Home', map: 'Map', walks: 'Walks', profile: 'You' };
 
-type TabBarProps = {
-  state: { index: number; routes: { key: string; name: string }[] };
-  navigation: { emit: (e: any) => any; navigate: (name: string) => void };
-};
+// Exactly what Expo Router's Tabs passes to a custom tab bar. In this version that is
+// { state, descriptors, emitter, navigateToTab, insets }: there is no `navigation`.
+export type TabBarProps = Parameters<NonNullable<ComponentProps<typeof Tabs>['tabBar']>>[0];
 
 function Tab({ name, focused, onPress }: { name: string; focused: boolean; onPress: () => void }) {
   const theme = useTheme();
@@ -66,15 +65,16 @@ function SosButton() {
   );
 }
 
-export function GlassTabBar({ state, navigation }: TabBarProps) {
+export function GlassTabBar({ state, emitter, navigateToTab }: TabBarProps) {
   const insets = useSafeAreaInsets();
   const routes = state.routes;
   const half = Math.ceil(routes.length / 2);
+  // Same contract as the built-in tab bar: announce the press, then switch unless a screen cancelled it.
   const go = (route: { key: string; name: string }, index: number) => {
-    const event = navigation.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
+    const event = emitter.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
     if (state.index !== index && !event.defaultPrevented) {
       Haptics.selectionAsync();
-      navigation.navigate(route.name);
+      navigateToTab(route.key);
     }
   };
   const render = (r: { key: string; name: string }) => {
