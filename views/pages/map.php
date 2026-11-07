@@ -63,7 +63,7 @@ $places_json = json_encode(array_values($places), JSON_HEX_TAG | JSON_HEX_APOS |
 ob_start(); ?>
 <script src="../../public/lib/leaflet.js"></script>
 <script src="../../public/js/locations.js"></script>
-<script src="../../public/js/lpu-campus.js"></script>
+<script src="../../public/js/lpu-campus.js?v=2"></script>
 <script src="../../public/js/campus-map.js"></script>
 <script>
 const PLACES = <?= $places_json ?>;

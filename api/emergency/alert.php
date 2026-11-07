@@ -1,7 +1,6 @@
 <?php
 require_once __DIR__ . '/../../app/middleware/session_bootstrap.php';
-configure_session_storage();
-session_start();
+ss_session_start();
 require_once __DIR__ . '/../../app/models/mysqli_db.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
