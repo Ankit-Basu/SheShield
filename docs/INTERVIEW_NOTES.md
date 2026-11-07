@@ -121,6 +121,9 @@ lib/api.ts  ── fetch + Bearer token ──►  PHP API on Render (via Vercel
   - **`preview`:** builds an **APK** you can install directly.
   - **`production`:** builds an **AAB** (Android App Bundle) for the Play Store, which then generates optimised APKs per device.
   - **Signing:** EAS creates and stores the Android signing keystore.
+- **CI builds:** a GitHub Actions workflow (`.github/workflows/android-apk.yml`) does the same without an Expo account.
+  - **Steps:** `expo prebuild` generates `android/`, then Gradle runs `assembleRelease` for `arm64-v8a` only (faster, smaller), and the APK is published as a GitHub Release.
+  - **Signing:** that APK is signed with a debug key, which is fine for sideloading. The Play Store needs a real upload key, which EAS manages.
 - **Permissions:**
   - Declared in `app.json`, with only foreground location; background location and microphone are explicitly blocked.
   - Requested at the moment they're needed (`requestForegroundPermissionsAsync`), not at launch.

@@ -81,16 +81,23 @@ npx tsc --noEmit   # type check
 npx expo lint      # lint (React Compiler rules included)
 ```
 
-## Build an APK for your phone
+## Install on your phone
 
-Builds run on Expo's servers; nothing heavy runs on your computer.
+Download the latest APK from **[Releases](https://github.com/Ankit-Basu/SheShield_app/releases/latest)** on an Android phone and install it. Full steps, first-run setup and a 2-minute demo script: **[docs/INSTALL.md](docs/INSTALL.md)**.
+
+## Build an APK
+
+**GitHub Actions (no account needed):** [`.github/workflows/android-apk.yml`](.github/workflows/android-apk.yml) runs `expo prebuild`, builds a release APK with Gradle on GitHub's servers, and publishes it as a release. Start it from **Actions → Android APK → Run workflow**, or push a `v*` tag.
+
+**EAS (Expo's build service):** for Play Store builds with managed signing.
 
 ```bash
 npx eas-cli@latest login
-npx eas-cli@latest build -p android --profile preview
 ```
 
-When it finishes, open the link it prints on your Android phone (or scan its QR code), download the APK and install it. Android will ask you to allow installs from your browser the first time.
+```bash
+npx eas-cli@latest build -p android --profile preview
+```
 
 ## Backend endpoints used
 
