@@ -37,7 +37,7 @@ function ss_pdo_ssl_options(array $cfg) {
 // or returns an object whose connect_error is set, like new mysqli() does.
 function ss_mysqli_connect(array $cfg, $dbname = '') {
     if (!$cfg['ssl']) {
-        return new mysqli($cfg['host'], $cfg['user'], $cfg['pass'], $dbname, $cfg['port']);
+        return @new mysqli($cfg['host'], $cfg['user'], $cfg['pass'], $dbname, $cfg['port']);
     }
     $conn = mysqli_init();
     $flags = MYSQLI_CLIENT_SSL;

@@ -300,7 +300,7 @@ class Database {
             return $this->conn;
         } catch(PDOException $e) {
             error_log("Connection Error: " . $e->getMessage());
-            throw new Exception("Database connection failed: " . $e->getMessage());
+            throw new Exception("The service is temporarily unavailable. Please try again in a minute.");
         }
     }
 }

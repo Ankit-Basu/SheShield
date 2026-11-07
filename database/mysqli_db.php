@@ -231,9 +231,19 @@ function ensure_mysqli_schema($conn) {
 function get_mysqli_connection() {
     global $dbConfig, $dbname;
 
-    $conn = ss_mysqli_connect($dbConfig);
+    // PHP 8 throws on a failed connect; older setups set connect_error instead. Handle both,
+    // and keep hostnames and driver errors in the server log, not in the response.
+    try {
+        $conn = ss_mysqli_connect($dbConfig);
+    } catch (mysqli_sql_exception $e) {
+        error_log("MySQL connection failed: " . $e->getMessage());
+        http_response_code(503);
+        die("The service is temporarily unavailable. Please try again in a minute.");
+    }
     if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
+        error_log("MySQL connection failed: " . $conn->connect_error);
+        http_response_code(503);
+        die("The service is temporarily unavailable. Please try again in a minute.");
     }
 
     $conn->set_charset("utf8mb4");
@@ -255,7 +265,9 @@ function get_mysqli_connection() {
 
     $conn->query("CREATE DATABASE IF NOT EXISTS `$dbname` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
     if (!$conn->select_db($dbname)) {
-        die("Database selection failed: " . $conn->error);
+        error_log("MySQL database selection failed: " . $conn->error);
+        http_response_code(503);
+        die("The service is temporarily unavailable. Please try again in a minute.");
     }
 
     ensure_mysqli_schema($conn);
