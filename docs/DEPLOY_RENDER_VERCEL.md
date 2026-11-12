@@ -90,7 +90,7 @@ Vercel only receives the static pages and assets (`scripts/vercel-build.js` copi
 
 ## Keeping the app awake
 
-`.github/workflows/keep-awake.yml` calls `/api/public_stats.php` every 10 minutes, so Render never reaches its 15-minute sleep timer and the Aiven database sees regular use. It runs on GitHub's free Actions minutes for public repositories.
+`.github/workflows/keep-awake.yml` calls `/api/public_stats.php` every 10 minutes, so Render never reaches its 15-minute sleep timer and the Aiven database sees regular use. GitHub throttles scheduled jobs on quiet repositories, so each run stays alive for 5 h 40 min and pings in a loop, with runs queued back to back. It is free for public repositories.
 
 - One always-on free service uses about 744 of Render's 750 free hours a month, so keep only one free service running in the workspace.
 - GitHub sometimes delays scheduled runs at busy times, so an occasional cold start can still happen. For a stricter check, also add a free monitor at https://uptimerobot.com pointing at the same URL every 5 minutes.
