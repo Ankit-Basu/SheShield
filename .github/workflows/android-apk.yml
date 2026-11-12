@@ -1,13 +1,15 @@
 name: Android APK
 
-# Builds an installable SheShield APK on GitHub's servers and publishes it as a
-# GitHub Release, so the app can be downloaded straight onto a phone.
-# Run it from the Actions tab (Run workflow), or push a tag such as v1.0.1.
+# Builds an installable SheShield Android APK from mobile/ on GitHub's servers and
+# publishes it as a GitHub Release, so it can be downloaded straight onto a phone.
+# Runs when the app changes on master, on a mobile-v* tag, or from the Actions tab.
 
 on:
-  workflow_dispatch:
   push:
-    tags: ['v*']
+    branches: [master]
+    paths: ['mobile/**', '.github/workflows/android-apk.yml']
+    tags: ['mobile-v*']
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -15,6 +17,10 @@ permissions:
 concurrency:
   group: android-apk
   cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: mobile
 
 jobs:
   apk:
@@ -30,6 +36,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
+          cache-dependency-path: mobile/package-lock.json
 
       - uses: actions/setup-java@v4
         with:
@@ -51,31 +58,33 @@ jobs:
       # several years uses. It is signed with the debug key Expo generates, which
       # is fine for installing directly; the Play Store would need EAS signing.
       - name: Build the APK
-        working-directory: android
+        working-directory: mobile/android
         run: ./gradlew assembleRelease -PreactNativeArchitectures=arm64-v8a --no-daemon
 
+      # Build numbers continue from the old SheShield_app repository (builds 1-6).
       - name: Name the APK
         id: apk
         run: |
           version=$(node -p "require('./app.json').expo.version")
-          name="SheShield-${version}-build${GITHUB_RUN_NUMBER}.apk"
+          build=$((GITHUB_RUN_NUMBER + 6))
+          name="SheShield-${version}-build${build}.apk"
           cp android/app/build/outputs/apk/release/app-release.apk "$name"
           echo "name=$name" >> "$GITHUB_OUTPUT"
-          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "tag=mobile-v${version}-build${build}" >> "$GITHUB_OUTPUT"
           ls -lh "$name"
 
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.apk.outputs.name }}
-          path: ${{ steps.apk.outputs.name }}
+          path: mobile/${{ steps.apk.outputs.name }}
 
       - name: Publish a release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          tag="${GITHUB_REF_NAME}"
-          if [ "${GITHUB_REF_TYPE}" != "tag" ]; then tag="v${{ steps.apk.outputs.version }}-build${GITHUB_RUN_NUMBER}"; fi
+          tag="${{ steps.apk.outputs.tag }}"
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then tag="${GITHUB_REF_NAME}"; fi
           gh release create "$tag" "${{ steps.apk.outputs.name }}" \
-            --title "SheShield ${tag}" \
-            --notes "Android APK for SheShield. Open this page on your phone, tap the .apk file to download it, then open it to install. Connects to https://sheshield-y9jp.onrender.com." \
+            --title "SheShield app ${tag#mobile-}" \
+            --notes "Android APK for the SheShield app. On your phone, tap the .apk file below to download it, then open it to install. Connects to https://sheshield-y9jp.onrender.com." \
             --target "${GITHUB_SHA}" --latest

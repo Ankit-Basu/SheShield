@@ -4,7 +4,7 @@ The app is an APK file attached to each GitHub Release. It isn't on the Play Sto
 
 ## 1. Download the APK
 
-1. On your phone, open **https://github.com/Ankit-Basu/SheShield_app/releases/latest**.
+1. On your phone, open **https://github.com/Ankit-Basu/SheShield/releases** and open the newest **SheShield app** release.
    - While the repository is private, sign in to GitHub in the phone's browser first (the GitHub app does not download release files).
 2. Under **Assets**, tap the file named like **`SheShield-1.0.0-build1.apk`** (about 30–40 MB).
 3. If Chrome warns that the file might be harmful, tap **Download anyway**. It says this for every APK that doesn't come from the Play Store.
@@ -37,14 +37,14 @@ The app is an APK file attached to each GitHub Release. It isn't on the Play Sto
 
 Install a newer APK over the old one the same way; your sign-in and settings stay.
 
-To make a new build, open **Actions → Android APK → Run workflow** in the repository, or push a tag:
+A new build starts on its own whenever something in `mobile/` changes on `master`. To start one by hand, open **Actions → Android APK → Run workflow**, or push a tag:
 
 ```bash
-git tag v1.0.1
+git tag mobile-v1.0.1
 ```
 
 ```bash
-git push origin v1.0.1
+git push origin mobile-v1.0.1
 ```
 
 ## Troubleshooting

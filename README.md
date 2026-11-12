@@ -23,7 +23,7 @@
 
 **SheShield** is a women's safety platform built around one idea: when something feels wrong, you should not have to work out who to call, where you are, or how to explain it.
 
-It pairs a glassmorphic interface with a PHP and MySQL backend. Every library, font and icon is served locally, and the only runtime network calls are map tiles and, when needed, Firebase sign-in.
+It pairs a glassmorphic web interface and a React Native Android app with a PHP and MySQL backend. Every library, font and icon is served locally, and the only runtime network calls are map tiles and, when needed, Firebase sign-in.
 
 ---
 
@@ -63,6 +63,26 @@ It pairs a glassmorphic interface with a PHP and MySQL backend. Every library, f
 ### 🔑 Admin
 - Update report status and view evidence
 - Verify walkers and assign them to walk requests
+
+---
+
+## 📱 Mobile App
+
+A React Native app for Android, in [`mobile/`](mobile/), built with Expo SDK 58, TypeScript, Expo Router, TanStack Query, Zustand and Reanimated. It talks to the same PHP API using token sign-in.
+
+<p align="center">
+  <img src="mobile/docs/screenshots/home.jpg" width="180" alt="App home">
+  <img src="mobile/docs/screenshots/sos.jpg" width="180" alt="Hold-to-send SOS">
+  <img src="mobile/docs/screenshots/map.jpg" width="180" alt="Campus map">
+  <img src="mobile/docs/screenshots/walks.jpg" width="180" alt="Walk With Us">
+</p>
+
+- **Hold-to-send SOS** with GPS, plus call, SMS and share fallbacks that work without the server
+- **Walk requests, incident reports with photos** (queued offline), and a satellite campus map
+- **Frosted glass UI** with real blur on Android 12+, and saved or sample data while the free server wakes
+- **APK builds on GitHub Actions** whenever `mobile/` changes, published to [Releases](https://github.com/Ankit-Basu/SheShield/releases)
+
+Details: [mobile/README.md](mobile/README.md) · install on a phone: [mobile/docs/INSTALL.md](mobile/docs/INSTALL.md)
 
 ---
 
@@ -505,6 +525,7 @@ SheShield/
 │   ├── fonts/  images/  assets/  icons.svg
 ├── docs/                  # Setup, deployment and DevOps guides
 ├── infrastructure/        # Docker, Jenkins, Kubernetes, Helm, Terraform, Ansible, monitoring
+├── mobile/                # React Native (Expo) Android app; see mobile/README.md
 ├── screenshots/           # Images used in this README
 └── scripts/               # Rebuilds public/lib and the icon sprite
 ```

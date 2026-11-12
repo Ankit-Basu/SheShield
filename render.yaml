@@ -10,6 +10,10 @@ services:
     dockerfilePath: ./infrastructure/docker/Dockerfile
     dockerContext: .
     healthCheckPath: /pro/landing.html
+    # App-only commits don't change the website image.
+    buildFilter:
+      ignoredPaths:
+        - mobile/**
     envVars:
       # Apache in the image listens on port 80
       - key: PORT

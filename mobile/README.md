@@ -45,7 +45,7 @@ React Native · Expo SDK 58 · TypeScript · Expo Router · TanStack Query · Zu
 - **react-native-svg** (gradients, SOS progress ring), **expo-linear-gradient**, **expo-blur** (iOS tab bar)
 - **expo-location, expo-image-picker, expo-haptics, expo-secure-store, expo-clipboard**, NetInfo, WebView
 - **Lucide** icons, **Clash Display** + **Plus Jakarta Sans** + **JetBrains Mono** fonts
-- Backend: the [SheShield](https://github.com/Ankit-Basu/SheShield) PHP + MySQL API, deployed on Render and Vercel
+- Backend: the SheShield PHP + MySQL API in the [repository root](../), deployed on Render and Vercel
 
 ## Project structure
 
@@ -84,11 +84,11 @@ npx expo lint      # lint (React Compiler rules included)
 
 ## Install on your phone
 
-Download the latest APK from **[Releases](https://github.com/Ankit-Basu/SheShield_app/releases/latest)** on an Android phone and install it. Full steps, first-run setup and a 2-minute demo script: **[docs/INSTALL.md](docs/INSTALL.md)**.
+Download the latest APK from **[Releases](https://github.com/Ankit-Basu/SheShield/releases)** on an Android phone and install it. Full steps, first-run setup and a 2-minute demo script: **[docs/INSTALL.md](docs/INSTALL.md)**.
 
 ## Build an APK
 
-**GitHub Actions (no account needed):** [`.github/workflows/android-apk.yml`](.github/workflows/android-apk.yml) runs `expo prebuild`, builds a release APK with Gradle on GitHub's servers, and publishes it as a release. Start it from **Actions → Android APK → Run workflow**, or push a `v*` tag.
+**GitHub Actions (no account needed):** [`.github/workflows/android-apk.yml`](../.github/workflows/android-apk.yml) in the repository root runs `expo prebuild`, builds a release APK with Gradle on GitHub's servers, and publishes it as a release. Start it from **Actions → Android APK → Run workflow**, or push a `v*` tag.
 
 **EAS (Expo's build service):** for Play Store builds with managed signing.
 
