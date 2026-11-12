@@ -64,6 +64,8 @@ export const fonts = {
 export const glass = {
   fill: 'rgba(255,255,255,0.065)',
   fillStrong: 'rgba(255,255,255,0.1)',
+  // Over a real blur the tint can be lighter: the frost does the work.
+  frost: 'rgba(255,255,255,0.04)',
   line: 'rgba(255,255,255,0.13)',
   lineTop: 'rgba(255,255,255,0.28)',
   lineSoft: 'rgba(255,255,255,0.07)',

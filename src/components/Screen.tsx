@@ -6,7 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRegisterBlurTarget } from '@/lib/blur';
 import { useTheme } from '@/lib/theme';
 
-import { Aurora } from './Aurora';
+import { Scene } from './Scene';
 
 export const TAB_BAR_SPACE = 112;
 
@@ -26,9 +26,10 @@ export function Screen({ children, scroll = true, refreshing, onRefresh, tabs = 
   const blurTarget = useRegisterBlurTarget();
   const pad = { paddingTop: insets.top + 12, paddingBottom: (tabs ? TAB_BAR_SPACE : 24) + insets.bottom, paddingHorizontal: padded ? 18 : 0 };
   return (
-    // Everything here is what the floating tab bar blurs on Android.
+    // Outer layer: what the floating tab bar blurs. Inside it, Scene keeps the
+    // background in its own blur source so every glass card frosts it.
     <BlurTargetView ref={blurTarget} style={styles.fill}>
-      <Aurora />
+      <Scene>
       {scroll ? (
         <ScrollView
           contentContainerStyle={[pad, { gap: 16 }]}
@@ -44,6 +45,7 @@ export function Screen({ children, scroll = true, refreshing, onRefresh, tabs = 
       ) : (
         <View style={[styles.fill, pad]}>{children}</View>
       )}
+      </Scene>
     </BlurTargetView>
   );
 }

@@ -1,5 +1,5 @@
 import { useFocusEffect } from 'expo-router';
-import { ComponentRef, RefObject, useCallback, useRef } from 'react';
+import { ComponentRef, createContext, RefObject, useCallback, useContext, useRef } from 'react';
 import { View } from 'react-native';
 import { create } from 'zustand';
 
@@ -25,3 +25,8 @@ export function useRegisterBlurTarget() {
   );
   return ref;
 }
+
+// The background layer (aurora and orbs) of the current screen. Glass cards blur it on
+// Android 12+, which is what makes them frosted rather than just translucent.
+export const BackdropContext = createContext<Target | null>(null);
+export const useBackdrop = () => useContext(BackdropContext);

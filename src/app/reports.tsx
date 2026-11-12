@@ -5,7 +5,7 @@ import { FlatList, Pressable, RefreshControl, StyleSheet, View } from 'react-nat
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Aurora } from '@/components/Aurora';
+import { Scene } from '@/components/Scene';
 import { Chip, Empty } from '@/components/bits';
 import { Glass } from '@/components/Glass';
 import { ReportRow } from '@/components/ReportRow';
@@ -29,8 +29,7 @@ export default function Reports() {
   const list = useMemo(() => (filter === 'all' ? data ?? [] : (data ?? []).filter((r) => r.status === filter)), [data, filter]);
 
   return (
-    <View style={{ flex: 1 }}>
-      <Aurora intensity={0.8} />
+    <Scene intensity={0.8}>
       <FlatList
         data={list}
         keyExtractor={(r) => String(r.id)}
@@ -73,7 +72,7 @@ export default function Reports() {
           </Glass>
         }
       />
-    </View>
+    </Scene>
   );
 }
 

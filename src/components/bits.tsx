@@ -106,7 +106,7 @@ export function SectionHeader({ title, action, onAction }: { title: string; acti
   const theme = useTheme();
   return (
     <View style={styles.section}>
-      <T variant="heading" style={{ fontSize: 19 }}>
+      <T variant="label" muted style={{ fontSize: 13, letterSpacing: 0.2 }}>
         {title}
       </T>
       {action ? (
@@ -137,6 +137,6 @@ const styles = StyleSheet.create({
   dot: { width: 6, height: 6, borderRadius: 3 },
   tile: { alignItems: 'center', justifyContent: 'center', borderWidth: 1 },
   avatar: { overflow: 'hidden', alignItems: 'center', justifyContent: 'center', borderWidth: 2, backgroundColor: 'rgba(255,255,255,0.06)' },
-  section: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 8 },
+  section: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 6, marginBottom: -6, paddingHorizontal: 4 },
   empty: { alignItems: 'center', gap: 10, paddingVertical: 26 },
 });

@@ -8,7 +8,6 @@ import Animated, { FadeInDown, LinearTransition } from 'react-native-reanimated'
 import { Badge, Chip, Empty, IconTile, SectionHeader } from '@/components/bits';
 import { Button } from '@/components/Button';
 import { Glass } from '@/components/Glass';
-import { GradientText } from '@/components/GradientText';
 import { Screen } from '@/components/Screen';
 import { SourceBanner } from '@/components/SourceBanner';
 import { T } from '@/components/Text';
@@ -75,13 +74,9 @@ export default function Walks() {
     <Screen refreshing={isRefetching} onRefresh={refetch}>
       <SourceBanner keys={["walks"]} />
       <Animated.View entering={FadeInDown.springify().damping(18)}>
-        <T variant="eyebrow">Walk With Us</T>
-        <T variant="display" style={{ fontSize: 36, lineHeight: 40 }}>
-          Never walk
+        <T variant="title" style={{ fontSize: 32, lineHeight: 37 }}>
+          Walk With Us
         </T>
-        <GradientText variant="display" style={{ fontSize: 36, lineHeight: 40 }}>
-          alone.
-        </GradientText>
         <T muted style={{ marginTop: 6 }}>
           A verified student walker meets you and stays with you to your destination.
         </T>

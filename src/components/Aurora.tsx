@@ -61,7 +61,7 @@ function Orb({ size, x, y, light, base, edge, drift, duration, opacity = 1 }: { 
   );
 }
 
-export function Aurora({ intensity = 1, orbs = true }: { intensity?: number; orbs?: boolean }) {
+export function Aurora({ intensity = 1, orbs = false }: { intensity?: number; orbs?: boolean }) {
   const theme = useTheme();
   const { width, height } = useWindowDimensions();
   const [a1, a2, a3] = theme.aurora;

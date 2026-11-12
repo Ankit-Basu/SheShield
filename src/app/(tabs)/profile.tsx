@@ -85,7 +85,7 @@ export default function Profile() {
     <Screen refreshing={isRefetching} onRefresh={refetch}>
       <SourceBanner keys={["me"]} />
       <Animated.View entering={FadeInDown.springify().damping(18)}>
-        <Glass radius={30} strong style={styles.hero} tint={[theme.primary + '3a', 'rgba(255,255,255,0.02)']}>
+        <Glass radius={30} strong style={styles.hero} tint={[theme.primary + '22', 'rgba(255,255,255,0.02)']}>
           <Avatar uri={absoluteUrl(u?.photo)} name={fullName} size={78} />
           <View style={{ flex: 1, gap: 4 }}>
             <T variant="title" numberOfLines={1}>
@@ -106,19 +106,23 @@ export default function Profile() {
         </Glass>
       </Animated.View>
 
-      <Animated.View entering={FadeInDown.delay(60).springify().damping(18)} style={styles.stats}>
-        {[
-          ['Reports', data?.stats.reports ?? 0],
-          ['Resolved', data?.stats.resolved ?? 0],
-          ['Pending', data?.stats.pending ?? 0],
-        ].map(([label, value]) => (
-          <Glass key={label as string} radius={20} style={styles.statBox}>
-            <T variant="title">{value as number}</T>
-            <T variant="small" muted>
-              {label as string}
-            </T>
-          </Glass>
-        ))}
+      <Animated.View entering={FadeInDown.delay(60).springify().damping(18)}>
+        <Glass radius={22} flat style={styles.stats}>
+          {[
+            ['Reports', data?.stats.reports ?? 0],
+            ['Resolved', data?.stats.resolved ?? 0],
+            ['Pending', data?.stats.pending ?? 0],
+          ].map(([label, value], i) => (
+            <View key={label as string} style={[styles.statBox, i > 0 && styles.statDivider]}>
+              <T variant="title" style={{ fontSize: 24, lineHeight: 28 }}>
+                {value as number}
+              </T>
+              <T variant="small" muted>
+                {label as string}
+              </T>
+            </View>
+          ))}
+        </Glass>
       </Animated.View>
 
       <SectionHeader title="Theme" />
@@ -183,8 +187,9 @@ export default function Profile() {
 
 const styles = StyleSheet.create({
   hero: { flexDirection: 'row', alignItems: 'center', gap: 15, padding: 18 },
-  stats: { flexDirection: 'row', gap: 10 },
-  statBox: { flex: 1, padding: 14, alignItems: 'center', gap: 2 },
+  stats: { flexDirection: 'row', paddingVertical: 14 },
+  statBox: { flex: 1, alignItems: 'center', gap: 2 },
+  statDivider: { borderLeftWidth: StyleSheet.hairlineWidth, borderLeftColor: 'rgba(255,255,255,0.16)' },
   themes: { flexDirection: 'row', gap: 10 },
   swatch: { height: 104, borderRadius: 20, borderWidth: 2, overflow: 'hidden', padding: 11, justifyContent: 'space-between' },
   swatchDot: { width: 26, height: 26, borderRadius: 13, alignItems: 'center', justifyContent: 'center' },

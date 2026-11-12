@@ -11,7 +11,7 @@ import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Swit
 import Animated, { FadeInDown, ZoomIn } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Aurora } from '@/components/Aurora';
+import { Scene } from '@/components/Scene';
 import { Chip } from '@/components/bits';
 import { Button } from '@/components/Button';
 import { Field } from '@/components/Field';
@@ -120,8 +120,7 @@ export default function Report() {
 
   if (doneId) {
     return (
-      <View style={{ flex: 1 }}>
-        <Aurora />
+      <Scene>
         <View style={[styles.done, { paddingBottom: insets.bottom + 24 }]}>
           <Animated.View entering={ZoomIn.springify()} style={[styles.doneIcon, { backgroundColor: theme.primary }]}>
             <Icons.Check size={44} color={theme.primaryForeground} strokeWidth={3} />
@@ -137,13 +136,12 @@ export default function Report() {
           </Animated.View>
           <Button label="Done" size="lg" style={{ alignSelf: 'stretch' }} onPress={() => router.back()} />
         </View>
-      </View>
+      </Scene>
     );
   }
 
   return (
-    <View style={{ flex: 1 }}>
-      <Aurora intensity={0.8} />
+    <Scene intensity={0.8}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={[styles.body, { paddingTop: insets.top + 12, paddingBottom: insets.bottom + 28 }]} keyboardShouldPersistTaps="handled">
           <View style={styles.head}>
@@ -249,7 +247,7 @@ export default function Report() {
           <Button label="Send report" size="lg" loading={busy} onPress={submit} />
         </ScrollView>
       </KeyboardAvoidingView>
-    </View>
+    </Scene>
   );
 }
 

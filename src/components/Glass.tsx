@@ -1,10 +1,12 @@
+import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ReactNode, useId } from 'react';
-import { Pressable, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
+import { Platform, Pressable, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import Svg, { Defs, RadialGradient, Rect, Stop } from 'react-native-svg';
 
+import { useBackdrop } from '@/lib/blur';
 import { glass } from '@/lib/theme';
 
 type Props = {
@@ -15,30 +17,32 @@ type Props = {
   tint?: readonly [string, string, ...string[]];
   onPress?: () => void;
   accessibilityLabel?: string;
-  /** Skip the corner glow on small or very numerous cards. */
+  /** Skip the corner light on small or very numerous cards. */
   flat?: boolean;
+  /** Turn off the frosted blur, e.g. for overlays on the map. */
+  noBlur?: boolean;
 };
 
-// The light sources of the glass: a specular glow in the top-left corner,
-// a bright rim along the top edge, and a slight shade towards the bottom for depth.
+// Light on the glass: a faint glow from the top-left, a fine rim along the top edge,
+// and a little shade at the bottom. Kept subtle on purpose.
 function Light({ radius, flat }: { radius: number; flat?: boolean }) {
   const id = `glow${useId().replace(/[^a-zA-Z0-9]/g, '')}`;
   return (
     <View style={[StyleSheet.absoluteFill, { borderRadius: radius, overflow: 'hidden' }]} pointerEvents="none">
       {!flat && (
-        <Svg width={220} height={170} style={styles.glow}>
+        <Svg width={240} height={180} style={styles.glow}>
           <Defs>
-            <RadialGradient id={id} cx="35%" cy="30%" r="60%">
-              <Stop offset="0" stopColor="#ffffff" stopOpacity={0.16} />
+            <RadialGradient id={id} cx="30%" cy="25%" r="65%">
+              <Stop offset="0" stopColor="#ffffff" stopOpacity={0.1} />
               <Stop offset="1" stopColor="#ffffff" stopOpacity={0} />
             </RadialGradient>
           </Defs>
-          <Rect width={220} height={170} fill={`url(#${id})`} />
+          <Rect width={240} height={180} fill={`url(#${id})`} />
         </Svg>
       )}
-      <LinearGradient colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.14)']} start={{ x: 0.5, y: 0.45 }} end={{ x: 0.5, y: 1 }} style={StyleSheet.absoluteFill} />
+      <LinearGradient colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.1)']} start={{ x: 0.5, y: 0.5 }} end={{ x: 0.5, y: 1 }} style={StyleSheet.absoluteFill} />
       <LinearGradient
-        colors={['rgba(255,255,255,0)', 'rgba(255,255,255,0.75)', 'rgba(255,255,255,0.18)', 'rgba(255,255,255,0)']}
+        colors={['rgba(255,255,255,0)', 'rgba(255,255,255,0.5)', 'rgba(255,255,255,0.12)', 'rgba(255,255,255,0)']}
         locations={[0, 0.3, 0.7, 1]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
@@ -48,16 +52,31 @@ function Light({ radius, flat }: { radius: number; flat?: boolean }) {
   );
 }
 
-// Glass card: translucent fill, a diagonal sheen, light from the top-left and a
-// brighter top edge. Pressable cards sink and tilt slightly under the finger.
-export function Glass({ children, style, radius = 24, strong, tint, onPress, accessibilityLabel, flat }: Props) {
+// Frosted glass: a real blur of the screen's background (Android 12+ through the
+// screen's backdrop, iOS natively), a light tint, and soft light on top.
+// Pressable cards sink slightly under the finger.
+export function Glass({ children, style, radius = 22, strong, tint, onPress, accessibilityLabel, flat, noBlur }: Props) {
+  const backdrop = useBackdrop();
   const press = useSharedValue(0);
-  const pressStyle = useAnimatedStyle(() => ({
-    transform: [{ perspective: 800 }, { scale: 1 - 0.03 * press.value }, { rotateX: `${2.5 * press.value}deg` }],
-  }));
+  const pressStyle = useAnimatedStyle(() => ({ transform: [{ scale: 1 - 0.025 * press.value }] }));
+  const frosted = !noBlur && (Platform.OS === 'ios' || (Platform.OS === 'android' && !!backdrop));
   const body = (
-    <View style={[styles.card, { borderRadius: radius, backgroundColor: strong ? glass.fillStrong : glass.fill }, style]}>
-      <LinearGradient colors={tint ?? glass.sheen} start={{ x: 0.1, y: 0 }} end={{ x: 0.9, y: 1 }} style={[StyleSheet.absoluteFill, { borderRadius: radius }]} pointerEvents="none" />
+    <View
+      style={[
+        styles.card,
+        { borderRadius: radius, backgroundColor: frosted ? (strong ? glass.fill : glass.frost) : strong ? glass.fillStrong : glass.fill },
+        style,
+      ]}>
+      {frosted && (
+        <BlurView
+          blurTarget={Platform.OS === 'android' ? backdrop ?? undefined : undefined}
+          blurMethod="dimezisBlurViewSdk31Plus"
+          intensity={Platform.OS === 'android' ? 70 : 40}
+          tint="dark"
+          style={StyleSheet.absoluteFill}
+        />
+      )}
+      <LinearGradient colors={tint ?? glass.sheen} start={{ x: 0.1, y: 0 }} end={{ x: 0.9, y: 1 }} style={StyleSheet.absoluteFill} pointerEvents="none" />
       <Light radius={radius} flat={flat} />
       {children}
     </View>
@@ -81,12 +100,11 @@ export function Glass({ children, style, radius = 24, strong, tint, onPress, acc
 const styles = StyleSheet.create({
   card: {
     overflow: 'hidden',
-    borderWidth: 1,
+    borderWidth: StyleSheet.hairlineWidth * 2,
     borderColor: glass.line,
     borderTopColor: glass.lineTop,
-    borderLeftColor: 'rgba(255,255,255,0.2)',
     borderBottomColor: glass.lineSoft,
   },
-  glow: { position: 'absolute', top: -50, left: -40 },
+  glow: { position: 'absolute', top: -60, left: -50 },
   rim: { position: 'absolute', top: 0, height: 1 },
 });

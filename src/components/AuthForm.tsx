@@ -12,7 +12,7 @@ import { useAuth } from '@/lib/auth';
 import { saveProfile } from '@/lib/fallback';
 import { useTheme } from '@/lib/theme';
 
-import { Aurora } from './Aurora';
+import { Scene } from './Scene';
 import { Logo } from './bits';
 import { Button } from './Button';
 import { Field } from './Field';
@@ -58,8 +58,7 @@ export function AuthForm({ mode }: { mode: 'login' | 'signup' }) {
   };
 
   return (
-    <View style={{ flex: 1 }}>
-      <Aurora />
+    <Scene>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={[styles.body, { paddingTop: insets.top + 10, paddingBottom: insets.bottom + 24 }]} keyboardShouldPersistTaps="handled">
           <Pressable onPress={() => router.back()} hitSlop={12} style={styles.back} accessibilityRole="button" accessibilityLabel="Back">
@@ -140,7 +139,7 @@ export function AuthForm({ mode }: { mode: 'login' | 'signup' }) {
           </Pressable>
         </ScrollView>
       </KeyboardAvoidingView>
-    </View>
+    </Scene>
   );
 }
 

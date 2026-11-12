@@ -4,7 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Aurora } from '@/components/Aurora';
+import { Scene } from '@/components/Scene';
 import { Logo } from '@/components/bits';
 import { Button } from '@/components/Button';
 import { Glass } from '@/components/Glass';
@@ -22,8 +22,7 @@ export default function Welcome() {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   return (
-    <View style={{ flex: 1 }}>
-      <Aurora intensity={1.15} />
+    <Scene intensity={1.15} orbs>
       <View style={[styles.body, { paddingTop: insets.top + 18, paddingBottom: insets.bottom + 22 }]}>
         <Animated.View entering={FadeInDown.duration(600)} style={styles.brand}>
           <Logo size={34} />
@@ -79,7 +78,7 @@ export default function Welcome() {
           <Button label="I already have an account" variant="ghost" size="lg" onPress={() => router.push('/login')} />
         </Animated.View>
       </View>
-    </View>
+    </Scene>
   );
 }
 
