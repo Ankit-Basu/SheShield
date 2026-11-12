@@ -12,4 +12,5 @@ logs
 tmp
 vendor
 node_modules
+mobile
 *.php

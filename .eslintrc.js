@@ -37,5 +37,6 @@ module.exports = {
     'vendor/',
     '*.min.js',
     'public/lib/',
+    'mobile/',
   ],
 };

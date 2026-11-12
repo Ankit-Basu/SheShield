@@ -28,6 +28,7 @@ logs
 tmp
 
 # Not needed to serve the site
+mobile
 vercel-dist
 vercel.json
 .vercelignore
