@@ -1,0 +1,65 @@
+{
+  "expo": {
+    "name": "SheShield",
+    "slug": "sheshield",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "sheshield",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#170d17",
+    "ios": {
+      "bundleIdentifier": "com.ankitbasu.sheshield",
+      "supportsTablet": false,
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "package": "com.ankitbasu.sheshield",
+      "adaptiveIcon": {
+        "backgroundColor": "#170d17",
+        "foregroundImage": "./assets/images/android-icon-foreground.png",
+        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+      },
+      "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION", "CAMERA"],
+      "blockedPermissions": ["ACCESS_BACKGROUND_LOCATION", "RECORD_AUDIO"],
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "output": "single",
+      "favicon": "./assets/images/favicon.png",
+      "backgroundColor": "#170d17"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "expo-web-browser",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#170d17",
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 120
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "SheShield uses your location to send it with an SOS alert and to show you on the campus map."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "SheShield lets you attach photos as evidence to a report.",
+          "cameraPermission": "SheShield lets you take a photo as evidence for a report."
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    }
+  }
+}

@@ -1,0 +1,81 @@
+name: Android APK
+
+# Builds an installable SheShield APK on GitHub's servers and publishes it as a
+# GitHub Release, so the app can be downloaded straight onto a phone.
+# Run it from the Actions tab (Run workflow), or push a tag such as v1.0.1.
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+concurrency:
+  group: android-apk
+  cancel-in-progress: true
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      EXPO_PUBLIC_API_URL: https://sheshield-y9jp.onrender.com/
+      NODE_ENV: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+      - name: Generate the Android project
+        run: npx expo prebuild --platform android --no-install
+
+      # Release build for 64-bit ARM, which every Android phone from the last
+      # several years uses. It is signed with the debug key Expo generates, which
+      # is fine for installing directly; the Play Store would need EAS signing.
+      - name: Build the APK
+        working-directory: android
+        run: ./gradlew assembleRelease -PreactNativeArchitectures=arm64-v8a --no-daemon
+
+      - name: Name the APK
+        id: apk
+        run: |
+          version=$(node -p "require('./app.json').expo.version")
+          name="SheShield-${version}-build${GITHUB_RUN_NUMBER}.apk"
+          cp android/app/build/outputs/apk/release/app-release.apk "$name"
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          ls -lh "$name"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.apk.outputs.name }}
+          path: ${{ steps.apk.outputs.name }}
+
+      - name: Publish a release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="${GITHUB_REF_NAME}"
+          if [ "${GITHUB_REF_TYPE}" != "tag" ]; then tag="v${{ steps.apk.outputs.version }}-build${GITHUB_RUN_NUMBER}"; fi
+          gh release create "$tag" "${{ steps.apk.outputs.name }}" \
+            --title "SheShield ${tag}" \
+            --notes "Android APK for SheShield. Open this page on your phone, tap the .apk file to download it, then open it to install. Connects to https://sheshield-y9jp.onrender.com." \
+            --target "${GITHUB_SHA}" --latest
