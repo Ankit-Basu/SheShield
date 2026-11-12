@@ -1,35 +1,47 @@
 name: Keep Render awake
 
-# Render's free plan puts the app to sleep after 15 minutes without requests,
-# and the next visitor waits about a minute. This pings it every 10 minutes.
-# The stats endpoint also queries MySQL, so the Aiven database stays active too.
+# Render's free plan sleeps after 15 minutes without requests; the next visitor (or
+# the mobile app) then waits up to a minute. The stats endpoint also queries MySQL,
+# so pinging it keeps the Aiven database active too.
+#
+# GitHub throttles scheduled workflows on quiet repositories (a "*/10" schedule ran
+# only every few hours), so each run stays alive and pings every 10 minutes for
+# 5 h 40 min. Runs queue one behind another rather than cancelling, so coverage is
+# continuous even when GitHub starts them late. Free for public repositories.
 #
 # One always-on free service uses about 744 of Render's 750 free hours a month.
-# GitHub can delay scheduled runs at busy times, and pauses schedules in repos
-# with no commits for 60 days (re-enable them from the Actions tab).
+# GitHub pauses schedules in repos with no commits for 60 days; re-enable them from
+# the Actions tab if that happens.
 
 on:
   schedule:
-    - cron: "*/10 * * * *"
+    - cron: "*/30 * * * *"
   workflow_dispatch:
 
 permissions: {}
 
 concurrency:
   group: keep-awake
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   ping:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 350
     env:
       APP_URL: ${{ vars.RENDER_URL || 'https://sheshield-y9jp.onrender.com' }}
+      ROUNDS: 34
     steps:
-      - name: Ping the app and database
+      - name: Ping every 10 minutes
         run: |
-          code=$(curl -s -o response.txt -w '%{http_code}' --max-time 120 \
-                 --retry 3 --retry-delay 10 --retry-all-errors \
-                 "$APP_URL/api/public_stats.php")
-          echo "HTTP $code: $(head -c 200 response.txt)"
-          test "$code" = 200
+          ok=0
+          for i in $(seq 1 "$ROUNDS"); do
+            code=$(curl -s -o response.txt -w '%{http_code}' --max-time 120 \
+                   --retry 3 --retry-delay 10 --retry-all-errors \
+                   "$APP_URL/api/public_stats.php" || true)
+            echo "$(date -u +%H:%M) round $i: HTTP $code $(head -c 120 response.txt 2>/dev/null)"
+            [ "$code" = 200 ] && ok=$((ok + 1))
+            [ "$i" -lt "$ROUNDS" ] && sleep 600
+          done
+          echo "$ok of $ROUNDS pings answered"
+          test "$ok" -gt 0
