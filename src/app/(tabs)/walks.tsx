@@ -10,6 +10,7 @@ import { Button } from '@/components/Button';
 import { Glass } from '@/components/Glass';
 import { GradientText } from '@/components/GradientText';
 import { Screen } from '@/components/Screen';
+import { SourceBanner } from '@/components/SourceBanner';
 import { T } from '@/components/Text';
 import { toast } from '@/components/Toast';
 import { landmarks } from '@/lib/campus';
@@ -72,6 +73,7 @@ export default function Walks() {
 
   return (
     <Screen refreshing={isRefetching} onRefresh={refetch}>
+      <SourceBanner keys={["walks"]} />
       <Animated.View entering={FadeInDown.springify().damping(18)}>
         <T variant="eyebrow">Walk With Us</T>
         <T variant="display" style={{ fontSize: 36, lineHeight: 40 }}>

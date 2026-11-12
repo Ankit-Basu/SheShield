@@ -1,6 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { api } from './api';
+import { isFallback, READ_TIMEOUT_MS, RETRY_WHILE_FALLBACK_MS, withFallback } from './fallback';
+import { sampleMe, sampleReports, sampleSafeSpaces, sampleWalks } from './sample';
 
 export type Report = {
   id: number;
@@ -52,16 +54,39 @@ export const keys = {
   safeSpaces: ['safe-spaces'] as const,
 };
 
-export const useMe = () => useQuery({ queryKey: keys.me, queryFn: () => api<Me>('api/user/me.php') });
+// Every read falls back to saved or sample data when the server is asleep, and
+// retries every 15 s until live data arrives (see lib/fallback.ts).
+const retryWhileFallback = (key: string) => () => (isFallback(key) ? RETRY_WHILE_FALLBACK_MS : false);
+const read = { timeoutMs: READ_TIMEOUT_MS };
+
+export const useMe = () =>
+  useQuery({
+    queryKey: keys.me,
+    queryFn: () => withFallback('me', () => api<Me>('api/user/me.php', read), sampleMe),
+    refetchInterval: retryWhileFallback('me'),
+  });
 
 export const useReports = () =>
-  useQuery({ queryKey: keys.reports, queryFn: async () => (await api<{ reports: Report[] }>('api/incidents/mine.php')).reports });
+  useQuery({
+    queryKey: keys.reports,
+    queryFn: () => withFallback('reports', async () => (await api<{ reports: Report[] }>('api/incidents/mine.php', read)).reports, sampleReports),
+    refetchInterval: retryWhileFallback('reports'),
+  });
 
 export const useWalks = () =>
-  useQuery({ queryKey: keys.walks, queryFn: async () => (await api<{ walks: Walk[] }>('api/walks/mine.php')).walks });
+  useQuery({
+    queryKey: keys.walks,
+    queryFn: () => withFallback('walks', async () => (await api<{ walks: Walk[] }>('api/walks/mine.php', read)).walks, sampleWalks),
+    refetchInterval: retryWhileFallback('walks'),
+  });
 
 export const useSafeSpaces = () =>
-  useQuery({ queryKey: keys.safeSpaces, queryFn: () => api<SafeSpace[]>('api/safespaces/list.php'), staleTime: 60_000 });
+  useQuery({
+    queryKey: keys.safeSpaces,
+    queryFn: () => withFallback('safe-spaces', () => api<SafeSpace[]>('api/safespaces/list.php', read), sampleSafeSpaces),
+    staleTime: 60_000,
+    refetchInterval: retryWhileFallback('safe-spaces'),
+  });
 
 export function useRequestWalk() {
   const qc = useQueryClient();

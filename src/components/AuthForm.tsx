@@ -9,6 +9,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { api } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
+import { saveProfile } from '@/lib/fallback';
 import { useTheme } from '@/lib/theme';
 
 import { Aurora } from './Aurora';
@@ -42,8 +43,10 @@ export function AuthForm({ mode }: { mode: 'login' | 'signup' }) {
       const body = signup
         ? { first_name: first.trim(), last_name: last.trim(), email: email.trim(), password, client: 'mobile', device }
         : { email: email.trim(), password, client: 'mobile', device };
-      const res = await api<{ token?: string }>(signup ? 'api/auth/signup.php' : 'api/auth/login.php', { json: body });
+      const res = await api<{ token?: string; user?: { first_name?: string; last_name?: string; email?: string } }>(signup ? 'api/auth/signup.php' : 'api/auth/login.php', { json: body });
       if (!res.token) throw new Error('The server did not return a sign-in token. It may need updating.');
+      // Remembered so the app can still greet you by name if the server is asleep later.
+      await saveProfile({ first_name: res.user?.first_name ?? first.trim(), last_name: res.user?.last_name ?? last.trim(), email: res.user?.email ?? email.trim() });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       await signIn(res.token);
     } catch (e: any) {

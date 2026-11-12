@@ -46,7 +46,12 @@ export async function api<T = any>(path: string, { method, json, form, timeoutMs
     // The token was revoked or the account is gone: sign out locally.
     useAuth.getState().signOut();
   }
-  // Server faults (5xx) can carry internal details such as database hostnames; never show those.
+  // 502/503/504 mean the free server is asleep or still starting: treat it like being
+  // offline, so reads fall back to saved data and reports queue for later.
+  if (res.status === 502 || res.status === 503 || res.status === 504) {
+    throw new ApiError('SheShield is waking up. This can take up to a minute; try again shortly.', res.status, true);
+  }
+  // Other server faults (5xx) can carry internal details such as database hostnames; never show those.
   if (res.status >= 500) {
     throw new ApiError('SheShield is having trouble right now. Please try again in a minute.', res.status);
   }

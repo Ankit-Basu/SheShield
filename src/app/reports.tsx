@@ -9,6 +9,7 @@ import { Aurora } from '@/components/Aurora';
 import { Chip, Empty } from '@/components/bits';
 import { Glass } from '@/components/Glass';
 import { ReportRow } from '@/components/ReportRow';
+import { SourceBanner } from '@/components/SourceBanner';
 import { T } from '@/components/Text';
 import { useReports } from '@/lib/queries';
 import { useTheme } from '@/lib/theme';
@@ -48,6 +49,7 @@ export default function Reports() {
                 <Plus size={21} color={theme.primaryForeground} />
               </Pressable>
             </View>
+            <SourceBanner keys={["reports"]} />
             <View style={styles.filters}>
               {filters.map((f) => (
                 <Chip key={f.value} label={f.label} selected={filter === f.value} onPress={() => setFilter(f.value)} />

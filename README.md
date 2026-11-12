@@ -31,6 +31,7 @@ React Native · Expo SDK 58 · TypeScript · Expo Router · TanStack Query · Zu
 | **Incident reports** | Type, severity, time, landmark or GPS location, up to 3 photos from the camera or gallery, and a fully anonymous option. **Works offline:** with no signal the report is saved on the phone and sent automatically when the connection returns. |
 | **Campus map** | Esri satellite or street tiles with the official OpenStreetMap campus outline, landmarks and safe spaces. Runs Leaflet in a WebView, so the installed app needs no map API key. Tap a landmark to walk from it or report there. |
 | **Dashboard** | Live IST clock with next sunrise or sunset at LPU, your report numbers, active walk, latest reports and one-tap helplines. Pull to refresh everywhere. |
+| **Never an empty screen** | Render's free server sleeps when idle and takes up to a minute to wake. Every screen loads the last data saved on the phone (or realistic sample data on a first run) if the server doesn't answer within 10 s, shows a "waking up" banner, and retries every 15 s until live data arrives. |
 | **Themes** | The website's three tweakcn themes (Sunset Horizon, Cosmic Night, Solar Dusk), saved between launches. |
 | **Secure sign-in** | Email and password exchange for a random token stored in the Android Keystore / iOS Keychain (`expo-secure-store`). The server keeps only a SHA-256 hash and revokes it on sign-out. |
 

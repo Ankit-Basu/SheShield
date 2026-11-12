@@ -10,12 +10,13 @@ import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { toast, ToastHost } from '@/components/Toast';
 import { useAuth } from '@/lib/auth';
+import { clearCache } from '@/lib/fallback';
 import { useReportQueue, watchConnection } from '@/lib/offline';
 import { useTheme } from '@/lib/theme';
 
@@ -53,9 +54,18 @@ export default function RootLayout() {
     });
   }, [token]);
 
-  // A different account must never see the previous one's cached data.
+  // A different account must never see the previous one's data, so signing out clears
+  // it. Only a real sign-out counts: at launch the token is briefly empty while it
+  // loads from secure storage, and that must not wipe the saved data.
+  const hadToken = useRef(false);
   useEffect(() => {
-    if (!token) queryClient.clear();
+    if (token) {
+      hadToken.current = true;
+    } else if (hadToken.current) {
+      hadToken.current = false;
+      queryClient.clear();
+      clearCache();
+    }
   }, [token]);
 
   useEffect(() => {

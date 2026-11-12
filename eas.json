@@ -14,13 +14,13 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://sheshield-ab.vercel.app/"
+        "EXPO_PUBLIC_API_URL": "https://sheshield-y9jp.onrender.com/"
       }
     },
     "production": {
       "autoIncrement": true,
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://sheshield-ab.vercel.app/"
+        "EXPO_PUBLIC_API_URL": "https://sheshield-y9jp.onrender.com/"
       }
     }
   },

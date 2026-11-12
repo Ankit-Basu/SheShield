@@ -10,6 +10,7 @@ import { Glass } from '@/components/Glass';
 import { GradientText } from '@/components/GradientText';
 import { ReportRow } from '@/components/ReportRow';
 import { Skeleton } from '@/components/Skeleton';
+import { SourceBanner } from '@/components/SourceBanner';
 import { Screen } from '@/components/Screen';
 import { T } from '@/components/Text';
 import { helplines } from '@/lib/campus';
@@ -71,6 +72,7 @@ export default function Home() {
         </Pressable>
       </Animated.View>
 
+      <SourceBanner keys={["me"]} />
       <Animated.View entering={reveal(1)}>
         <Glass radius={30} strong style={styles.hero} tint={[theme.primary + '30', 'rgba(255,255,255,0.03)']}>
           <T variant="display">

@@ -11,6 +11,7 @@ import { Button } from '@/components/Button';
 import { Field } from '@/components/Field';
 import { Glass } from '@/components/Glass';
 import { Screen } from '@/components/Screen';
+import { SourceBanner } from '@/components/SourceBanner';
 import { T } from '@/components/Text';
 import { toast } from '@/components/Toast';
 import { api } from '@/lib/api';
@@ -82,6 +83,7 @@ export default function Profile() {
 
   return (
     <Screen refreshing={isRefetching} onRefresh={refetch}>
+      <SourceBanner keys={["me"]} />
       <Animated.View entering={FadeInDown.springify().damping(18)}>
         <Glass radius={30} strong style={styles.hero} tint={[theme.primary + '3a', 'rgba(255,255,255,0.02)']}>
           <Avatar uri={absoluteUrl(u?.photo)} name={fullName} size={78} />

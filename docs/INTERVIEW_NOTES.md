@@ -74,6 +74,14 @@ lib/api.ts  ── fetch + Bearer token ──►  PHP API on Render (via Vercel
 - **Retrying:** `watchConnection` listens with NetInfo. When the phone is back online it flushes the queue, shows a toast, and invalidates queries so the screens refresh.
 - **Rejected reports aren't retried:** a report the server rejects (validation error) is dropped from the queue, since it would never succeed.
 
+### Saved and sample data when the server sleeps: `lib/fallback.ts`, `lib/sample.ts`
+- **Problem:** Render's free plan sleeps when idle, and the first requests time out or get 502/503 while it wakes.
+- **Fallback:** reads go through `withFallback`, which waits 10 s.
+  - **Server answers:** it saves the result in AsyncStorage.
+  - **Server unreachable or waking:** it returns the saved copy, or sample data on a first run, and records which (live, saved or sample) in a small Zustand store.
+- **Banner and retry:** `SourceBanner` reads that store to explain what's on screen. React Query's `refetchInterval` retries every 15 s only while a screen shows fallback data.
+- **Real errors still surface:** only network or gateway errors fall back, so "not signed in" isn't hidden. Saved data is cleared on sign-out, never at launch.
+
 ### Optimistic updates: `lib/queries.ts` → `useCancelWalk`
 - **onMutate:** cancel the in-flight query, save the old list, and show the walk as cancelled immediately.
 - **onError:** restore the saved list.
