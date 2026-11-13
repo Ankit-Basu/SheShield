@@ -27,6 +27,8 @@ export function istLocalString(d = new Date()) {
 
 export function greeting(d = new Date()) {
   const h = Number(d.toLocaleString('en-US', { hour: 'numeric', hour12: false, timeZone: 'Asia/Kolkata' }));
+  // "Good morning" at 1 a.m. reads wrong; late night gets its own greeting.
+  if (h < 5 || h >= 22) return 'Good night';
   return h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
 }
 
