@@ -5,10 +5,10 @@ import { Linking, Pressable, StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
 import { Avatar, Badge, Empty } from '@/components/bits';
-import { Button } from '@/components/Button';
-import { CountUp } from '@/components/CountUp';
+import { CampusCard } from '@/components/CampusCard';
 import { Glass } from '@/components/Glass';
 import { ReportRow } from '@/components/ReportRow';
+import { SafetyRing } from '@/components/SafetyRing';
 import { Screen } from '@/components/Screen';
 import { Skeleton } from '@/components/Skeleton';
 import { SourceBanner } from '@/components/SourceBanner';
@@ -81,40 +81,35 @@ export default function Home() {
         ? `${data.stats.pending} of your report${data.stats.pending === 1 ? ' is' : 's are'} waiting on review.`
         : 'Nothing needs your attention right now.';
 
-  const summary = [
-    { label: 'Reports', value: data?.stats.reports ?? 0 },
-    { label: 'Resolved', value: data?.stats.resolved ?? 0 },
-    { label: 'Walkers on duty', value: data?.stats.active_walkers ?? 0 },
-  ];
 
   return (
     <Screen refreshing={isRefetching} onRefresh={refetch}>
-      {/* Header: date and campus time, then a plain large title. */}
+      {/* Header: who you are and what needs attention. */}
       <Animated.View entering={reveal(0)} style={styles.header}>
         <View style={{ flex: 1, gap: 2 }}>
           <T variant="small" muted>
-            {today()} · {clock.time}
+            {greeting()} · {today()}
           </T>
-          <T variant="small" muted style={{ fontSize: 12 }}>
-            {clock.next} at LPU
-          </T>
+          {name ? (
+            <T variant="title" style={{ fontSize: 32, lineHeight: 37 }}>
+              {name}
+            </T>
+          ) : (
+            <Skeleton width={140} height={32} radius={10} style={{ marginVertical: 2 }} />
+          )}
+          {isLoading && !name ? null : (
+            <T variant="small" muted style={{ marginTop: 2 }}>
+              {subtitle}
+            </T>
+          )}
         </View>
         <Pressable onPress={() => router.navigate('/profile')} accessibilityLabel="Your profile" hitSlop={6}>
           {data ? (
-            <Avatar uri={absoluteUrl(data.user.photo)} name={`${data.user.first_name} ${data.user.last_name}`} size={42} />
+            <Avatar uri={absoluteUrl(data.user.photo)} name={`${data.user.first_name} ${data.user.last_name}`} size={48} />
           ) : (
-            <Skeleton width={42} height={42} radius={21} />
+            <Skeleton width={48} height={48} radius={24} />
           )}
         </Pressable>
-      </Animated.View>
-
-      <Animated.View entering={reveal(1)} style={{ gap: 6 }}>
-        <T variant="title" style={{ fontSize: 32, lineHeight: 37 }}>
-          {greeting()}
-          {name ? ', ' : ''}
-          {name ? <T variant="title" color={theme.primary} style={{ fontSize: 32, lineHeight: 37 }}>{name}</T> : null}
-        </T>
-        {isLoading && !name ? <Skeleton width={220} height={16} /> : <T muted>{subtitle}</T>}
       </Animated.View>
 
       <SourceBanner keys={['me']} />
@@ -128,8 +123,17 @@ export default function Home() {
         </Glass>
       )}
 
-      {/* The one focal panel: your walk, or an invitation to request one. */}
+      {/* The hero: how ready SOS is for you, with each missing piece one tap away. */}
+      <Animated.View entering={reveal(1)}>
+        <SafetyRing user={data?.user} />
+      </Animated.View>
+
       <Animated.View entering={reveal(2)}>
+        <CampusCard time={clock.time} next={clock.next} isDay={clock.isDay} walkers={data?.stats.active_walkers} safeSpaces={data?.stats.safe_spaces} />
+      </Animated.View>
+
+      {/* Your walk, or a quiet invitation to request one. */}
+      <Animated.View entering={reveal(3)}>
         {walk ? (
           <Glass strong radius={26} onPress={() => router.navigate('/walks')} style={styles.focus} accessibilityLabel="Your walk">
             <View style={styles.focusTop}>
@@ -159,36 +163,30 @@ export default function Home() {
             </T>
           </Glass>
         ) : (
-          <Glass strong radius={26} style={styles.focus}>
-            <T variant="heading">Heading somewhere?</T>
-            <T muted style={{ marginTop: -4 }}>
-              A verified student walker can meet you at any campus landmark and stay with you.
-            </T>
-            <Button label="Request a walk" icon={<Footprints size={17} color={theme.primaryForeground} />} onPress={() => router.navigate('/walks')} style={{ marginTop: 4 }} />
+          <Glass radius={22} onPress={() => router.navigate('/walks')} style={styles.invite} accessibilityLabel="Request a walk">
+            <View style={[styles.inviteIcon, { backgroundColor: theme.primary + '24' }]}>
+              <Footprints size={20} color={theme.primary} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <T variant="label">Heading somewhere late?</T>
+              <T variant="small" muted>
+                A verified walker can meet you on campus.
+              </T>
+            </View>
+            <View style={[styles.inviteGo, { backgroundColor: theme.primary }]}>
+              <ChevronRight size={18} color={theme.primaryForeground} />
+            </View>
           </Glass>
         )}
       </Animated.View>
 
-      <Animated.View entering={reveal(3)} style={styles.quickRow}>
+      <Animated.View entering={reveal(4)} style={styles.quickRow}>
         <QuickAction icon={FilePlus} label="Report" onPress={() => router.push('/report')} />
         <QuickAction icon={Footprints} label="Walk" onPress={() => router.navigate('/walks')} />
         <QuickAction icon={Map} label="Map" onPress={() => router.navigate('/map')} />
         <QuickAction icon={History} label="History" onPress={() => router.push('/reports')} />
       </Animated.View>
 
-      {/* One summary strip instead of a grid of number cards. */}
-      <Animated.View entering={reveal(4)}>
-        <Glass radius={22} flat style={styles.strip}>
-          {summary.map((s, i) => (
-            <View key={s.label} style={[styles.stripCell, i > 0 && styles.stripDivider]}>
-              {data ? <CountUp value={s.value} style={{ fontSize: 26, lineHeight: 30 }} /> : <Skeleton width={30} height={26} />}
-              <T variant="small" muted numberOfLines={1} style={{ fontSize: 12 }}>
-                {s.label}
-              </T>
-            </View>
-          ))}
-        </Glass>
-      </Animated.View>
 
       <SectionTitle title="Recent reports" action="See all" onAction={() => router.push('/reports')} />
       <Animated.View entering={reveal(5)}>
@@ -233,6 +231,9 @@ export default function Home() {
 
 const styles = StyleSheet.create({
   header: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  invite: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14 },
+  inviteIcon: { width: 44, height: 44, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
+  inviteGo: { width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
   notice: { flexDirection: 'row', alignItems: 'center', gap: 10, padding: 14 },
   focus: { padding: 18, gap: 14 },
   focusTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
