@@ -29,9 +29,10 @@ The app is an APK file attached to each GitHub Release. It isn't on the Play Sto
 1. **Home:** live campus clock, your numbers, quick actions.
 2. **SOS** (red button in the middle): hold for 2 seconds and watch the ring fill and the phone vibrate. Show the location confirmation and the call, text and share buttons. *Tip: this sends a real alert to your backend; that's fine for a demo account.*
 3. **Report:** pick a type, tap **Use my location**, add a photo, send. Then turn on airplane mode, send another and show it's saved. Turn airplane mode off and watch it send by itself.
-4. **Walks:** request a walk from Library to Main Gate, then cancel it.
+4. **Walks:** request a walk from Library to Main Gate, then cancel it. Scroll down to **Volunteer as a walker** to show the walker sign-up.
 5. **Map:** satellite view of LPU with the campus outline; tap a landmark.
-6. **You:** switch between the three themes.
+6. **You:** tap your photo to change it, then switch between the three themes.
+7. **History:** open a report to show its full details and **Mark as resolved**.
 
 ## Updating the app
 

@@ -5,8 +5,12 @@
   <h3>No one walks home alone.</h3>
   <p><em>A campus safety platform for women at Lovely Professional University: one-tap SOS, walking companions, confidential reporting and a live satellite safety map.</em></p>
   <a href="https://github.com/Ankit-Basu/SheShield/actions/workflows/main.yml"><img src="https://github.com/Ankit-Basu/SheShield/actions/workflows/main.yml/badge.svg?branch=master" alt="CI/CD Pipeline"></a>
+  <a href="https://github.com/Ankit-Basu/SheShield/actions/workflows/android-apk.yml"><img src="https://github.com/Ankit-Basu/SheShield/actions/workflows/android-apk.yml/badge.svg" alt="Android APK"></a>
   <br>
+  <strong><a href="https://sheshield-ab.vercel.app">Live website</a> · <a href="https://github.com/Ankit-Basu/SheShield/releases">Android app (APK)</a></strong>
+  <br><br>
   <a href="#-key-features">Features</a> •
+  <a href="#-mobile-app">Mobile App</a> •
   <a href="#-screenshots">Screenshots</a> •
   <a href="#-tech-stack">Tech Stack</a> •
   <a href="#-cicd--devops-pipeline">CI/CD & DevOps</a> •
@@ -526,6 +530,7 @@ SheShield/
 ├── docs/                  # Setup, deployment and DevOps guides
 ├── infrastructure/        # Docker, Jenkins, Kubernetes, Helm, Terraform, Ansible, monitoring
 ├── mobile/                # React Native (Expo) Android app; see mobile/README.md
+├── render.yaml  vercel.json  # Free hosting: Render (PHP API) and Vercel (static pages)
 ├── screenshots/           # Images used in this README
 └── scripts/               # Rebuilds public/lib and the icon sprite
 ```
@@ -555,12 +560,14 @@ Slower devices lower the aurora frame rate and turn off blur automatically.
 | Layer | Implementation |
 |-------|---------------|
 | **Authentication** | Session-based auth with `password_hash()` / `password_verify()` |
+| **Mobile sign-in** | Random 64-character tokens, stored only as SHA-256 hashes and revoked on sign-out; kept in the Android Keystore on the phone |
 | **Authorization** | Dashboard pages require sign-in, and admin actions require an admin account |
 | **Ownership** | Reports can only be resolved by their owner or an admin |
 | **Database** | Prepared statements across the live endpoints |
 | **Privacy** | Anonymous reports are unlinked from accounts, and the shared map shows counts only |
-| **Email** | Sent only to the signed-in user, over TLS via PHPMailer |
-| **Config** | Credentials live in `.gitignore`-protected config files |
+| **Email** | Sent only to the signed-in user, over TLS (Brevo's API or SMTP via PHPMailer) |
+| **Config** | Credentials come from environment variables in hosted deploys, or `.gitignore`-protected files locally |
+| **Errors** | Database and driver errors are logged on the server; visitors only see a generic message |
 | **Container** | Aqua Trivy CVE scanning on every Docker build |
 | **Code Quality** | SonarQube static analysis with Quality Gate enforcement |
 
@@ -577,9 +584,11 @@ Slower devices lower the aurora frame rate and turn off blur automatically.
 - [x] Docker, Jenkins, GitHub Actions, SonarQube, Trivy and Nexus
 - [x] Kubernetes, Helm, Terraform, Ansible, Prometheus and Grafana
 - [x] Husky and Commitlint git hooks
+- [x] React Native Android app with offline reports and real frosted glass
+- [x] Free hosting on Render, Vercel and Aiven, kept awake by a scheduled job
+- [x] Token sign-in for the app, with saved data when the server is asleep
 - [ ] Automatic SOS alerts to emergency contacts
 - [ ] Verified building positions on the campus map
-- [ ] Native mobile app
 - [ ] AI-powered assistant
 - [ ] Multi-language support
 
@@ -591,7 +600,7 @@ Built by students passionate about making campuses safer for women through moder
 
 ## 📄 License
 
-This project is licensed under the **MIT License**.
+This project is licensed under the **MIT License**. See [LICENSE](LICENSE).
 
 ## 🤝 Contributing
 
