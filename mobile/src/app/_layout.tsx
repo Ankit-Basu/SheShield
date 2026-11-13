@@ -91,6 +91,7 @@ export default function RootLayout() {
               <Stack.Screen name="report" options={{ presentation: 'modal', animation: 'slide_from_bottom' }} />
               <Stack.Screen name="reports" options={{ animation: 'slide_from_right' }} />
               <Stack.Screen name="volunteer" options={{ presentation: 'modal', animation: 'slide_from_bottom' }} />
+              <Stack.Screen name="fake-call" options={{ presentation: 'fullScreenModal', animation: 'fade', gestureEnabled: false }} />
             </Stack.Protected>
           </Stack>
           <ToastHost />

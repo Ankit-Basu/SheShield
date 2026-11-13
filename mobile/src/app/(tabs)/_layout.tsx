@@ -1,11 +1,14 @@
 import { Tabs } from 'expo-router';
 
 import { GlassTabBar } from '@/components/GlassTabBar';
+import { ToolsWatcher } from '@/components/ToolsWatcher';
 import { useTheme } from '@/lib/theme';
 
 export default function TabsLayout() {
   const theme = useTheme();
   return (
+    <>
+    <ToolsWatcher />
     <Tabs
       tabBar={(props) => <GlassTabBar {...props} />}
       screenOptions={{ headerShown: false, sceneStyle: { backgroundColor: theme.base }, animation: 'shift' }}>
@@ -14,5 +17,6 @@ export default function TabsLayout() {
       <Tabs.Screen name="walks" />
       <Tabs.Screen name="profile" />
     </Tabs>
+    </>
   );
 }

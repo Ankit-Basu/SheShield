@@ -1,6 +1,5 @@
 import * as Clipboard from 'expo-clipboard';
 import * as Haptics from 'expo-haptics';
-import * as Location from 'expo-location';
 import { router } from 'expo-router';
 import { Check, CircleAlert, Copy, LoaderCircle, MapPin, MessageSquare, Phone, Share2, X } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
@@ -14,27 +13,11 @@ import { Glass } from '@/components/Glass';
 import { HoldToSend } from '@/components/HoldToSend';
 import { T } from '@/components/Text';
 import { api } from '@/lib/api';
+import { Fix, getFix } from '@/lib/location';
 import { useMe } from '@/lib/queries';
 import { status } from '@/lib/theme';
 
 type Phase = 'idle' | 'locating' | 'sending' | 'sent' | 'failed';
-type Fix = { lat: number; lng: number; accuracy: number | null };
-
-const withTimeout = <T,>(p: Promise<T>, ms: number) => Promise.race([p, new Promise<never>((_, r) => setTimeout(() => r(new Error('timeout')), ms))]);
-
-// Last known position first (instant), then a fresh fix if it arrives within 8 s.
-async function getFix(): Promise<Fix | null> {
-  const { granted } = await Location.requestForegroundPermissionsAsync();
-  if (!granted) return null;
-  const last = await Location.getLastKnownPositionAsync({ maxAge: 120000 }).catch(() => null);
-  try {
-    const fresh = await withTimeout(Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High }), 8000);
-    return { lat: fresh.coords.latitude, lng: fresh.coords.longitude, accuracy: fresh.coords.accuracy };
-  } catch {
-    return last ? { lat: last.coords.latitude, lng: last.coords.longitude, accuracy: last.coords.accuracy } : null;
-  }
-}
-
 function Spinner({ color }: { color: string }) {
   const r = useSharedValue(0);
   useEffect(() => {
