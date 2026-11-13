@@ -19,9 +19,10 @@ const STROKE = 10;
 const R = (SIZE - STROKE) / 2;
 const C = 2 * Math.PI * R;
 
+export type Readiness = ReturnType<typeof useReadiness>;
+
 // The three things that make SOS work for you. Each unfinished one can be fixed from here.
-export function SafetyRing({ user }: { user: Me['user'] | undefined }) {
-  const theme = useTheme();
+export function useReadiness(user: Me['user'] | undefined) {
   const [location, setLocation] = useState<boolean | null>(null);
 
   // Re-check when Home comes back into view, e.g. after changing it in settings.
@@ -36,7 +37,6 @@ export function SafetyRing({ user }: { user: Me['user'] | undefined }) {
   const steps = [
     {
       label: 'Location access',
-      hint: 'Sent with every SOS',
       done: location === true,
       fix: async () => {
         const p = await Location.requestForegroundPermissionsAsync();
@@ -44,11 +44,16 @@ export function SafetyRing({ user }: { user: Me['user'] | undefined }) {
         if (p.granted) Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       },
     },
-    { label: 'Emergency contact', hint: 'SOS offers to call them', done: !!user?.emergency_contact_phone, fix: () => router.navigate('/profile') },
-    { label: 'Profile photo', hint: 'Helps your walker find you', done: !!user?.photo, fix: () => router.navigate('/profile') },
+    { label: 'Emergency contact', done: !!user?.emergency_contact_phone, fix: () => router.navigate('/profile') },
+    { label: 'Profile photo', done: !!user?.photo, fix: () => router.navigate('/profile') },
   ];
   const done = steps.filter((s) => s.done).length;
-  const ready = done === steps.length;
+  return { steps, done, ready: done === steps.length, known: location !== null && !!user };
+}
+
+export function SafetyRing({ readiness }: { readiness: Readiness }) {
+  const theme = useTheme();
+  const { steps, done, ready } = readiness;
 
   const progress = useSharedValue(0);
   useEffect(() => {
@@ -122,7 +127,7 @@ export function SafetyRing({ user }: { user: Me['user'] | undefined }) {
 }
 
 const styles = StyleSheet.create({
-  card: { flexDirection: 'row', alignItems: 'center', gap: 16, padding: 16 },
+  card: { flexDirection: 'row', alignItems: 'center', gap: 16, padding: 16, height: 196 },
   ring: { width: SIZE, height: SIZE, alignItems: 'center', justifyContent: 'center' },
   ringCenter: { position: 'absolute', alignItems: 'center' },
   step: { flexDirection: 'row', alignItems: 'center', gap: 9, paddingVertical: 4 },
