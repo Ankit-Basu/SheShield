@@ -73,12 +73,26 @@ export const useReports = () =>
     refetchInterval: retryWhileFallback('reports'),
   });
 
-export const useWalks = () =>
-  useQuery({
-    queryKey: keys.walks,
-    queryFn: () => withFallback('walks', async () => (await api<{ walks: Walk[] }>('api/walks/mine.php', read)).walks, sampleWalks),
-    refetchInterval: retryWhileFallback('walks'),
-  });
+export type WalkerProfile = { verification_status: 'pending' | 'verified' | 'rejected'; available_from: string | null; available_to: string | null; preferred_areas: string[] };
+type WalksData = { walks: Walk[]; walker_profile: WalkerProfile | null };
+
+// One request feeds both your walks and your walker profile.
+const walksQuery = {
+  queryKey: keys.walks,
+  queryFn: async (): Promise<WalksData> => {
+    const data = await withFallback<WalksData | Walk[]>(
+      'walks',
+      () => api<WalksData>('api/walks/mine.php', read),
+      () => ({ walks: sampleWalks(), walker_profile: null }),
+    );
+    // Data saved by an older version of the app was just the list.
+    return Array.isArray(data) ? { walks: data, walker_profile: null } : data;
+  },
+  refetchInterval: retryWhileFallback('walks'),
+};
+
+export const useWalks = () => useQuery({ ...walksQuery, select: (d: WalksData) => d.walks });
+export const useWalkerProfile = () => useQuery({ ...walksQuery, select: (d: WalksData) => d.walker_profile });
 
 export const useSafeSpaces = () =>
   useQuery({
@@ -107,8 +121,11 @@ export function useCancelWalk() {
     // Optimistic: show it cancelled at once, roll back if the server says no.
     onMutate: async (walkId) => {
       await qc.cancelQueries({ queryKey: keys.walks });
-      const previous = qc.getQueryData<Walk[]>(keys.walks);
-      qc.setQueryData<Walk[]>(keys.walks, (w) => w?.map((x) => (x.walk_id === walkId ? { ...x, status: 'cancelled' } : x)));
+      // The cache holds { walks, walker_profile }; only the walk's status changes.
+      const previous = qc.getQueryData<WalksData>(keys.walks);
+      qc.setQueryData<WalksData>(keys.walks, (d) =>
+        d ? { ...d, walks: d.walks.map((x) => (x.walk_id === walkId ? { ...x, status: 'cancelled' } : x)) } : d,
+      );
       return { previous };
     },
     onError: (_e, _v, ctx) => ctx?.previous && qc.setQueryData(keys.walks, ctx.previous),
@@ -124,5 +141,51 @@ export function useUpdateProfile() {
   return useMutation({
     mutationFn: (v: Partial<Me['user']>) => api('api/user/update_profile.php', { json: v }),
     onSuccess: () => qc.invalidateQueries({ queryKey: keys.me }),
+  });
+}
+
+export function useResolveReport() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: number) => api('api/incidents/resolve.php', { json: { id } }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: keys.reports });
+      qc.invalidateQueries({ queryKey: keys.me });
+    },
+  });
+}
+
+export function useUploadPhoto() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (uri: string) => {
+      const ext = (uri.split('.').pop() || 'jpg').toLowerCase();
+      const form = new FormData();
+      form.append('profile_image', { uri, name: `photo.${ext === 'png' ? 'png' : 'jpg'}`, type: ext === 'png' ? 'image/png' : 'image/jpeg' } as any);
+      return api('api/user/upload_photo.php', { form, timeoutMs: 60000 });
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: keys.me }),
+  });
+}
+
+export type WalkerForm = {
+  phone: string;
+  type: 'student' | 'staff' | 'security';
+  gender: 'female' | 'male' | 'other';
+  idProofType: 'University ID' | 'Staff ID' | 'Government ID';
+  idProofNumber: string;
+  availableFrom: string;
+  availableUntil: string;
+  preferredAreas: string[];
+};
+
+export function useRegisterWalker() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (v: WalkerForm) => api<{ message: string }>('api/walks/register_walker.php', { json: v }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: keys.walks });
+      qc.invalidateQueries({ queryKey: keys.me });
+    },
   });
 }

@@ -194,7 +194,7 @@ export default function Home() {
       <Animated.View entering={reveal(5)}>
         <Glass radius={22} style={{ paddingHorizontal: 16 }}>
           {data?.latest_reports.length ? (
-            data.latest_reports.slice(0, 3).map((r, i, arr) => <ReportRow key={r.id} r={r} last={i === arr.length - 1} />)
+            data.latest_reports.slice(0, 3).map((r, i, arr) => <ReportRow key={r.id} r={r} last={i === arr.length - 1} onPress={() => router.push('/reports')} />)
           ) : (
             <Empty icon={<Inbox size={24} color={theme.muted} />} text={isLoading ? 'Loading…' : "You haven't filed a report."} />
           )}

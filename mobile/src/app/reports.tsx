@@ -11,7 +11,8 @@ import { Glass } from '@/components/Glass';
 import { ReportRow } from '@/components/ReportRow';
 import { SourceBanner } from '@/components/SourceBanner';
 import { T } from '@/components/Text';
-import { useReports } from '@/lib/queries';
+import { toast } from '@/components/Toast';
+import { useReports, useResolveReport } from '@/lib/queries';
 import { useTheme } from '@/lib/theme';
 
 const filters = [
@@ -26,6 +27,8 @@ export default function Reports() {
   const insets = useSafeAreaInsets();
   const { data, isLoading, refetch, isRefetching, error } = useReports();
   const [filter, setFilter] = useState('all');
+  const [open, setOpen] = useState<number | null>(null);
+  const resolve = useResolveReport();
   const list = useMemo(() => (filter === 'all' ? data ?? [] : (data ?? []).filter((r) => r.status === filter)), [data, filter]);
 
   return (
@@ -59,7 +62,19 @@ export default function Reports() {
         renderItem={({ item, index }) => (
           <Animated.View entering={FadeInDown.delay(Math.min(index, 8) * 45).springify().damping(18)}>
             <Glass radius={20} style={{ paddingHorizontal: 14 }}>
-              <ReportRow r={item} last />
+              <ReportRow
+                r={item}
+                last
+                expanded={open === item.id}
+                onPress={() => setOpen((o) => (o === item.id ? null : item.id))}
+                resolving={resolve.isPending && resolve.variables === item.id}
+                onResolve={() =>
+                  resolve.mutate(item.id, {
+                    onSuccess: () => toast('Marked as resolved'),
+                    onError: (e) => toast(e.message, 'error'),
+                  })
+                }
+              />
             </Glass>
           </Animated.View>
         )}

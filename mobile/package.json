@@ -55,7 +55,7 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "eslint -c eslint.config.js src"
   },
   "private": true
 }
