@@ -1,6 +1,6 @@
 import * as Haptics from 'expo-haptics';
-import { useLocalSearchParams } from 'expo-router';
-import { ArrowUpDown, Clock, Footprints, MapPin, Navigation, Phone, Route } from 'lucide-react-native';
+import { router, useLocalSearchParams } from 'expo-router';
+import { ArrowUpDown, ChevronRight, Clock, Footprints, HeartHandshake, MapPin, Navigation, Phone, Route } from 'lucide-react-native';
 import { useState } from 'react';
 import { Linking, Pressable, StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown, LinearTransition } from 'react-native-reanimated';
@@ -14,8 +14,8 @@ import { T } from '@/components/Text';
 import { toast } from '@/components/Toast';
 import { landmarks } from '@/lib/campus';
 import { shortDateTime } from '@/lib/format';
-import { useCancelWalk, useRequestWalk, useWalks } from '@/lib/queries';
-import { useTheme } from '@/lib/theme';
+import { useCancelWalk, useRequestWalk, useWalkerProfile, useWalks } from '@/lib/queries';
+import { status, useTheme } from '@/lib/theme';
 
 const when = [
   { label: 'Now', minutes: 0 },
@@ -27,6 +27,31 @@ const when = [
 function ist(minutesFromNow: number) {
   const d = new Date(Date.now() + minutesFromNow * 60000 + 5.5 * 3600000);
   return d.toISOString().slice(0, 19).replace('T', ' ');
+}
+
+// Your walker status, or an invitation to volunteer.
+function WalkerCard() {
+  const theme = useTheme();
+  const { data: profile } = useWalkerProfile();
+  const state = profile?.verification_status;
+  const label = state === 'verified' ? 'Verified walker' : state === 'rejected' ? 'Not approved' : 'Waiting for verification';
+  const color = state === 'verified' ? status.good : state === 'rejected' ? '#ff6b6b' : status.warn;
+  return (
+    <Glass radius={22} onPress={() => router.push('/volunteer')} style={styles.walkerCard} accessibilityLabel={profile ? 'Edit your walker profile' : 'Volunteer as a walker'}>
+      <View style={[styles.walkerIcon, { backgroundColor: (profile ? color : theme.primary) + '22' }]}>
+        <HeartHandshake size={20} color={profile ? color : theme.primary} />
+      </View>
+      <View style={{ flex: 1, gap: 2 }}>
+        <T variant="label">{profile ? label : 'Volunteer as a walker'}</T>
+        <T variant="small" muted numberOfLines={2}>
+          {profile
+            ? `${profile.available_from?.slice(0, 5) ?? '?'}–${profile.available_to?.slice(0, 5) ?? '?'} · ${profile.preferred_areas.join(', ') || 'No areas yet'}`
+            : 'Walk with students who would rather not go alone.'}
+        </T>
+      </View>
+      <ChevronRight size={18} color={theme.muted} />
+    </Glass>
+  );
 }
 
 export default function Walks() {
@@ -214,11 +239,15 @@ export default function Walks() {
           </Animated.View>
         ))
       )}
+      <SectionHeader title="Help others" />
+      <WalkerCard />
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
+  walkerCard: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14 },
+  walkerIcon: { width: 42, height: 42, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
   stepHead: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   route: { flexDirection: 'row', alignItems: 'center', gap: 12 },

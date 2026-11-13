@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { ArrowRight, Footprints, MapPin, ShieldCheck, Siren } from 'lucide-react-native';
+import { ArrowRight, MapPin } from 'lucide-react-native';
 import { StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -13,16 +13,16 @@ import { T } from '@/components/Text';
 import { useTheme } from '@/lib/theme';
 
 const features = [
-  { icon: Siren, title: 'Hold for SOS', text: 'Sends your location and dials 112' },
-  { icon: Footprints, title: 'Walk With Us', text: 'A verified walker for your route' },
-  { icon: ShieldCheck, title: 'Report safely', text: 'Anonymous, even offline' },
+  { title: 'Hold for SOS', text: 'Your location goes to campus security, with 112 one tap away.' },
+  { title: 'Walk with someone', text: 'A verified student walker meets you at any landmark.' },
+  { title: 'Report safely', text: 'Anonymous if you want, and saved even without signal.' },
 ];
 
 export default function Welcome() {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   return (
-    <Scene intensity={1.15} orbs>
+    <Scene intensity={1.1}>
       <View style={[styles.body, { paddingTop: insets.top + 18, paddingBottom: insets.bottom + 22 }]}>
         <Animated.View entering={FadeInDown.duration(600)} style={styles.brand}>
           <Logo size={34} />
@@ -55,23 +55,23 @@ export default function Welcome() {
           </Animated.View>
         </View>
 
-        <View style={{ gap: 10 }}>
-          {features.map((f, i) => (
-            <Animated.View key={f.title} entering={FadeInUp.delay(420 + i * 90).springify().damping(18)}>
-              <Glass style={styles.feature} radius={20}>
-                <View style={[styles.featureIcon, { backgroundColor: theme.primary + '26' }]}>
-                  <f.icon size={19} color={theme.primary} />
-                </View>
-                <View style={{ flex: 1 }}>
+        <Animated.View entering={FadeInUp.delay(420).springify().damping(20)}>
+          <Glass radius={24} style={{ paddingHorizontal: 18 }}>
+            {features.map((f, i) => (
+              <View key={f.title} style={[styles.feature, i < features.length - 1 && styles.featureDivider]}>
+                <T variant="mono" color={theme.primary} style={{ fontSize: 12, marginTop: 2 }}>
+                  0{i + 1}
+                </T>
+                <View style={{ flex: 1, gap: 2 }}>
                   <T variant="label">{f.title}</T>
-                  <T variant="small" muted>
+                  <T variant="small" muted style={{ lineHeight: 18 }}>
                     {f.text}
                   </T>
                 </View>
-              </Glass>
-            </Animated.View>
-          ))}
-        </View>
+              </View>
+            ))}
+          </Glass>
+        </Animated.View>
 
         <Animated.View entering={FadeInUp.delay(720).duration(600)} style={{ gap: 10 }}>
           <Button label="Create an account" size="lg" icon={<ArrowRight size={18} color={theme.primaryForeground} />} onPress={() => router.push('/signup')} />
@@ -86,6 +86,6 @@ const styles = StyleSheet.create({
   body: { flex: 1, paddingHorizontal: 22, justifyContent: 'space-between' },
   brand: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   where: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  feature: { flexDirection: 'row', alignItems: 'center', gap: 13, padding: 13 },
-  featureIcon: { width: 40, height: 40, borderRadius: 13, alignItems: 'center', justifyContent: 'center' },
+  feature: { flexDirection: 'row', gap: 14, paddingVertical: 15 },
+  featureDivider: { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: 'rgba(255,255,255,0.12)' },
 });
