@@ -31,10 +31,11 @@ React Native · Expo SDK 58 · TypeScript · Expo Router · TanStack Query · Zu
 | **Volunteer as a walker** | Role, gender, phone, ID, hours and areas, the same as the website. New walkers wait for admin verification; Walks shows your status. |
 | **Incident reports** | Type, severity, time, landmark or GPS location, up to 3 photos from the camera or gallery, and a fully anonymous option. **Works offline:** with no signal the report is saved on the phone and sent automatically when the connection returns. Tap a report to read it in full and mark your own pending ones resolved. |
 | **Campus map** | Esri satellite or street tiles with the official OpenStreetMap campus outline, landmarks and safe spaces. Runs Leaflet in a WebView, so the installed app needs no map API key. Tap a landmark to walk from it or report there. |
-| **Home** | Today's date and campus time, one focal panel (your walk, or a prompt to request one), quick actions, a summary strip, recent reports and helplines with Call buttons. Pull to refresh everywhere. |
-| **Frosted glass** | Each screen keeps its background in its own blur source, and every panel blurs it on Android 12+ (iOS blurs natively). The floating tab bar blurs the screen beneath it. |
+| **Home** | A swipeable hero: the live campus card (time, next sunrise or sunset, walkers on duty, safe spaces) and an SOS-readiness ring whose missing steps are one tap away. Then your walk or a prompt to request one, the Safety tools, and a segmented switch between your reports and helplines. Pull to refresh everywhere. |
+| **Safety tools** | **Fake call**: pick who's calling and when, and the phone shows a real-looking incoming call that vibrates until answered. **Check-in timer**: if you don't check in within 10 to 45 minutes, SheShield asks if you're OK and offers SOS; it survives the app closing. **Share location**: a Google Maps pin through the share sheet. **Report**: straight to the report form. |
+| **Frosted glass** | Each screen keeps its background in its own blur source, and every panel blurs it on Android 12+ (iOS blurs natively). The floating pill tab bar blurs the screen beneath it; a glass lens springs to the open tab and SOS sits docked in a cut-out. |
 | **Never an empty screen** | Render's free server sleeps when idle and takes up to a minute to wake. Every screen loads the last data saved on the phone (or realistic sample data on a first run) if the server doesn't answer within 10 s, shows a "waking up" banner, and retries every 15 s until live data arrives. |
-| **Profile** | Change your photo, set an emergency contact for SOS, and pick one of the website's three themes (Sunset Horizon, Cosmic Night, Solar Dusk). |
+| **Profile** | Change your photo, set an emergency contact for SOS, and pick a theme from live previews of the app: the website's three (Sunset Horizon, Cosmic Night, Solar Dusk) plus Deep Ocean and Rose Quartz. |
 | **Secure sign-in** | Email and password exchange for a random token stored in the Android Keystore / iOS Keychain (`expo-secure-store`). The server keeps only a SHA-256 hash and revokes it on sign-out. |
 
 ## Tech stack
@@ -42,7 +43,7 @@ React Native · Expo SDK 58 · TypeScript · Expo Router · TanStack Query · Zu
 - **Expo SDK 58 / React Native 0.88 / React 19** with the New Architecture and the React Compiler
 - **Expo Router**: file-based routes, protected route groups, modal and full-screen modal screens
 - **TanStack Query**: server state, caching, pull-to-refresh, optimistic updates
-- **Zustand**: auth, theme, toast and offline-queue stores (theme persisted with AsyncStorage)
+- **Zustand**: auth, theme, toast, offline-queue and safety-tool stores (theme and check-in persisted with AsyncStorage)
 - **Reanimated 4**: UI-thread animations (aurora, SOS ring, tab bar, press feedback, list entry)
 - **expo-blur** (real blur via `BlurTargetView` on Android 12+), **react-native-svg** (gradients, SOS ring), **expo-linear-gradient**, **masked-view**
 - **expo-location, expo-image-picker, expo-haptics, expo-secure-store, expo-clipboard**, NetInfo, WebView

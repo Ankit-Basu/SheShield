@@ -2,7 +2,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
-// The same three tweakcn presets as the website, converted from OKLCH to hex.
+// The website's three tweakcn presets (converted from OKLCH to hex), plus two
+// app-only palettes: a cool blue glass and a soft rose.
 export const themes = {
   dawn: {
     name: 'Sunset Horizon',
@@ -39,6 +40,30 @@ export const themes = {
     destructive: '#e93632',
     aurora: ['#3a1c0a', '#b0480f', '#e8a23a'] as const,
     base: '#120d0a',
+  },
+  ocean: {
+    name: 'Deep Ocean',
+    background: '#0a1018',
+    foreground: '#e6f0fa',
+    muted: '#a6b5c7',
+    primary: '#4f9dff',
+    primaryForeground: '#04122b',
+    accent: '#2dd4bf',
+    destructive: '#ef4444',
+    aurora: ['#0b2350', '#1f5fbf', '#17998f'] as const,
+    base: '#09101a',
+  },
+  rose: {
+    name: 'Rose Quartz',
+    background: '#1a0c14',
+    foreground: '#fbeaf1',
+    muted: '#d3b4c3',
+    primary: '#ff79ad',
+    primaryForeground: '#33061a',
+    accent: '#c9a6ff',
+    destructive: '#e63946',
+    aurora: ['#3b0f2d', '#a3346f', '#7a4fd1'] as const,
+    base: '#160a12',
   },
 };
 
