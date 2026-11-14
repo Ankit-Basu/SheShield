@@ -1,23 +1,10 @@
-import { BlurTargetView } from 'expo-blur';
-import { ComponentRef, ReactNode, useRef } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { ReactNode } from 'react';
+import { View } from 'react-native';
 
-import { BackdropContext } from '@/lib/blur';
+import { useTheme } from '@/lib/theme';
 
-import { Aurora } from './Aurora';
-
-// A screen's two layers: the background (aurora and orbs) in its own blur source, so
-// every glass card above it can frost it, and the content on top.
-export function Scene({ children, intensity, orbs }: { children: ReactNode; intensity?: number; orbs?: boolean }) {
-  const backdrop = useRef<ComponentRef<typeof View>>(null);
-  return (
-    <View style={styles.fill}>
-      <BlurTargetView ref={backdrop} style={StyleSheet.absoluteFill}>
-        <Aurora intensity={intensity} orbs={orbs} />
-      </BlurTargetView>
-      <BackdropContext.Provider value={backdrop}>{children}</BackdropContext.Provider>
-    </View>
-  );
+// A screen's background: the theme's solid base colour.
+export function Scene({ children }: { children: ReactNode }) {
+  const theme = useTheme();
+  return <View style={{ flex: 1, backgroundColor: theme.base }}>{children}</View>;
 }
-
-const styles = StyleSheet.create({ fill: { flex: 1 } });

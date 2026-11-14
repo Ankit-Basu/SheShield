@@ -9,7 +9,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Avatar, Badge, SectionHeader } from '@/components/bits';
 import { Button } from '@/components/Button';
 import { Field } from '@/components/Field';
-import { Glass } from '@/components/Glass';
+import { Card } from '@/components/Card';
 import { Screen } from '@/components/Screen';
 import { SourceBanner } from '@/components/SourceBanner';
 import { T } from '@/components/Text';
@@ -43,7 +43,7 @@ function ContactForm({ user }: { user: Me['user'] }) {
     );
 
   return (
-    <Glass radius={26} style={{ padding: 16, gap: 14 }}>
+    <Card radius={26} style={{ padding: 16, gap: 14 }}>
       <View style={styles.note}>
         <HeartHandshake size={18} color={theme.primary} />
         <T variant="small" muted style={{ flex: 1 }}>
@@ -54,7 +54,7 @@ function ContactForm({ user }: { user: Me['user'] }) {
       <Field label="Their phone" value={contactPhone} onChangeText={setContactPhone} placeholder="+91 98765 43210" keyboardType="phone-pad" icon={<Phone size={17} color={theme.muted} />} />
       <Field label="Your phone" value={phone} onChangeText={setPhone} placeholder="+91" keyboardType="phone-pad" icon={<Phone size={17} color={theme.muted} />} />
       <Button label="Save" loading={update.isPending} onPress={save} />
-    </Glass>
+    </Card>
   );
 }
 
@@ -101,10 +101,10 @@ export default function Profile() {
     <Screen refreshing={isRefetching} onRefresh={refetch}>
       <SourceBanner keys={["me"]} />
       <Animated.View entering={FadeInDown.springify().damping(18)}>
-        <Glass radius={30} strong style={styles.hero} tint={[theme.primary + '22', 'rgba(255,255,255,0.02)']}>
+        <Card radius={30} strong style={styles.hero}>
           <Pressable onPress={changePhoto} disabled={upload.isPending} accessibilityRole="button" accessibilityLabel="Change profile photo" hitSlop={6}>
             <Avatar uri={absoluteUrl(u?.photo)} name={fullName} size={78} />
-            <View style={[styles.camera, { backgroundColor: theme.primary }]}>
+            <View style={[styles.camera, { backgroundColor: theme.primary, borderColor: theme.surface }]}>
               {upload.isPending ? <ActivityIndicator size="small" color={theme.primaryForeground} /> : <Camera size={14} color={theme.primaryForeground} />}
             </View>
           </Pressable>
@@ -124,11 +124,11 @@ export default function Profile() {
               ) : null}
             </View>
           </View>
-        </Glass>
+        </Card>
       </Animated.View>
 
       <Animated.View entering={FadeInDown.delay(60).springify().damping(18)}>
-        <Glass radius={22} flat style={styles.stats}>
+        <Card radius={22} flat style={styles.stats}>
           {[
             ['Reports', data?.stats.reports ?? 0],
             ['Resolved', data?.stats.resolved ?? 0],
@@ -143,7 +143,7 @@ export default function Profile() {
               </T>
             </View>
           ))}
-        </Glass>
+        </Card>
       </Animated.View>
 
       <View style={styles.themeHead}>
@@ -162,7 +162,7 @@ export default function Profile() {
       </Animated.View>
 
       <SectionHeader title="About" />
-      <Glass radius={24} style={{ padding: 16, gap: 12 }}>
+      <Card radius={24} style={{ padding: 16, gap: 12 }}>
         <View style={styles.aboutRow}>
           <ShieldCheck size={17} color={theme.muted} />
           <T variant="small" style={{ flex: 1 }}>
@@ -181,7 +181,7 @@ export default function Profile() {
             Built by students at Lovely Professional University
           </T>
         </View>
-      </Glass>
+      </Card>
 
       <Button label="Sign out" variant="ghost" icon={<LogOut size={17} color={theme.foreground} />} onPress={confirmSignOut} />
     </Screen>
@@ -189,11 +189,11 @@ export default function Profile() {
 }
 
 const styles = StyleSheet.create({
-  camera: { position: 'absolute', right: -2, bottom: -2, width: 28, height: 28, borderRadius: 14, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: 'rgba(20,12,18,0.9)' },
+  camera: { position: 'absolute', right: -2, bottom: -2, width: 28, height: 28, borderRadius: 14, alignItems: 'center', justifyContent: 'center', borderWidth: 2 },
   hero: { flexDirection: 'row', alignItems: 'center', gap: 15, padding: 18 },
   stats: { flexDirection: 'row', paddingVertical: 14 },
   statBox: { flex: 1, alignItems: 'center', gap: 2 },
-  statDivider: { borderLeftWidth: StyleSheet.hairlineWidth, borderLeftColor: 'rgba(255,255,255,0.16)' },
+  statDivider: { borderLeftWidth: StyleSheet.hairlineWidth, borderLeftColor: 'rgba(127,127,127,0.22)' },
   themeHead: { gap: 2 },
   note: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   aboutRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },

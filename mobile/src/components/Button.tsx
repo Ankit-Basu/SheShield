@@ -1,17 +1,16 @@
 import * as Haptics from 'expo-haptics';
-import { LinearGradient } from 'expo-linear-gradient';
 import { ReactNode } from 'react';
 import { ActivityIndicator, Pressable, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
-import { glass, useTheme } from '@/lib/theme';
+import { sosRed, useTheme } from '@/lib/theme';
 
 import { T } from './Text';
 
 type Props = {
   label: string;
   onPress?: () => void;
-  variant?: 'primary' | 'ghost' | 'danger';
+  variant?: 'primary' | 'ghost' | 'danger' | 'onDark';
   icon?: ReactNode;
   loading?: boolean;
   disabled?: boolean;
@@ -26,9 +25,9 @@ export function Button({ label, onPress, variant = 'primary', icon, loading, dis
   const height = size === 'lg' ? 58 : 50;
   const off = disabled || loading;
 
-  const colors: readonly [string, string] =
-    variant === 'danger' ? ['#ff4d5e', theme.destructive] : [theme.accent, theme.primary];
-  const fg = variant === 'ghost' ? theme.foreground : variant === 'danger' ? '#fff' : theme.primaryForeground;
+  // onDark: for the always-dark SOS screen, whatever the theme.
+  const bg = variant === 'ghost' ? theme.surfaceAlt : variant === 'onDark' ? 'rgba(255,255,255,0.12)' : variant === 'danger' ? sosRed : theme.primary;
+  const fg = variant === 'ghost' ? theme.foreground : variant === 'danger' || variant === 'onDark' ? '#fff' : theme.primaryForeground;
 
   return (
     <Pressable
@@ -43,10 +42,7 @@ export function Button({ label, onPress, variant = 'primary', icon, loading, dis
       }}
       style={style}>
       <Animated.View style={[anim, { opacity: disabled ? 0.5 : 1 }]}>
-        <View style={[styles.base, { height, borderRadius: height / 2 }, variant === 'ghost' && styles.ghost]}>
-          {variant !== 'ghost' && (
-            <LinearGradient colors={colors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[StyleSheet.absoluteFill, { borderRadius: height / 2 }]} />
-          )}
+        <View style={[styles.base, { height, borderRadius: height / 2, backgroundColor: bg }, variant === 'ghost' && { borderWidth: 1, borderColor: theme.line }, variant === 'onDark' && { borderWidth: 1, borderColor: 'rgba(255,255,255,0.22)' }]}>
           {loading ? (
             <ActivityIndicator color={fg} />
           ) : (
@@ -65,5 +61,4 @@ export function Button({ label, onPress, variant = 'primary', icon, loading, dis
 
 const styles = StyleSheet.create({
   base: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingHorizontal: 18, overflow: 'hidden' },
-  ghost: { backgroundColor: glass.fill, borderWidth: 1, borderColor: glass.line, borderTopColor: glass.lineTop },
 });

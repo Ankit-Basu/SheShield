@@ -75,7 +75,7 @@ export function CampusCard({ time, next, isDay, walkers, safeSpaces }: Props) {
 }
 
 const styles = StyleSheet.create({
-  card: { height: 196, borderRadius: 28, overflow: 'hidden', padding: 16, justifyContent: 'space-between', borderWidth: 1, borderColor: 'rgba(255,255,255,0.14)' },
+  card: { height: 196, borderRadius: 28, overflow: 'hidden', padding: 16, justifyContent: 'space-between', borderWidth: 0 },
   top: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   live: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 10, height: 26, borderRadius: 13, backgroundColor: 'rgba(0,0,0,0.45)' },
   liveDot: { width: 6, height: 6, borderRadius: 3 },

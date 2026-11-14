@@ -9,7 +9,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Chip } from '@/components/bits';
 import { Button } from '@/components/Button';
 import { Field } from '@/components/Field';
-import { Glass } from '@/components/Glass';
+import { Card } from '@/components/Card';
 import { Scene } from '@/components/Scene';
 import { T } from '@/components/Text';
 import { toast } from '@/components/Toast';
@@ -80,7 +80,7 @@ export default function Volunteer() {
   };
 
   return (
-    <Scene intensity={0.85}>
+    <Scene>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={[styles.body, { paddingTop: insets.top + 12, paddingBottom: insets.bottom + 28 }]} keyboardShouldPersistTaps="handled">
           <View style={styles.head}>
@@ -96,7 +96,7 @@ export default function Volunteer() {
           </View>
 
           <Animated.View entering={FadeInDown.springify().damping(20)}>
-            <Glass radius={24} style={styles.card}>
+            <Card radius={24} style={styles.card}>
               <Group title="You are">
                 {roles.map((r) => (
                   <Chip key={r.value} label={r.label} selected={type === r.value} onPress={() => setType(r.value)} />
@@ -108,22 +108,22 @@ export default function Volunteer() {
                 ))}
               </Group>
               <Field label="Phone" value={phone} onChangeText={setPhone} placeholder="+91 98765 43210" keyboardType="phone-pad" icon={<Phone size={17} color={theme.muted} />} />
-            </Glass>
+            </Card>
           </Animated.View>
 
           <Animated.View entering={FadeInDown.delay(60).springify().damping(20)}>
-            <Glass radius={24} style={styles.card}>
+            <Card radius={24} style={styles.card}>
               <Group title="ID for verification">
                 {idTypes.map((t) => (
                   <Chip key={t} label={t} selected={idType === t} onPress={() => setIdType(t)} />
                 ))}
               </Group>
               <Field label="ID number" value={idNumber} onChangeText={setIdNumber} placeholder="Only admins can see this" autoCapitalize="characters" icon={<IdCard size={17} color={theme.muted} />} />
-            </Glass>
+            </Card>
           </Animated.View>
 
           <Animated.View entering={FadeInDown.delay(120).springify().damping(20)}>
-            <Glass radius={24} style={styles.card}>
+            <Card radius={24} style={styles.card}>
               <Group title="Available from">
                 {fromTimes.map((t) => (
                   <Chip key={t} label={t} selected={from === t} onPress={() => setFrom(t)} />
@@ -139,7 +139,7 @@ export default function Volunteer() {
                   <Chip key={l.name} label={l.name} selected={areas.includes(l.name)} onPress={() => toggleArea(l.name)} />
                 ))}
               </Group>
-            </Glass>
+            </Card>
           </Animated.View>
 
           <Button label={profile ? 'Save changes' : 'Volunteer'} size="lg" icon={<BadgeCheck size={18} color={theme.primaryForeground} />} loading={register.isPending} onPress={submit} />
@@ -152,7 +152,7 @@ export default function Volunteer() {
 const styles = StyleSheet.create({
   body: { paddingHorizontal: 18, gap: 14 },
   head: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, marginBottom: 2 },
-  close: { width: 42, height: 42, borderRadius: 21, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.08)' },
+  close: { width: 42, height: 42, borderRadius: 21, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(127,127,127,0.1)' },
   card: { padding: 16, gap: 16 },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
 });

@@ -33,9 +33,9 @@ React Native · Expo SDK 58 · TypeScript · Expo Router · TanStack Query · Zu
 | **Campus map** | Esri satellite or street tiles with the official OpenStreetMap campus outline, landmarks and safe spaces. Runs Leaflet in a WebView, so the installed app needs no map API key. Tap a landmark to walk from it or report there. |
 | **Home** | A swipeable hero: the live campus card (time, next sunrise or sunset, walkers on duty, safe spaces) and an SOS-readiness ring whose missing steps are one tap away. Then your walk or a prompt to request one, the Safety tools, and a segmented switch between your reports and helplines. Pull to refresh everywhere. |
 | **Safety tools** | **Fake call**: pick who's calling and when, and the phone shows a real-looking incoming call that vibrates until answered. **Check-in timer**: if you don't check in within 10 to 45 minutes, SheShield asks if you're OK and offers SOS; it survives the app closing. **Share location**: a Google Maps pin through the share sheet. **Report**: straight to the report form. |
-| **Frosted glass** | Each screen keeps its background in its own blur source, and every panel blurs it on Android 12+ (iOS blurs natively). The floating pill tab bar blurs the screen beneath it; a glass lens springs to the open tab and SOS sits docked in a cut-out. |
+| **Flat design system** | Solid surfaces, ink text and one accent per theme, in the style of product templates rather than gradients and glass. Every colour comes from theme tokens (surface, line, accent, soft, dock, selected), so light and dark themes share one set of components. The tab bar is a solid dock; an accent pill slides to the open tab and SOS sits in a cut-out. |
 | **Never an empty screen** | Render's free server sleeps when idle and takes up to a minute to wake. Every screen loads the last data saved on the phone (or realistic sample data on a first run) if the server doesn't answer within 10 s, shows a "waking up" banner, and retries every 15 s until live data arrives. |
-| **Profile** | Change your photo, set an emergency contact for SOS, and pick a theme from live previews of the app: the website's three (Sunset Horizon, Cosmic Night, Solar Dusk) plus Deep Ocean and Rose Quartz. |
+| **Profile** | Change your photo, set an emergency contact for SOS, and pick a theme from miniature previews of the app: Paper (default), Sand and Lilac (light), Ink and Midnight (dark). |
 | **Secure sign-in** | Email and password exchange for a random token stored in the Android Keystore / iOS Keychain (`expo-secure-store`). The server keeps only a SHA-256 hash and revokes it on sign-out. |
 
 ## Tech stack
@@ -44,8 +44,8 @@ React Native · Expo SDK 58 · TypeScript · Expo Router · TanStack Query · Zu
 - **Expo Router**: file-based routes, protected route groups, modal and full-screen modal screens
 - **TanStack Query**: server state, caching, pull-to-refresh, optimistic updates
 - **Zustand**: auth, theme, toast, offline-queue and safety-tool stores (theme and check-in persisted with AsyncStorage)
-- **Reanimated 4**: UI-thread animations (aurora, SOS ring, tab bar, press feedback, list entry)
-- **expo-blur** (real blur via `BlurTargetView` on Android 12+), **react-native-svg** (gradients, SOS ring), **expo-linear-gradient**, **masked-view**
+- **Reanimated 4**: UI-thread animations (SOS ring, sliding tab indicator, carousel, press feedback, list entry)
+- **react-native-svg** (readiness and SOS rings), **expo-linear-gradient** (photo scrims)
 - **expo-location, expo-image-picker, expo-haptics, expo-secure-store, expo-clipboard**, NetInfo, WebView
 - **Lucide** icons, **Clash Display** + **Plus Jakarta Sans** + **JetBrains Mono** fonts
 - Backend: the SheShield PHP + MySQL API in the [repository root](../), deployed on Render and Vercel
@@ -57,19 +57,21 @@ src/
   app/                       Expo Router: every file is a screen
     _layout.tsx              fonts, providers, auth-guarded stacks, offline sync
     welcome.tsx login.tsx signup.tsx         signed-out screens
-    (tabs)/_layout.tsx       custom glass tab bar with the SOS button
+    (tabs)/_layout.tsx       custom tab bar with the SOS button, Safety-tool timers
     (tabs)/index.tsx map.tsx walks.tsx profile.tsx
     sos.tsx                  full-screen emergency flow
     report.tsx reports.tsx   new report (modal) and history
     volunteer.tsx            walker registration (modal)
-  components/                Glass, Scene, Button, Field, HoldToSend, CampusMap, GlassTabBar…
+    fake-call.tsx            the Safety tools fake incoming call
+  components/                Card, Button, Field, Sheet, Segmented, TabBar, SafetyTools, HoldToSend, CampusMap…
   lib/
     api.ts                   fetch wrapper: base URL, bearer token, timeouts, honest errors
     auth.ts                  token in SecureStore, Zustand store
     queries.ts               TanStack Query hooks and mutations
     fallback.ts sample.ts    saved or sample data while the server wakes
     offline.ts               offline report queue + NetInfo auto-retry
-    blur.ts theme.ts         blur sources, three themes, fonts, glass tokens
+    theme.ts                 five themes as tokens, status colours, fonts
+    tools.ts location.ts     check-in and fake-call stores, shared GPS helper
     campus.ts format.ts lpu-boundary.ts
 ```
 

@@ -1,4 +1,5 @@
 import { LinearGradient } from 'expo-linear-gradient';
+import { StatusBar } from 'expo-status-bar';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Grid3x3, MicOff, Pause, Phone, PhoneOff, Plus, Video, Volume2 } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
@@ -74,6 +75,7 @@ export default function FakeCall() {
 
   return (
     <View style={styles.fill}>
+      <StatusBar style="light" />
       <LinearGradient colors={['#1b2330', '#10141c', '#07090d']} style={StyleSheet.absoluteFill} />
       <View style={[styles.top, { paddingTop: insets.top + 56 }]}>
         <T variant="small" color="rgba(255,255,255,0.7)">

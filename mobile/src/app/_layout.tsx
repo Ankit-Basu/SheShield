@@ -78,7 +78,7 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: theme.base }}>
       <SafeAreaProvider>
         <QueryClientProvider client={queryClient}>
-          <StatusBar style="light" />
+          <StatusBar style={theme.mode === "light" ? "dark" : "light"} />
           <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: theme.base }, animation: 'fade_from_bottom' }}>
             <Stack.Protected guard={!token} redirectTo="/">
               <Stack.Screen name="welcome" />

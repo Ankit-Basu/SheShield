@@ -1,5 +1,4 @@
 import * as Haptics from 'expo-haptics';
-import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { ArrowUpRight, FilePlus, LocateFixed, PhoneIncoming, Timer } from 'lucide-react-native';
 import { ReactNode, useEffect, useState } from 'react';
@@ -8,11 +7,11 @@ import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-na
 
 import { getFix, mapsLink } from '@/lib/location';
 import { mmss, useCheckIn, useFakeCall } from '@/lib/tools';
-import { glass, status, useTheme } from '@/lib/theme';
+import { status, useTheme } from '@/lib/theme';
 
 import { Chip } from './bits';
 import { Button } from './Button';
-import { Glass } from './Glass';
+import { Card } from './Card';
 import { Sheet } from './Sheet';
 import { T } from './Text';
 import { toast } from './Toast';
@@ -33,6 +32,7 @@ export function useNow(active: boolean) {
   return now;
 }
 
+// On an active tile (filled with the accent) the switch inverts to stay visible.
 function Switch({ on }: { on: boolean }) {
   const theme = useTheme();
   const v = useSharedValue(on ? 1 : 0);
@@ -41,8 +41,8 @@ function Switch({ on }: { on: boolean }) {
   }, [on, v]);
   const knob = useAnimatedStyle(() => ({ transform: [{ translateX: 14 * v.value }] }));
   return (
-    <View style={[styles.switch, { backgroundColor: on ? theme.primary : 'rgba(255,255,255,0.14)' }]}>
-      <Animated.View style={[styles.knob, knob]} />
+    <View style={[styles.switch, { backgroundColor: on ? theme.primaryForeground : theme.line }]}>
+      <Animated.View style={[styles.knob, { backgroundColor: on ? theme.primary : theme.surface }, knob]} />
     </View>
   );
 }
@@ -62,25 +62,25 @@ function Tile({ icon, title, detail, active, progress, corner, onPress, label }:
   const theme = useTheme();
   return (
     <View style={styles.cell}>
-      <Glass radius={24} flat onPress={onPress} accessibilityLabel={label} style={styles.tile} tint={active ? [theme.primary + '3a', theme.accent + '12'] : undefined}>
+      <Card radius={24} onPress={onPress} accessibilityLabel={label} style={styles.tile} fill={active ? theme.primary : undefined}>
         <View style={styles.tileTop}>
-          <View style={[styles.tileIcon, { backgroundColor: active ? theme.primary : 'rgba(255,255,255,0.09)' }]}>{icon}</View>
-          {corner ?? <ArrowUpRight size={16} color={theme.muted} />}
+          <View style={[styles.tileIcon, { backgroundColor: active ? theme.primaryForeground + '26' : theme.surfaceAlt }]}>{icon}</View>
+          {corner ?? <ArrowUpRight size={16} color={active ? theme.primaryForeground : theme.muted} />}
         </View>
         <View style={{ gap: 1 }}>
-          <T variant="label" style={{ fontSize: 15 }}>
+          <T variant="label" color={active ? theme.primaryForeground : theme.foreground} style={{ fontSize: 15 }}>
             {title}
           </T>
-          <T variant="small" color={active ? theme.foreground : theme.muted} numberOfLines={1} style={{ fontSize: 12, fontVariant: ['tabular-nums'] }}>
+          <T variant="small" color={active ? theme.primaryForeground : theme.muted} numberOfLines={1} style={{ fontSize: 12, fontVariant: ['tabular-nums'], opacity: active ? 0.85 : 1 }}>
             {detail}
           </T>
         </View>
         {progress != null ? (
-          <View style={styles.bar}>
-            <LinearGradient colors={[theme.accent, theme.primary]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={[styles.barFill, { width: `${Math.round(progress * 100)}%` }]} />
+          <View style={[styles.bar, { backgroundColor: theme.primaryForeground + '33' }]}>
+            <View style={[styles.barFill, { backgroundColor: theme.primaryForeground, width: `${Math.round(progress * 100)}%` }]} />
           </View>
         ) : null}
-      </Glass>
+      </Card>
     </View>
   );
 }
@@ -224,8 +224,8 @@ export function SafetyTools({ contactName }: { contactName?: string | null }) {
             <T variant="display" style={{ fontSize: 48, lineHeight: 52, textAlign: 'center', fontVariant: ['tabular-nums'] }}>
               {mmss(left)}
             </T>
-            <View style={styles.bigBar}>
-              <LinearGradient colors={[theme.accent, theme.primary]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={[styles.barFill, { width: `${Math.round((1 - left / (checkIn.minutes * 60_000)) * 100)}%` }]} />
+            <View style={[styles.bigBar, { backgroundColor: theme.surfaceAlt }]}>
+              <View style={[styles.barFill, { backgroundColor: theme.primary, width: `${Math.round((1 - left / (checkIn.minutes * 60_000)) * 100)}%` }]} />
             </View>
             <View style={{ flexDirection: 'row', gap: 10 }}>
               <Button style={{ flex: 1 }} label="+10 min" variant="ghost" onPress={() => checkIn.extend(10)} />
@@ -251,7 +251,7 @@ export function SafetyTools({ contactName }: { contactName?: string | null }) {
                 ))}
               </View>
             </View>
-            <View style={[styles.hint, { borderColor: status.info + '40' }]}>
+            <View style={[styles.hint, { borderColor: status.info + '40', backgroundColor: status.info + '14' }]}>
               <T variant="small" muted style={{ flex: 1 }}>
                 Keep SheShield open in the background. The timer shows on Home until you check in.
               </T>
@@ -279,10 +279,10 @@ const styles = StyleSheet.create({
   tileTop: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' },
   tileIcon: { width: 40, height: 40, borderRadius: 13, alignItems: 'center', justifyContent: 'center' },
   switch: { width: 34, height: 20, borderRadius: 10, padding: 2 },
-  knob: { width: 16, height: 16, borderRadius: 8, backgroundColor: '#fff' },
-  bar: { position: 'absolute', left: 14, right: 14, bottom: 8, height: 3, borderRadius: 2, backgroundColor: 'rgba(255,255,255,0.1)', overflow: 'hidden' },
-  bigBar: { height: 6, borderRadius: 3, backgroundColor: 'rgba(255,255,255,0.1)', overflow: 'hidden' },
+  knob: { width: 16, height: 16, borderRadius: 8 },
+  bar: { position: 'absolute', left: 14, right: 14, bottom: 8, height: 3, borderRadius: 2, overflow: 'hidden' },
+  bigBar: { height: 6, borderRadius: 3, overflow: 'hidden' },
   barFill: { height: '100%', borderRadius: 3 },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  hint: { flexDirection: 'row', padding: 12, borderRadius: 16, borderWidth: 1, backgroundColor: glass.fill },
+  hint: { flexDirection: 'row', padding: 12, borderRadius: 16, borderWidth: 1 },
 });

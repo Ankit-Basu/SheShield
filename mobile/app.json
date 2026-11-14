@@ -6,8 +6,8 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "sheshield",
-    "userInterfaceStyle": "dark",
-    "backgroundColor": "#170d17",
+    "userInterfaceStyle": "automatic",
+    "backgroundColor": "#f4f1ea",
     "ios": {
       "bundleIdentifier": "com.ankitbasu.sheshield",
       "supportsTablet": false,
@@ -37,7 +37,7 @@
     "web": {
       "output": "single",
       "favicon": "./assets/images/favicon.png",
-      "backgroundColor": "#170d17"
+      "backgroundColor": "#f4f1ea"
     },
     "plugins": [
       "expo-router",
@@ -46,7 +46,7 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#170d17",
+          "backgroundColor": "#f4f1ea",
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 120
         }

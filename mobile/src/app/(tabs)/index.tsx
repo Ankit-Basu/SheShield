@@ -6,7 +6,7 @@ import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 
 import { Avatar, Badge, Empty } from '@/components/bits';
 import { CampusCard } from '@/components/CampusCard';
-import { Glass } from '@/components/Glass';
+import { Card } from '@/components/Card';
 import { HeroCarousel, HeroCarouselHandle } from '@/components/HeroCarousel';
 import { ReportRow } from '@/components/ReportRow';
 import { SafetyRing, useReadiness } from '@/components/SafetyRing';
@@ -119,12 +119,12 @@ export default function Home() {
       <SourceBanner keys={['me']} />
 
       {queued > 0 && (
-        <Glass style={styles.notice} radius={18} flat tint={[status.warn + '24', 'rgba(255,255,255,0.02)']}>
+        <Card style={styles.notice} radius={18} flat fill={status.warn + '1f'}>
           <CloudOff size={18} color={status.warn} />
           <T variant="small" style={{ flex: 1 }}>
             {queued} report{queued === 1 ? ' is' : 's are'} saved on this phone and will send when you&apos;re back online.
           </T>
-        </Glass>
+        </Card>
       )}
 
       {/* The hero: the campus right now, and how ready SOS is. Swipe between them. */}
@@ -145,7 +145,7 @@ export default function Home() {
       {/* Your walk, or a quiet invitation to request one. */}
       <Animated.View entering={reveal(2)}>
         {walk ? (
-          <Glass strong radius={26} onPress={() => router.navigate('/walks')} style={styles.focus} accessibilityLabel="Your walk">
+          <Card strong radius={26} onPress={() => router.navigate('/walks')} style={styles.focus} accessibilityLabel="Your walk">
             <View style={styles.focusTop}>
               <T variant="small" muted>
                 Your walk
@@ -171,10 +171,10 @@ export default function Home() {
             <T variant="small" muted>
               {walk.walker_name ? `${walk.walker_name} is walking with you` : 'Finding a verified walker'} · {shortDateTime(walk.request_time)}
             </T>
-          </Glass>
+          </Card>
         ) : (
-          <Glass radius={22} onPress={() => router.navigate('/walks')} style={styles.invite} accessibilityLabel="Request a walk">
-            <View style={[styles.inviteIcon, { backgroundColor: theme.primary + '24' }]}>
+          <Card radius={22} onPress={() => router.navigate('/walks')} style={styles.invite} accessibilityLabel="Request a walk">
+            <View style={[styles.inviteIcon, { backgroundColor: theme.soft }]}>
               <Footprints size={20} color={theme.primary} />
             </View>
             <View style={{ flex: 1 }}>
@@ -186,7 +186,7 @@ export default function Home() {
             <View style={[styles.inviteGo, { backgroundColor: theme.primary }]}>
               <ChevronRight size={18} color={theme.primaryForeground} />
             </View>
-          </Glass>
+          </Card>
         )}
       </Animated.View>
 
@@ -206,7 +206,7 @@ export default function Home() {
         />
         {tab === 'reports' ? (
           <Animated.View key="reports" entering={FadeIn.duration(220)}>
-            <Glass radius={22} style={{ paddingHorizontal: 16 }}>
+            <Card radius={22} style={{ paddingHorizontal: 16 }}>
               {reports.length ? (
                 <>
                   {reports.slice(0, 3).map((r, i, arr) => (
@@ -222,11 +222,11 @@ export default function Home() {
               ) : (
                 <Empty icon={<Inbox size={24} color={theme.muted} />} text={isLoading ? 'Loading…' : "You haven't filed a report. If something happens, Report is in Safety tools above."} />
               )}
-            </Glass>
+            </Card>
           </Animated.View>
         ) : (
           <Animated.View key="helplines" entering={FadeIn.duration(220)}>
-            <Glass radius={22} style={{ paddingHorizontal: 16 }}>
+            <Card radius={22} style={{ paddingHorizontal: 16 }}>
               {helplines.map((h, i) => (
                 <View key={h.number} style={[styles.line, i < helplines.length - 1 && styles.lineDivider]}>
                   <T variant="heading" style={{ width: 58, fontVariant: ['tabular-nums'] }}>
@@ -237,7 +237,7 @@ export default function Home() {
                   </T>
                   <Pressable
                     onPress={() => Linking.openURL(`tel:${h.number}`)}
-                    style={[styles.call, { backgroundColor: theme.primary + '22' }]}
+                    style={[styles.call, { backgroundColor: theme.soft }]}
                     hitSlop={6}
                     accessibilityRole="button"
                     accessibilityLabel={`Call ${h.label}, ${h.number}`}>
@@ -248,7 +248,7 @@ export default function Home() {
                   </Pressable>
                 </View>
               ))}
-            </Glass>
+            </Card>
           </Animated.View>
         )}
       </Animated.View>
@@ -269,12 +269,12 @@ const styles = StyleSheet.create({
   route: { flexDirection: 'row', gap: 14 },
   routeLine: { alignItems: 'center', paddingVertical: 6 },
   routeDot: { width: 10, height: 10, borderRadius: 5 },
-  routeDash: { width: 2, flex: 1, marginVertical: 4, borderRadius: 1, backgroundColor: 'rgba(255,255,255,0.2)' },
-  hairline: { height: StyleSheet.hairlineWidth, backgroundColor: 'rgba(255,255,255,0.14)' },
+  routeDash: { width: 2, flex: 1, marginVertical: 4, borderRadius: 1, backgroundColor: 'rgba(127,127,127,0.22)' },
+  hairline: { height: StyleSheet.hairlineWidth, backgroundColor: 'rgba(127,127,127,0.22)' },
   section: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 6, marginBottom: -4, paddingHorizontal: 4 },
   sectionAction: { flexDirection: 'row', alignItems: 'center', gap: 2 },
-  seeAll: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 2, paddingVertical: 14, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: 'rgba(255,255,255,0.12)' },
+  seeAll: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 2, paddingVertical: 14, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: 'rgba(127,127,127,0.22)' },
   line: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 14 },
-  lineDivider: { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: 'rgba(255,255,255,0.12)' },
+  lineDivider: { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: 'rgba(127,127,127,0.22)' },
   call: { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 12, height: 32, borderRadius: 16 },
 });

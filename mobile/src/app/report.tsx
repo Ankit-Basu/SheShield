@@ -15,7 +15,7 @@ import { Scene } from '@/components/Scene';
 import { Chip } from '@/components/bits';
 import { Button } from '@/components/Button';
 import { Field } from '@/components/Field';
-import { Glass } from '@/components/Glass';
+import { Card } from '@/components/Card';
 import { T } from '@/components/Text';
 import { toast } from '@/components/Toast';
 import { ApiError } from '@/lib/api';
@@ -141,7 +141,7 @@ export default function Report() {
   }
 
   return (
-    <Scene intensity={0.8}>
+    <Scene>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={[styles.body, { paddingTop: insets.top + 12, paddingBottom: insets.bottom + 28 }]} keyboardShouldPersistTaps="handled">
           <View style={styles.head}>
@@ -154,7 +154,7 @@ export default function Report() {
             </Pressable>
           </View>
 
-          <Glass radius={26} style={styles.card}>
+          <Card radius={26} style={styles.card}>
             <T variant="eyebrow">What happened</T>
             <View style={styles.typeGrid}>
               {incidentTypes.map((t) => {
@@ -167,7 +167,7 @@ export default function Report() {
                       Haptics.selectionAsync();
                       setType(t.value);
                     }}
-                    style={[styles.type, on ? { borderColor: theme.primary, backgroundColor: theme.primary + '24' } : null]}
+                    style={[styles.type, on ? { borderColor: theme.primary, backgroundColor: theme.soft } : null]}
                     accessibilityRole="radio"
                     accessibilityState={{ checked: on }}>
                     <Icon size={20} color={on ? theme.primary : theme.muted} />
@@ -196,9 +196,9 @@ export default function Report() {
                 <Chip key={t.label} label={t.label} selected={hoursAgo === t.hours} onPress={() => setHoursAgo(t.hours)} />
               ))}
             </View>
-          </Glass>
+          </Card>
 
-          <Glass radius={26} style={styles.card}>
+          <Card radius={26} style={styles.card}>
             <Field label="Where" value={location} onChangeText={setLocation} placeholder="e.g. Block 34, ground floor" />
             <View style={styles.row}>
               <Chip label={locating ? 'Locating…' : 'Use my location'} icon={<LocateFixed size={14} color={theme.primary} />} onPress={useMyLocation} />
@@ -207,9 +207,9 @@ export default function Report() {
               ))}
             </View>
             <Field label="What happened" value={description} onChangeText={setDescription} placeholder="Describe it in your own words. Include anything that could help, like a description or a vehicle number." multiline />
-          </Glass>
+          </Card>
 
-          <Glass radius={26} style={styles.card}>
+          <Card radius={26} style={styles.card}>
             <T variant="eyebrow">Evidence (optional)</T>
             <View style={styles.row}>
               {photos.map((uri) => (
@@ -240,9 +240,9 @@ export default function Report() {
                   Not linked to your account at all.
                 </T>
               </View>
-              <Switch value={anonymous} onValueChange={setAnonymous} trackColor={{ true: theme.primary, false: 'rgba(255,255,255,0.2)' }} thumbColor="#fff" />
+              <Switch value={anonymous} onValueChange={setAnonymous} trackColor={{ true: theme.primary, false: 'rgba(127,127,127,0.22)' }} thumbColor="#fff" />
             </View>
-          </Glass>
+          </Card>
 
           <Button label="Send report" size="lg" loading={busy} onPress={submit} />
         </ScrollView>
@@ -254,14 +254,14 @@ export default function Report() {
 const styles = StyleSheet.create({
   body: { paddingHorizontal: 18, gap: 14 },
   head: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 2 },
-  close: { width: 42, height: 42, borderRadius: 21, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.08)' },
+  close: { width: 42, height: 42, borderRadius: 21, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(127,127,127,0.1)' },
   card: { padding: 16, gap: 12 },
   typeGrid: { flexDirection: 'row', flexWrap: 'wrap', rowGap: 8, justifyContent: 'space-between' },
-  type: { width: '32%', minHeight: 78, borderRadius: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.12)', backgroundColor: 'rgba(255,255,255,0.04)', alignItems: 'center', justifyContent: 'center', gap: 6, padding: 8 },
+  type: { width: '32%', minHeight: 78, borderRadius: 16, borderWidth: 1, borderColor: 'rgba(127,127,127,0.22)', backgroundColor: 'rgba(127,127,127,0.1)', alignItems: 'center', justifyContent: 'center', gap: 6, padding: 8 },
   row: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   thumb: { width: 74, height: 74, borderRadius: 14, overflow: 'hidden' },
   remove: { position: 'absolute', top: 4, right: 4, width: 22, height: 22, borderRadius: 11, backgroundColor: 'rgba(0,0,0,0.6)', alignItems: 'center', justifyContent: 'center' },
-  add: { width: 74, height: 74, borderRadius: 14, borderWidth: 1.5, borderStyle: 'dashed', borderColor: 'rgba(255,255,255,0.25)', alignItems: 'center', justifyContent: 'center' },
+  add: { width: 74, height: 74, borderRadius: 14, borderWidth: 1.5, borderStyle: 'dashed', borderColor: 'rgba(127,127,127,0.22)', alignItems: 'center', justifyContent: 'center' },
   anon: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 4 },
   done: { flex: 1, paddingHorizontal: 24, alignItems: 'center', justifyContent: 'center', gap: 22 },
   doneIcon: { width: 96, height: 96, borderRadius: 48, alignItems: 'center', justifyContent: 'center' },

@@ -7,8 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Scene } from '@/components/Scene';
 import { Logo } from '@/components/bits';
 import { Button } from '@/components/Button';
-import { Glass } from '@/components/Glass';
-import { GradientText } from '@/components/GradientText';
+import { Card } from '@/components/Card';
 import { T } from '@/components/Text';
 import { useTheme } from '@/lib/theme';
 
@@ -22,7 +21,7 @@ export default function Welcome() {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   return (
-    <Scene intensity={1.1}>
+    <Scene>
       <View style={[styles.body, { paddingTop: insets.top + 18, paddingBottom: insets.bottom + 22 }]}>
         <Animated.View entering={FadeInDown.duration(600)} style={styles.brand}>
           <Logo size={34} />
@@ -34,8 +33,8 @@ export default function Welcome() {
         <View style={{ gap: 14 }}>
           <Animated.View entering={FadeInDown.delay(120).duration(700)}>
             <View style={styles.where}>
-              <MapPin size={13} color={theme.accent} />
-              <T variant="eyebrow" color={theme.accent}>
+              <MapPin size={13} color={theme.primary} />
+              <T variant="eyebrow" color={theme.primary}>
                 LPU · Phagwara
               </T>
             </View>
@@ -44,9 +43,9 @@ export default function Welcome() {
             <T variant="display" style={{ fontSize: 50, lineHeight: 54 }}>
               No one walks
             </T>
-            <GradientText variant="display" style={{ fontSize: 50, lineHeight: 54 }}>
+            <T variant="display" color={theme.primary} style={{ fontSize: 50, lineHeight: 54 }}>
               home alone.
-            </GradientText>
+            </T>
           </Animated.View>
           <Animated.View entering={FadeInDown.delay(320).duration(800)}>
             <T muted style={{ fontSize: 16, lineHeight: 24 }}>
@@ -56,7 +55,7 @@ export default function Welcome() {
         </View>
 
         <Animated.View entering={FadeInUp.delay(420).springify().damping(20)}>
-          <Glass radius={24} style={{ paddingHorizontal: 18 }}>
+          <Card radius={24} style={{ paddingHorizontal: 18 }}>
             {features.map((f, i) => (
               <View key={f.title} style={[styles.feature, i < features.length - 1 && styles.featureDivider]}>
                 <T variant="mono" color={theme.primary} style={{ fontSize: 12, marginTop: 2 }}>
@@ -70,7 +69,7 @@ export default function Welcome() {
                 </View>
               </View>
             ))}
-          </Glass>
+          </Card>
         </Animated.View>
 
         <Animated.View entering={FadeInUp.delay(720).duration(600)} style={{ gap: 10 }}>
@@ -87,5 +86,5 @@ const styles = StyleSheet.create({
   brand: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   where: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   feature: { flexDirection: 'row', gap: 14, paddingVertical: 15 },
-  featureDivider: { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: 'rgba(255,255,255,0.12)' },
+  featureDivider: { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: 'rgba(127,127,127,0.22)' },
 });

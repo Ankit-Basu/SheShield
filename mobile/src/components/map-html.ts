@@ -19,7 +19,7 @@ export const buildMapHtml = (theme: Theme) => `<!doctype html><html><head><meta 
 html,body,#m{margin:0;height:100%;background:${theme.base}}
 .leaflet-control-attribution{background:rgba(0,0,0,.45)!important;color:#ddd!important;font:10px sans-serif}
 .leaflet-control-attribution a{color:#fff!important}
-.pin{transition:transform .25s;width:22px;height:22px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:linear-gradient(135deg,${theme.accent},${theme.primary});border:2px solid #fff;box-shadow:0 4px 14px rgba(0,0,0,.45)}
+.pin{transition:transform .25s;width:22px;height:22px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:${theme.primary};border:2px solid #fff;box-shadow:0 4px 14px rgba(0,0,0,.45)}
 .lbl{background:rgba(20,12,18,.82);color:#fff;border:1px solid rgba(255,255,255,.18);border-radius:8px;padding:3px 7px;font:600 11px sans-serif;box-shadow:none}
 .lbl:before{display:none}
 .far .lbl{display:none}

@@ -7,7 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Scene } from '@/components/Scene';
 import { Chip, Empty } from '@/components/bits';
-import { Glass } from '@/components/Glass';
+import { Card } from '@/components/Card';
 import { ReportRow } from '@/components/ReportRow';
 import { SourceBanner } from '@/components/SourceBanner';
 import { T } from '@/components/Text';
@@ -32,7 +32,7 @@ export default function Reports() {
   const list = useMemo(() => (filter === 'all' ? data ?? [] : (data ?? []).filter((r) => r.status === filter)), [data, filter]);
 
   return (
-    <Scene intensity={0.8}>
+    <Scene>
       <FlatList
         data={list}
         keyExtractor={(r) => String(r.id)}
@@ -61,7 +61,7 @@ export default function Reports() {
         }
         renderItem={({ item, index }) => (
           <Animated.View entering={FadeInDown.delay(Math.min(index, 8) * 45).springify().damping(18)}>
-            <Glass radius={20} style={{ paddingHorizontal: 14 }}>
+            <Card radius={20} style={{ paddingHorizontal: 14 }}>
               <ReportRow
                 r={item}
                 last
@@ -75,16 +75,16 @@ export default function Reports() {
                   })
                 }
               />
-            </Glass>
+            </Card>
           </Animated.View>
         )}
         ListEmptyComponent={
-          <Glass radius={24}>
+          <Card radius={24}>
             <Empty
               icon={<Inbox size={28} color={theme.muted} />}
               text={isLoading ? 'Loading your reports…' : error ? 'Could not load reports. Pull down to retry.' : filter === 'all' ? 'No reports yet. Anonymous reports are not listed here.' : 'Nothing with this status.'}
             />
-          </Glass>
+          </Card>
         }
       />
     </Scene>
@@ -93,6 +93,6 @@ export default function Reports() {
 
 const styles = StyleSheet.create({
   head: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  icon: { width: 42, height: 42, borderRadius: 21, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.08)' },
+  icon: { width: 42, height: 42, borderRadius: 21, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(127,127,127,0.1)' },
   filters: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
 });

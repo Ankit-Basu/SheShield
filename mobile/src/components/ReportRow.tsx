@@ -102,7 +102,7 @@ export function ReportRow({ r, last, expanded, onPress, onResolve, resolving }: 
 
 const styles = StyleSheet.create({
   row: { flexDirection: 'row', gap: 12, paddingVertical: 14 },
-  divider: { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: 'rgba(255,255,255,0.12)' },
+  divider: { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: 'rgba(127,127,127,0.22)' },
   dot: { width: 8, height: 8, borderRadius: 4, marginTop: 6 },
   top: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
   meta: { flexDirection: 'row', alignItems: 'center', gap: 6 },

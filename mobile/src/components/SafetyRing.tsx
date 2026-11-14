@@ -5,12 +5,12 @@ import { Check, ChevronRight } from 'lucide-react-native';
 import { useCallback, useEffect, useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import Animated, { Easing, useAnimatedProps, useSharedValue, withTiming } from 'react-native-reanimated';
-import Svg, { Circle, Defs, LinearGradient, Stop } from 'react-native-svg';
+import Svg, { Circle } from 'react-native-svg';
 
 import type { Me } from '@/lib/queries';
 import { status, useTheme } from '@/lib/theme';
 
-import { Glass } from './Glass';
+import { Card } from './Card';
 import { T } from './Text';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
@@ -62,21 +62,15 @@ export function SafetyRing({ readiness }: { readiness: Readiness }) {
   const ringProps = useAnimatedProps(() => ({ strokeDashoffset: C * (1 - progress.value) }));
 
   return (
-    <Glass strong radius={28} style={styles.card}>
+    <Card strong radius={28} style={styles.card}>
       <View style={styles.ring}>
         <Svg width={SIZE} height={SIZE}>
-          <Defs>
-            <LinearGradient id="safetyRing" x1="0" y1="0" x2="1" y2="1">
-              <Stop offset="0" stopColor={ready ? status.good : theme.accent} />
-              <Stop offset="1" stopColor={ready ? '#2fb36f' : theme.primary} />
-            </LinearGradient>
-          </Defs>
-          <Circle cx={SIZE / 2} cy={SIZE / 2} r={R} stroke="rgba(255,255,255,0.1)" strokeWidth={STROKE} fill="none" />
+          <Circle cx={SIZE / 2} cy={SIZE / 2} r={R} stroke={theme.surfaceAlt} strokeWidth={STROKE} fill="none" />
           <AnimatedCircle
             cx={SIZE / 2}
             cy={SIZE / 2}
             r={R}
-            stroke="url(#safetyRing)"
+            stroke={ready ? status.good : theme.primary}
             strokeWidth={STROKE}
             strokeLinecap="round"
             fill="none"
@@ -110,8 +104,8 @@ export function SafetyRing({ readiness }: { readiness: Readiness }) {
             style={styles.step}
             accessibilityRole={s.done ? undefined : 'button'}
             accessibilityLabel={s.done ? `${s.label}: done` : `${s.label}: set up`}>
-            <View style={[styles.tick, s.done ? { backgroundColor: status.good } : { borderColor: 'rgba(255,255,255,0.35)', borderWidth: 1.5 }]}>
-              {s.done ? <Check size={11} color="#0b2a17" strokeWidth={3.5} /> : null}
+            <View style={[styles.tick, s.done ? { backgroundColor: status.good } : { borderColor: theme.line, borderWidth: 1.5 }]}>
+              {s.done ? <Check size={11} color="#fff" strokeWidth={3.5} /> : null}
             </View>
             <View style={{ flex: 1 }}>
               <T variant="small" color={s.done ? theme.muted : theme.foreground} style={{ fontSize: 13 }}>
@@ -122,7 +116,7 @@ export function SafetyRing({ readiness }: { readiness: Readiness }) {
           </Pressable>
         ))}
       </View>
-    </Glass>
+    </Card>
   );
 }
 
