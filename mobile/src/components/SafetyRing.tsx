@@ -2,7 +2,7 @@ import * as Haptics from 'expo-haptics';
 import * as Location from 'expo-location';
 import { router, useFocusEffect } from 'expo-router';
 import { Check, ChevronRight } from 'lucide-react-native';
-import { useCallback, useEffect, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import Animated, { Easing, useAnimatedProps, useSharedValue, withTiming } from 'react-native-reanimated';
 import Svg, { Circle } from 'react-native-svg';
@@ -51,7 +51,8 @@ export function useReadiness(user: Me['user'] | undefined) {
   return { steps, done, ready: done === steps.length, known: location !== null && !!user };
 }
 
-export function SafetyRing({ readiness }: { readiness: Readiness }) {
+// In a sheet (`bare`), `onStep` closes it before a step navigates away.
+export function SafetyRing({ readiness, bare, onStep }: { readiness: Readiness; bare?: boolean; onStep?: () => void }) {
   const theme = useTheme();
   const { steps, done, ready } = readiness;
 
@@ -62,7 +63,7 @@ export function SafetyRing({ readiness }: { readiness: Readiness }) {
   const ringProps = useAnimatedProps(() => ({ strokeDashoffset: C * (1 - progress.value) }));
 
   return (
-    <Card strong radius={28} style={styles.card}>
+    <Wrap bare={bare}>
       <View style={styles.ring}>
         <Svg width={SIZE} height={SIZE}>
           <Circle cx={SIZE / 2} cy={SIZE / 2} r={R} stroke={theme.surfaceAlt} strokeWidth={STROKE} fill="none" />
@@ -93,13 +94,22 @@ export function SafetyRing({ readiness }: { readiness: Readiness }) {
       </View>
 
       <View style={{ flex: 1, gap: 4 }}>
-        <T variant="label" style={{ fontSize: 15.5 }}>
-          {ready ? "You're SOS-ready" : 'Get SOS-ready'}
-        </T>
+        {bare ? null : (
+          <T variant="label" style={{ fontSize: 15.5 }}>
+            {ready ? "You're SOS-ready" : 'Get SOS-ready'}
+          </T>
+        )}
         {steps.map((s) => (
           <Pressable
             key={s.label}
-            onPress={s.done ? undefined : s.fix}
+            onPress={
+              s.done
+                ? undefined
+                : () => {
+                    onStep?.();
+                    s.fix();
+                  }
+            }
             disabled={s.done}
             style={styles.step}
             accessibilityRole={s.done ? undefined : 'button'}
@@ -116,6 +126,66 @@ export function SafetyRing({ readiness }: { readiness: Readiness }) {
           </Pressable>
         ))}
       </View>
+    </Wrap>
+  );
+}
+
+const MINI = 46;
+const MINI_R = (MINI - 6) / 2;
+const MINI_C = 2 * Math.PI * MINI_R;
+
+// The header's compact version: a small ring with done/total, or a green check when ready.
+export function ReadinessBadge({ readiness, onPress }: { readiness: Readiness; onPress: () => void }) {
+  const theme = useTheme();
+  const { steps, done, ready, known } = readiness;
+  const progress = useSharedValue(0);
+  useEffect(() => {
+    progress.set(withTiming(done / steps.length, { duration: 900, easing: Easing.out(Easing.cubic) }));
+  }, [done, steps.length, progress]);
+  const ringProps = useAnimatedProps(() => ({ strokeDashoffset: MINI_C * (1 - progress.value) }));
+  return (
+    <Pressable
+      onPress={() => {
+        Haptics.selectionAsync();
+        onPress();
+      }}
+      hitSlop={8}
+      accessibilityRole="button"
+      accessibilityLabel={ready ? 'SOS-ready. Show checklist' : `SOS readiness ${done} of ${steps.length}. Show checklist`}
+      style={[styles.badge, { backgroundColor: theme.surface, borderColor: theme.line }]}>
+      <Svg width={MINI} height={MINI}>
+        <Circle cx={MINI / 2} cy={MINI / 2} r={MINI_R} stroke={theme.surfaceAlt} strokeWidth={4} fill="none" />
+        <AnimatedCircle
+          cx={MINI / 2}
+          cy={MINI / 2}
+          r={MINI_R}
+          stroke={ready ? status.good : theme.primary}
+          strokeWidth={4}
+          strokeLinecap="round"
+          fill="none"
+          strokeDasharray={`${MINI_C} ${MINI_C}`}
+          animatedProps={ringProps}
+          transform={`rotate(-90 ${MINI / 2} ${MINI / 2})`}
+        />
+      </Svg>
+      <View style={styles.ringCenter} pointerEvents="none">
+        {ready ? (
+          <Check size={18} color={status.good} strokeWidth={3} />
+        ) : (
+          <T variant="label" style={{ fontSize: 13 }}>
+            {known ? `${done}/${steps.length}` : '…'}
+          </T>
+        )}
+      </View>
+    </Pressable>
+  );
+}
+
+function Wrap({ bare, children }: { bare?: boolean; children: ReactNode }) {
+  if (bare) return <View style={[styles.card, styles.bare]}>{children}</View>;
+  return (
+    <Card strong radius={28} style={styles.card}>
+      {children}
     </Card>
   );
 }
@@ -126,4 +196,6 @@ const styles = StyleSheet.create({
   ringCenter: { position: 'absolute', alignItems: 'center' },
   step: { flexDirection: 'row', alignItems: 'center', gap: 9, paddingVertical: 4 },
   tick: { width: 18, height: 18, borderRadius: 9, alignItems: 'center', justifyContent: 'center' },
+  bare: { padding: 0, height: 'auto', paddingBottom: 6 },
+  badge: { width: MINI + 8, height: MINI + 8, borderRadius: (MINI + 8) / 2, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
 });

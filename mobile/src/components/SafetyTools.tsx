@@ -2,8 +2,9 @@ import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 import { ArrowUpRight, FilePlus, LocateFixed, PhoneIncoming, Timer } from 'lucide-react-native';
 import { ReactNode, useEffect, useState } from 'react';
-import { ActivityIndicator, Share, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Share, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+import Svg, { Circle } from 'react-native-svg';
 
 import { getFix, mapsLink } from '@/lib/location';
 import { mmss, useCheckIn, useFakeCall } from '@/lib/tools';
@@ -52,35 +53,67 @@ type TileProps = {
   title: string;
   detail: string;
   active?: boolean;
-  progress?: number;
   corner?: ReactNode;
   onPress: () => void;
   label: string;
+  style?: StyleProp<ViewStyle>;
+  children?: ReactNode;
 };
 
-function Tile({ icon, title, detail, active, progress, corner, onPress, label }: TileProps) {
+function Tile({ icon, title, detail, active, corner, onPress, label, style, children }: TileProps) {
   const theme = useTheme();
   return (
-    <View style={styles.cell}>
-      <Card radius={24} onPress={onPress} accessibilityLabel={label} style={styles.tile} fill={active ? theme.primary : undefined}>
-        <View style={styles.tileTop}>
-          <View style={[styles.tileIcon, { backgroundColor: active ? theme.primaryForeground + '26' : theme.surfaceAlt }]}>{icon}</View>
-          {corner ?? <ArrowUpRight size={16} color={active ? theme.primaryForeground : theme.muted} />}
-        </View>
-        <View style={{ gap: 1 }}>
-          <T variant="label" color={active ? theme.primaryForeground : theme.foreground} style={{ fontSize: 15 }}>
-            {title}
-          </T>
-          <T variant="small" color={active ? theme.primaryForeground : theme.muted} numberOfLines={1} style={{ fontSize: 12, fontVariant: ['tabular-nums'], opacity: active ? 0.85 : 1 }}>
-            {detail}
-          </T>
-        </View>
-        {progress != null ? (
-          <View style={[styles.bar, { backgroundColor: theme.primaryForeground + '33' }]}>
-            <View style={[styles.barFill, { backgroundColor: theme.primaryForeground, width: `${Math.round(progress * 100)}%` }]} />
-          </View>
-        ) : null}
-      </Card>
+    <Card radius={24} onPress={onPress} accessibilityLabel={label} style={[styles.tile, style]} fill={active ? theme.primary : undefined}>
+      <View style={styles.tileTop}>
+        <View style={[styles.tileIcon, { backgroundColor: active ? theme.primaryForeground + '26' : theme.surfaceAlt }]}>{icon}</View>
+        {corner ?? <ArrowUpRight size={16} color={active ? theme.primaryForeground : theme.muted} />}
+      </View>
+      {children}
+      <View style={{ gap: 1 }}>
+        <T variant="label" color={active ? theme.primaryForeground : theme.foreground} style={{ fontSize: 15 }}>
+          {title}
+        </T>
+        <T variant="small" color={active ? theme.primaryForeground : theme.muted} numberOfLines={1} style={{ fontSize: 12, fontVariant: ['tabular-nums'], opacity: active ? 0.85 : 1 }}>
+          {detail}
+        </T>
+      </View>
+    </Card>
+  );
+}
+
+const RING = 96;
+const RING_R = (RING - 8) / 2;
+const RING_C = 2 * Math.PI * RING_R;
+
+// The check-in tile's dial: time left while a check-in runs, the last length used otherwise.
+function Dial({ active, progress, label, unit }: { active: boolean; progress: number; label: string; unit: string }) {
+  const theme = useTheme();
+  const track = active ? theme.primaryForeground + '33' : theme.surfaceAlt;
+  const ink = active ? theme.primaryForeground : theme.foreground;
+  return (
+    <View style={styles.dial}>
+      <Svg width={RING} height={RING}>
+        <Circle cx={RING / 2} cy={RING / 2} r={RING_R} stroke={track} strokeWidth={7} fill="none" />
+        <Circle
+          cx={RING / 2}
+          cy={RING / 2}
+          r={RING_R}
+          stroke={active ? theme.primaryForeground : theme.primary}
+          strokeWidth={7}
+          strokeLinecap="round"
+          fill="none"
+          strokeDasharray={`${RING_C * Math.max(0.001, progress)} ${RING_C}`}
+          transform={`rotate(-90 ${RING / 2} ${RING / 2})`}
+        />
+      </Svg>
+      <View style={styles.dialCenter} pointerEvents="none">
+        <T variant="title" color={ink} style={{ fontSize: 22, lineHeight: 25, fontVariant: ['tabular-nums'] }}>
+          {label}
+        </T>
+        <T variant="small" color={ink} style={{ fontSize: 10.5, opacity: 0.7 }}>
+          {unit}
+        </T>
+      </View>
     </View>
   );
 }
@@ -94,7 +127,8 @@ const delays = [
 ];
 const durations = [10, 20, 30, 45];
 
-// Four things you can do in a few seconds when a walk or a situation feels off.
+// Four things you can do in a few seconds when a walk or a situation feels off,
+// laid out as a bento: the check-in dial large, the quick actions beside it.
 export function SafetyTools({ contactName }: { contactName?: string | null }) {
   const theme = useTheme();
   const checkIn = useCheckIn();
@@ -133,39 +167,62 @@ export function SafetyTools({ contactName }: { contactName?: string | null }) {
   };
 
   return (
-    <View style={styles.grid}>
-      <Tile
-        label="Fake call"
-        icon={<PhoneIncoming size={19} color={fake.at ? theme.primaryForeground : theme.foreground} />}
-        title="Fake call"
-        detail={fake.at ? `${fake.caller} calls in ${mmss(ringsIn)}` : 'Your excuse to leave'}
-        active={!!fake.at}
-        onPress={() => setSheet('call')}
-      />
-      <Tile
-        label={checking ? `Check-in, ${mmss(left)} left` : 'Check-in timer'}
-        icon={<Timer size={19} color={checking ? theme.primaryForeground : theme.foreground} />}
-        title="Check-in"
-        detail={checking ? `${mmss(left)} left` : "We'll ask if you're OK"}
-        active={checking}
-        progress={checking ? 1 - left / (checkIn.minutes * 60_000) : undefined}
-        corner={<Switch on={checking} />}
-        onPress={() => setSheet('checkin')}
-      />
-      <Tile
-        label="Share my location"
-        icon={sharing ? <ActivityIndicator size="small" color={theme.foreground} /> : <LocateFixed size={19} color={theme.foreground} />}
-        title="Share location"
-        detail={sharing ? 'Finding you…' : 'Send a live map pin'}
-        onPress={share}
-      />
-      <Tile
-        label="Report an incident"
-        icon={<FilePlus size={19} color={theme.foreground} />}
-        title="Report"
-        detail="Saved even offline"
-        onPress={() => router.push('/report')}
-      />
+    <View style={{ gap: 12 }}>
+      <View style={styles.row}>
+        <View style={{ flex: 1 }}>
+          <Tile
+            label={checking ? `Check-in, ${mmss(left)} left` : 'Check-in timer'}
+            icon={<Timer size={19} color={checking ? theme.primaryForeground : theme.foreground} />}
+            title="Check-in"
+            detail={checking ? 'Tap to check in' : "We'll ask if you're OK"}
+            active={checking}
+            corner={<Switch on={checking} />}
+            onPress={() => setSheet('checkin')}
+            style={styles.tall}>
+            <Dial
+              active={checking}
+              progress={checking ? 1 - left / (checkIn.minutes * 60_000) : 0}
+              label={checking ? mmss(left) : String(checkIn.minutes)}
+              unit={checking ? 'left' : 'min'}
+            />
+          </Tile>
+        </View>
+        <View style={{ flex: 1, gap: 12 }}>
+          <Tile
+            label="Fake call"
+            icon={<PhoneIncoming size={19} color={fake.at ? theme.primaryForeground : theme.foreground} />}
+            title="Fake call"
+            detail={fake.at ? `${fake.caller} in ${mmss(ringsIn)}` : 'Your excuse to leave'}
+            active={!!fake.at}
+            onPress={() => setSheet('call')}
+            style={styles.small}
+          />
+          <Tile
+            label="Share my location"
+            icon={sharing ? <ActivityIndicator size="small" color={theme.foreground} /> : <LocateFixed size={19} color={theme.foreground} />}
+            title="Share location"
+            detail={sharing ? 'Finding you…' : 'Send a map pin'}
+            onPress={share}
+            style={styles.small}
+          />
+        </View>
+      </View>
+      <Card radius={22} onPress={() => router.push('/report')} accessibilityLabel="Report an incident" style={styles.wide}>
+        <View style={[styles.tileIcon, { backgroundColor: theme.soft }]}>
+          <FilePlus size={19} color={theme.primary} />
+        </View>
+        <View style={{ flex: 1 }}>
+          <T variant="label" style={{ fontSize: 15 }}>
+            Report an incident
+          </T>
+          <T variant="small" muted style={{ fontSize: 12 }}>
+            Anonymous option · works offline
+          </T>
+        </View>
+        <View style={[styles.go, { backgroundColor: theme.selected }]}>
+          <ArrowUpRight size={16} color={theme.selectedForeground} />
+        </View>
+      </Card>
 
       <Sheet
         open={sheet === 'call'}
@@ -273,14 +330,18 @@ export function SafetyTools({ contactName }: { contactName?: string | null }) {
 }
 
 const styles = StyleSheet.create({
-  grid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', rowGap: 12 },
-  cell: { width: '48.4%' },
-  tile: { height: 136, padding: 14, justifyContent: 'space-between' },
+  row: { flexDirection: 'row', gap: 12 },
+  tile: { padding: 14, justifyContent: 'space-between' },
+  tall: { height: 260 },
+  small: { height: 124 },
+  wide: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14 },
+  go: { width: 34, height: 34, borderRadius: 17, alignItems: 'center', justifyContent: 'center' },
   tileTop: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' },
   tileIcon: { width: 40, height: 40, borderRadius: 13, alignItems: 'center', justifyContent: 'center' },
+  dial: { alignSelf: 'center', width: RING, height: RING, alignItems: 'center', justifyContent: 'center' },
+  dialCenter: { position: 'absolute', alignItems: 'center' },
   switch: { width: 34, height: 20, borderRadius: 10, padding: 2 },
   knob: { width: 16, height: 16, borderRadius: 8 },
-  bar: { position: 'absolute', left: 14, right: 14, bottom: 8, height: 3, borderRadius: 2, overflow: 'hidden' },
   bigBar: { height: 6, borderRadius: 3, overflow: 'hidden' },
   barFill: { height: '100%', borderRadius: 3 },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
