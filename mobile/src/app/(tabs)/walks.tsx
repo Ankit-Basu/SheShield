@@ -56,22 +56,31 @@ function WalkerCard() {
 
 export default function Walks() {
   const theme = useTheme();
-  const params = useLocalSearchParams<{ from?: string }>();
+  const params = useLocalSearchParams<{ from?: string; to?: string }>();
   const [from, setFrom] = useState<string | null>(params.from ?? null);
-  const [to, setTo] = useState<string | null>(null);
+  const [to, setTo] = useState<string | null>(params.to ?? null);
   const [editing, setEditing] = useState<'from' | 'to'>(params.from ? 'to' : 'from');
   const [minutes, setMinutes] = useState(0);
   const { data: walks, isLoading, refetch, isRefetching } = useWalks();
   const request = useRequestWalk();
   const cancel = useCancelWalk();
 
-  // A landmark chosen on the map arrives as ?from=; adopt it when it changes.
+  // A landmark chosen on the map arrives as ?from=, a destination tapped on Home as
+  // ?to=; adopt each when it changes, then ask for the end that is still missing.
   const [lastFrom, setLastFrom] = useState(params.from);
   if (params.from !== lastFrom) {
     setLastFrom(params.from);
     if (params.from) {
       setFrom(params.from);
       setEditing('to');
+    }
+  }
+  const [lastTo, setLastTo] = useState(params.to);
+  if (params.to !== lastTo) {
+    setLastTo(params.to);
+    if (params.to) {
+      setTo(params.to);
+      setEditing('from');
     }
   }
 

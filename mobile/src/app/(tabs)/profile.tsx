@@ -147,9 +147,11 @@ export default function Profile() {
       </Animated.View>
 
       <View style={styles.themeHead}>
-        <SectionHeader title="Theme" />
-        <T variant="small" muted style={{ paddingHorizontal: 4 }}>
-          {themes[themeName].name} · applies everywhere, instantly
+        <T variant="label" muted style={{ fontSize: 13, letterSpacing: 0.2 }}>
+          Theme
+        </T>
+        <T variant="small" muted>
+          {themes[themeName].name} · {themes[themeName].mode === 'light' ? 'Light' : 'Dark'}
         </T>
       </View>
       <Animated.View entering={FadeInDown.delay(100).springify().damping(18)}>
@@ -194,7 +196,7 @@ const styles = StyleSheet.create({
   stats: { flexDirection: 'row', paddingVertical: 14 },
   statBox: { flex: 1, alignItems: 'center', gap: 2 },
   statDivider: { borderLeftWidth: StyleSheet.hairlineWidth, borderLeftColor: 'rgba(127,127,127,0.22)' },
-  themeHead: { gap: 2 },
+  themeHead: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 6, marginBottom: -6, paddingHorizontal: 4 },
   note: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   aboutRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
 });
