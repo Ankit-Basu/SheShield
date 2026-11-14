@@ -1,4 +1,5 @@
 import * as Haptics from 'expo-haptics';
+import { LinearGradient } from 'expo-linear-gradient';
 import { router, Tabs } from 'expo-router';
 import { Footprints, House, Map, Siren, UserRound } from 'lucide-react-native';
 import { ComponentProps, useEffect, useRef, useState } from 'react';
@@ -126,8 +127,12 @@ export function TabBar({ state, emitter, navigateToTab }: TabBarProps) {
       />
     );
   };
+  const bottom = Math.max(insets.bottom, 10) + 4;
   return (
-    <View style={[styles.wrap, { bottom: Math.max(insets.bottom, 10) + 4 }]} pointerEvents="box-none">
+    <>
+    {/* Content fades out under the floating dock instead of showing through the gap below it. */}
+    <LinearGradient colors={[theme.base + '00', theme.base + 'e6', theme.base]} locations={[0, 0.45, 1]} style={[styles.fade, { height: bottom + BAR + 28 }]} pointerEvents="none" />
+    <View style={[styles.wrap, { bottom }]} pointerEvents="box-none">
       <View style={[styles.bar, { backgroundColor: theme.dock, borderColor: theme.mode === 'dark' ? theme.line : theme.dock }]}>
         <Indicator box={boxes[routes[state.index]?.key]} />
         {routes.slice(0, half).map(render)}
@@ -136,11 +141,13 @@ export function TabBar({ state, emitter, navigateToTab }: TabBarProps) {
       </View>
       <SosButton />
     </View>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   wrap: { position: 'absolute', left: 16, right: 16, alignItems: 'center' },
+  fade: { position: 'absolute', left: 0, right: 0, bottom: 0 },
   bar: {
     flexDirection: 'row',
     alignItems: 'center',

@@ -119,5 +119,5 @@ const styles = StyleSheet.create({
   dockDot: { width: 5, height: 5, borderRadius: 3, opacity: 0.55 },
   sos: { width: 15, height: 15, borderRadius: 8, marginTop: -10, borderWidth: 2 },
   check: { position: 'absolute', top: 8, right: 8, width: 20, height: 20, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
-  caption: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', paddingHorizontal: 2 },
+  caption: { gap: 1, paddingHorizontal: 4 },
 });
