@@ -33,7 +33,8 @@ function useClock() {
   return now;
 }
 
-const today = () => new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Asia/Kolkata' });
+// Short enough to fit beside the greeting on any day: "Sun, 15 Nov".
+const today = () => new Date().toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Asia/Kolkata' });
 const reveal = (i: number) =>
   FadeInDown.delay(60 * i)
     .springify()
