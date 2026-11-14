@@ -83,7 +83,7 @@ A React Native app for Android, in [`mobile/`](mobile/), built with Expo SDK 58,
 
 - **Hold-to-send SOS** with GPS, plus call, SMS and share fallbacks that work without the server
 - **Walk requests, incident reports with photos** (queued offline), and a satellite campus map
-- **Frosted glass UI** with real blur on Android 12+, and saved or sample data while the free server wakes
+- **Flat, themeable UI** (three light and two dark themes), Safety tools (fake call, check-in timer), and saved or sample data while the free server wakes
 - **APK builds on GitHub Actions** whenever `mobile/` changes, published to [Releases](https://github.com/Ankit-Basu/SheShield/releases)
 
 Details: [mobile/README.md](mobile/README.md) · install on a phone: [mobile/docs/INSTALL.md](mobile/docs/INSTALL.md)
@@ -584,7 +584,7 @@ Slower devices lower the aurora frame rate and turn off blur automatically.
 - [x] Docker, Jenkins, GitHub Actions, SonarQube, Trivy and Nexus
 - [x] Kubernetes, Helm, Terraform, Ansible, Prometheus and Grafana
 - [x] Husky and Commitlint git hooks
-- [x] React Native Android app with offline reports and real frosted glass
+- [x] React Native Android app with offline reports, Safety tools and a flat theme system
 - [x] Free hosting on Render, Vercel and Aiven, kept awake by a scheduled job
 - [x] Token sign-in for the app, with saved data when the server is asleep
 - [ ] Automatic SOS alerts to emergency contacts
