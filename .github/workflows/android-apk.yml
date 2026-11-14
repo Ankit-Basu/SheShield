@@ -7,7 +7,8 @@ name: Android APK
 on:
   push:
     branches: [master]
-    paths: ['mobile/**', '.github/workflows/android-apk.yml']
+    # Docs and screenshots alone don't need a new APK.
+    paths: ['mobile/**', '!mobile/docs/**', '!mobile/**/*.md', '.github/workflows/android-apk.yml']
     tags: ['mobile-v*']
   workflow_dispatch:
 
