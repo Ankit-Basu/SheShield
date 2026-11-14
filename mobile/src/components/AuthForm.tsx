@@ -16,7 +16,7 @@ import { Scene } from './Scene';
 import { Logo } from './bits';
 import { Button } from './Button';
 import { Field } from './Field';
-import { Glass } from './Glass';
+import { Card } from './Card';
 import { T } from './Text';
 
 export function AuthForm({ mode }: { mode: 'login' | 'signup' }) {
@@ -74,7 +74,7 @@ export function AuthForm({ mode }: { mode: 'login' | 'signup' }) {
           </Animated.View>
 
           <Animated.View entering={FadeInDown.delay(150).duration(650)}>
-            <Glass style={styles.card} radius={28} strong>
+            <Card style={styles.card} radius={28} strong>
               {signup && (
                 <View style={styles.row}>
                   <View style={{ flex: 1 }}>
@@ -126,7 +126,7 @@ export function AuthForm({ mode }: { mode: 'login' | 'signup' }) {
                   The server may take up to a minute to wake on the free plan.
                 </T>
               ) : null}
-            </Glass>
+            </Card>
           </Animated.View>
 
           <Pressable onPress={() => router.replace(signup ? '/login' : '/signup')} style={{ alignSelf: 'center', padding: 8 }}>
@@ -145,7 +145,7 @@ export function AuthForm({ mode }: { mode: 'login' | 'signup' }) {
 
 const styles = StyleSheet.create({
   body: { paddingHorizontal: 20, gap: 22 },
-  back: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.07)' },
+  back: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(127,127,127,0.1)' },
   card: { padding: 18, gap: 15 },
   row: { flexDirection: 'row', gap: 10 },
   error: { padding: 12, borderRadius: 14, borderWidth: 1 },

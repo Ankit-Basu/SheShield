@@ -1,8 +1,7 @@
 import Constants from 'expo-constants';
 import * as Haptics from 'expo-haptics';
-import { LinearGradient } from 'expo-linear-gradient';
 import * as ImagePicker from 'expo-image-picker';
-import { Camera, Check, HeartHandshake, LogOut, Palette, Phone, Server, ShieldCheck, UserRound } from 'lucide-react-native';
+import { Camera, HeartHandshake, LogOut, Palette, Phone, Server, ShieldCheck, UserRound } from 'lucide-react-native';
 import { useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
@@ -10,17 +9,18 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Avatar, Badge, SectionHeader } from '@/components/bits';
 import { Button } from '@/components/Button';
 import { Field } from '@/components/Field';
-import { Glass } from '@/components/Glass';
+import { Card } from '@/components/Card';
 import { Screen } from '@/components/Screen';
 import { SourceBanner } from '@/components/SourceBanner';
 import { T } from '@/components/Text';
+import { ThemePicker } from '@/components/ThemePicker';
 import { toast } from '@/components/Toast';
 import { api } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import { absoluteUrl, API_URL } from '@/lib/config';
 import { parseServerDate } from '@/lib/format';
 import { Me, useMe, useUpdateProfile, useUploadPhoto } from '@/lib/queries';
-import { ThemeName, themes, useTheme, useThemeStore } from '@/lib/theme';
+import { themes, useTheme, useThemeStore } from '@/lib/theme';
 
 // Starts from the saved values; keyed by user so a different account gets a fresh form.
 function ContactForm({ user }: { user: Me['user'] }) {
@@ -43,7 +43,7 @@ function ContactForm({ user }: { user: Me['user'] }) {
     );
 
   return (
-    <Glass radius={26} style={{ padding: 16, gap: 14 }}>
+    <Card radius={26} style={{ padding: 16, gap: 14 }}>
       <View style={styles.note}>
         <HeartHandshake size={18} color={theme.primary} />
         <T variant="small" muted style={{ flex: 1 }}>
@@ -54,7 +54,7 @@ function ContactForm({ user }: { user: Me['user'] }) {
       <Field label="Their phone" value={contactPhone} onChangeText={setContactPhone} placeholder="+91 98765 43210" keyboardType="phone-pad" icon={<Phone size={17} color={theme.muted} />} />
       <Field label="Your phone" value={phone} onChangeText={setPhone} placeholder="+91" keyboardType="phone-pad" icon={<Phone size={17} color={theme.muted} />} />
       <Button label="Save" loading={update.isPending} onPress={save} />
-    </Glass>
+    </Card>
   );
 }
 
@@ -75,7 +75,7 @@ export default function Profile() {
     });
   };
   const theme = useTheme();
-  const { name: themeName, setTheme } = useThemeStore();
+  const themeName = useThemeStore((s) => s.name);
   const { data, refetch, isRefetching } = useMe();
   const signOut = useAuth((s) => s.signOut);
 
@@ -101,10 +101,10 @@ export default function Profile() {
     <Screen refreshing={isRefetching} onRefresh={refetch}>
       <SourceBanner keys={["me"]} />
       <Animated.View entering={FadeInDown.springify().damping(18)}>
-        <Glass radius={30} strong style={styles.hero} tint={[theme.primary + '22', 'rgba(255,255,255,0.02)']}>
+        <Card radius={30} strong style={styles.hero}>
           <Pressable onPress={changePhoto} disabled={upload.isPending} accessibilityRole="button" accessibilityLabel="Change profile photo" hitSlop={6}>
             <Avatar uri={absoluteUrl(u?.photo)} name={fullName} size={78} />
-            <View style={[styles.camera, { backgroundColor: theme.primary }]}>
+            <View style={[styles.camera, { backgroundColor: theme.primary, borderColor: theme.surface }]}>
               {upload.isPending ? <ActivityIndicator size="small" color={theme.primaryForeground} /> : <Camera size={14} color={theme.primaryForeground} />}
             </View>
           </Pressable>
@@ -124,11 +124,11 @@ export default function Profile() {
               ) : null}
             </View>
           </View>
-        </Glass>
+        </Card>
       </Animated.View>
 
       <Animated.View entering={FadeInDown.delay(60).springify().damping(18)}>
-        <Glass radius={22} flat style={styles.stats}>
+        <Card radius={22} flat style={styles.stats}>
           {[
             ['Reports', data?.stats.reports ?? 0],
             ['Resolved', data?.stats.resolved ?? 0],
@@ -143,35 +143,17 @@ export default function Profile() {
               </T>
             </View>
           ))}
-        </Glass>
+        </Card>
       </Animated.View>
 
-      <SectionHeader title="Theme" />
-      <Animated.View entering={FadeInDown.delay(100).springify().damping(18)} style={styles.themes}>
-        {(Object.keys(themes) as ThemeName[]).map((k) => {
-          const t = themes[k];
-          const on = themeName === k;
-          return (
-            <Pressable
-              key={k}
-              onPress={() => {
-                Haptics.selectionAsync();
-                setTheme(k);
-              }}
-              style={{ flex: 1 }}
-              accessibilityRole="radio"
-              accessibilityState={{ checked: on }}
-              accessibilityLabel={`${t.name} theme`}>
-              <View style={[styles.swatch, { borderColor: on ? t.primary : 'rgba(255,255,255,0.12)' }]}>
-                <LinearGradient colors={[t.aurora[1], t.aurora[0], t.base]} style={StyleSheet.absoluteFill} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
-                <View style={[styles.swatchDot, { backgroundColor: t.primary }]}>{on ? <Check size={14} color={t.primaryForeground} strokeWidth={3} /> : null}</View>
-                <T variant="small" color="#fff" style={{ fontSize: 11.5 }}>
-                  {t.name}
-                </T>
-              </View>
-            </Pressable>
-          );
-        })}
+      <View style={styles.themeHead}>
+        <SectionHeader title="Theme" />
+        <T variant="small" muted style={{ paddingHorizontal: 4 }}>
+          {themes[themeName].name} · applies everywhere, instantly
+        </T>
+      </View>
+      <Animated.View entering={FadeInDown.delay(100).springify().damping(18)}>
+        <ThemePicker />
       </Animated.View>
 
       <SectionHeader title="Emergency contact" />
@@ -180,7 +162,7 @@ export default function Profile() {
       </Animated.View>
 
       <SectionHeader title="About" />
-      <Glass radius={24} style={{ padding: 16, gap: 12 }}>
+      <Card radius={24} style={{ padding: 16, gap: 12 }}>
         <View style={styles.aboutRow}>
           <ShieldCheck size={17} color={theme.muted} />
           <T variant="small" style={{ flex: 1 }}>
@@ -199,7 +181,7 @@ export default function Profile() {
             Built by students at Lovely Professional University
           </T>
         </View>
-      </Glass>
+      </Card>
 
       <Button label="Sign out" variant="ghost" icon={<LogOut size={17} color={theme.foreground} />} onPress={confirmSignOut} />
     </Screen>
@@ -207,14 +189,12 @@ export default function Profile() {
 }
 
 const styles = StyleSheet.create({
-  camera: { position: 'absolute', right: -2, bottom: -2, width: 28, height: 28, borderRadius: 14, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: 'rgba(20,12,18,0.9)' },
+  camera: { position: 'absolute', right: -2, bottom: -2, width: 28, height: 28, borderRadius: 14, alignItems: 'center', justifyContent: 'center', borderWidth: 2 },
   hero: { flexDirection: 'row', alignItems: 'center', gap: 15, padding: 18 },
   stats: { flexDirection: 'row', paddingVertical: 14 },
   statBox: { flex: 1, alignItems: 'center', gap: 2 },
-  statDivider: { borderLeftWidth: StyleSheet.hairlineWidth, borderLeftColor: 'rgba(255,255,255,0.16)' },
-  themes: { flexDirection: 'row', gap: 10 },
-  swatch: { height: 104, borderRadius: 20, borderWidth: 2, overflow: 'hidden', padding: 11, justifyContent: 'space-between' },
-  swatchDot: { width: 26, height: 26, borderRadius: 13, alignItems: 'center', justifyContent: 'center' },
+  statDivider: { borderLeftWidth: StyleSheet.hairlineWidth, borderLeftColor: 'rgba(127,127,127,0.22)' },
+  themeHead: { gap: 2 },
   note: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   aboutRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
 });

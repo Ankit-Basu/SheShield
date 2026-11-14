@@ -28,7 +28,7 @@ You already know React. Most of it carries over; this is what changes.
 | React Router | Expo Router (file-based, like Next.js) | `src/app/` |
 | `localStorage` | AsyncStorage (plain) / SecureStore (encrypted) | `lib/theme.ts`, `lib/auth.ts` |
 | `fetch` | same `fetch` | `lib/api.ts` |
-| CSS animations | Reanimated (runs on the UI thread) | `Aurora.tsx`, `HoldToSend.tsx`, `GlassTabBar.tsx` |
+| CSS animations | Reanimated (runs on the UI thread) | `HoldToSend.tsx`, `TabBar.tsx`, `HeroCarousel.tsx` |
 
 **Platform files:** `CampusMap.tsx` is the native version, and `CampusMap.web.tsx` is picked automatically for the web build. The bundler chooses by file extension.
 
@@ -111,8 +111,8 @@ lib/api.ts  ── fetch + Bearer token ──►  PHP API on Render (via Vercel
 
 ## 5. Performance choices (good to volunteer)
 
-- **UI-thread animations:** all animations are Reanimated worklets. The aurora background drifts with `withRepeat` and costs zero JS per frame.
-- **Respecting reduced motion:** `useReducedMotion()` turns the aurora off for users who enable it.
+- **UI-thread animations:** all animations are Reanimated worklets. The carousel dots and slides follow the scroll position through `useAnimatedScrollHandler`, so they cost zero JS per frame.
+- **Respecting reduced motion:** `useReducedMotion()` turns off the pulsing loaders for users who enable it.
 - **Long lists:** use `FlatList` (virtualised), not `.map()` inside a ScrollView (`app/reports.tsx`).
 - **React Compiler is on:** it auto-memoises components. Lint enforces its rules, which is why shared values use `.set()` instead of `.value =`.
 - **Fewer requests:** `api/user/me.php` returns profile, stats and recent reports in one request instead of five.

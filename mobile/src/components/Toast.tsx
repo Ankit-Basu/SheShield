@@ -5,7 +5,7 @@ import Animated, { FadeInUp, FadeOutUp } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { create } from 'zustand';
 
-import { glass, status } from '@/lib/theme';
+import { status, useTheme } from '@/lib/theme';
 
 import { T } from './Text';
 
@@ -23,6 +23,7 @@ export const toast = (m: string, k?: 'success' | 'error') => useToast.getState()
 
 export function ToastHost() {
   const { message, kind, id, hide } = useToast();
+  const theme = useTheme();
   const insets = useSafeAreaInsets();
   useEffect(() => {
     if (!message) return;
@@ -30,12 +31,12 @@ export function ToastHost() {
     return () => clearTimeout(t);
   }, [id, message, hide]);
   if (!message) return null;
-  const c = kind === 'error' ? '#ff6b6b' : status.good;
+  const c = kind === 'error' ? theme.destructive : status.good;
   return (
     <Animated.View key={id} entering={FadeInUp.springify().damping(16)} exiting={FadeOutUp} style={[styles.wrap, { top: insets.top + 8 }]} pointerEvents="none" accessibilityLiveRegion="polite">
-      <View style={styles.toast}>
+      <View style={[styles.toast, { backgroundColor: theme.dock, borderColor: theme.dock }]}>
         {kind === 'error' ? <CircleAlert size={18} color={c} /> : <CircleCheck size={18} color={c} />}
-        <T variant="label" style={{ flex: 1 }}>
+        <T variant="label" color={theme.dockForeground} style={{ flex: 1 }}>
           {message}
         </T>
       </View>
@@ -45,5 +46,5 @@ export function ToastHost() {
 
 const styles = StyleSheet.create({
   wrap: { position: 'absolute', left: 16, right: 16, zIndex: 100 },
-  toast: { flexDirection: 'row', alignItems: 'center', gap: 10, padding: 14, borderRadius: 18, backgroundColor: glass.solid, borderWidth: 1, borderColor: glass.line, borderTopColor: glass.lineTop },
+  toast: { flexDirection: 'row', alignItems: 'center', gap: 10, padding: 14, borderRadius: 18, borderWidth: 1, shadowColor: '#000', shadowOpacity: 0.18, shadowRadius: 16, shadowOffset: { width: 0, height: 6 }, elevation: 6 },
 });

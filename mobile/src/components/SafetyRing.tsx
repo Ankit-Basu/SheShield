@@ -5,12 +5,12 @@ import { Check, ChevronRight } from 'lucide-react-native';
 import { useCallback, useEffect, useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import Animated, { Easing, useAnimatedProps, useSharedValue, withTiming } from 'react-native-reanimated';
-import Svg, { Circle, Defs, LinearGradient, Stop } from 'react-native-svg';
+import Svg, { Circle } from 'react-native-svg';
 
 import type { Me } from '@/lib/queries';
 import { status, useTheme } from '@/lib/theme';
 
-import { Glass } from './Glass';
+import { Card } from './Card';
 import { T } from './Text';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
@@ -19,9 +19,10 @@ const STROKE = 10;
 const R = (SIZE - STROKE) / 2;
 const C = 2 * Math.PI * R;
 
+export type Readiness = ReturnType<typeof useReadiness>;
+
 // The three things that make SOS work for you. Each unfinished one can be fixed from here.
-export function SafetyRing({ user }: { user: Me['user'] | undefined }) {
-  const theme = useTheme();
+export function useReadiness(user: Me['user'] | undefined) {
   const [location, setLocation] = useState<boolean | null>(null);
 
   // Re-check when Home comes back into view, e.g. after changing it in settings.
@@ -36,7 +37,6 @@ export function SafetyRing({ user }: { user: Me['user'] | undefined }) {
   const steps = [
     {
       label: 'Location access',
-      hint: 'Sent with every SOS',
       done: location === true,
       fix: async () => {
         const p = await Location.requestForegroundPermissionsAsync();
@@ -44,11 +44,16 @@ export function SafetyRing({ user }: { user: Me['user'] | undefined }) {
         if (p.granted) Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       },
     },
-    { label: 'Emergency contact', hint: 'SOS offers to call them', done: !!user?.emergency_contact_phone, fix: () => router.navigate('/profile') },
-    { label: 'Profile photo', hint: 'Helps your walker find you', done: !!user?.photo, fix: () => router.navigate('/profile') },
+    { label: 'Emergency contact', done: !!user?.emergency_contact_phone, fix: () => router.navigate('/profile') },
+    { label: 'Profile photo', done: !!user?.photo, fix: () => router.navigate('/profile') },
   ];
   const done = steps.filter((s) => s.done).length;
-  const ready = done === steps.length;
+  return { steps, done, ready: done === steps.length, known: location !== null && !!user };
+}
+
+export function SafetyRing({ readiness }: { readiness: Readiness }) {
+  const theme = useTheme();
+  const { steps, done, ready } = readiness;
 
   const progress = useSharedValue(0);
   useEffect(() => {
@@ -57,21 +62,15 @@ export function SafetyRing({ user }: { user: Me['user'] | undefined }) {
   const ringProps = useAnimatedProps(() => ({ strokeDashoffset: C * (1 - progress.value) }));
 
   return (
-    <Glass strong radius={28} style={styles.card}>
+    <Card strong radius={28} style={styles.card}>
       <View style={styles.ring}>
         <Svg width={SIZE} height={SIZE}>
-          <Defs>
-            <LinearGradient id="safetyRing" x1="0" y1="0" x2="1" y2="1">
-              <Stop offset="0" stopColor={ready ? status.good : theme.accent} />
-              <Stop offset="1" stopColor={ready ? '#2fb36f' : theme.primary} />
-            </LinearGradient>
-          </Defs>
-          <Circle cx={SIZE / 2} cy={SIZE / 2} r={R} stroke="rgba(255,255,255,0.1)" strokeWidth={STROKE} fill="none" />
+          <Circle cx={SIZE / 2} cy={SIZE / 2} r={R} stroke={theme.surfaceAlt} strokeWidth={STROKE} fill="none" />
           <AnimatedCircle
             cx={SIZE / 2}
             cy={SIZE / 2}
             r={R}
-            stroke="url(#safetyRing)"
+            stroke={ready ? status.good : theme.primary}
             strokeWidth={STROKE}
             strokeLinecap="round"
             fill="none"
@@ -105,8 +104,8 @@ export function SafetyRing({ user }: { user: Me['user'] | undefined }) {
             style={styles.step}
             accessibilityRole={s.done ? undefined : 'button'}
             accessibilityLabel={s.done ? `${s.label}: done` : `${s.label}: set up`}>
-            <View style={[styles.tick, s.done ? { backgroundColor: status.good } : { borderColor: 'rgba(255,255,255,0.35)', borderWidth: 1.5 }]}>
-              {s.done ? <Check size={11} color="#0b2a17" strokeWidth={3.5} /> : null}
+            <View style={[styles.tick, s.done ? { backgroundColor: status.good } : { borderColor: theme.line, borderWidth: 1.5 }]}>
+              {s.done ? <Check size={11} color="#fff" strokeWidth={3.5} /> : null}
             </View>
             <View style={{ flex: 1 }}>
               <T variant="small" color={s.done ? theme.muted : theme.foreground} style={{ fontSize: 13 }}>
@@ -117,12 +116,12 @@ export function SafetyRing({ user }: { user: Me['user'] | undefined }) {
           </Pressable>
         ))}
       </View>
-    </Glass>
+    </Card>
   );
 }
 
 const styles = StyleSheet.create({
-  card: { flexDirection: 'row', alignItems: 'center', gap: 16, padding: 16 },
+  card: { flexDirection: 'row', alignItems: 'center', gap: 16, padding: 16, height: 196 },
   ring: { width: SIZE, height: SIZE, alignItems: 'center', justifyContent: 'center' },
   ringCenter: { position: 'absolute', alignItems: 'center' },
   step: { flexDirection: 'row', alignItems: 'center', gap: 9, paddingVertical: 4 },

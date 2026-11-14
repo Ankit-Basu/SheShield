@@ -1,7 +1,7 @@
 import { ReactNode, useState } from 'react';
 import { StyleSheet, TextInput, TextInputProps, View } from 'react-native';
 
-import { fonts, glass, useTheme } from '@/lib/theme';
+import { fonts, useTheme } from '@/lib/theme';
 
 import { T } from './Text';
 
@@ -17,13 +17,13 @@ export function Field({ label, icon, right, error, style, multiline, ...rest }: 
         style={[
           styles.box,
           multiline && { alignItems: 'flex-start', paddingTop: 14, minHeight: 120 },
-          { borderColor: error ? theme.destructive : focused ? theme.primary : glass.line },
+          { backgroundColor: theme.surfaceAlt, borderColor: error ? theme.destructive : focused ? theme.primary : theme.line },
         ]}>
         {icon}
         <TextInput
           {...rest}
           multiline={multiline}
-          placeholderTextColor="rgba(255,255,255,0.38)"
+          placeholderTextColor={theme.muted + "99"}
           selectionColor={theme.primary}
           onFocus={(e) => {
             setFocused(true);
@@ -55,7 +55,6 @@ const styles = StyleSheet.create({
     minHeight: 54,
     borderRadius: 18,
     borderWidth: 1,
-    backgroundColor: 'rgba(0,0,0,0.22)',
   },
   input: { flex: 1, fontFamily: fonts.medium, fontSize: 15.5, paddingVertical: 12 },
 });

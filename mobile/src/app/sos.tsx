@@ -1,40 +1,23 @@
 import * as Clipboard from 'expo-clipboard';
 import * as Haptics from 'expo-haptics';
-import * as Location from 'expo-location';
 import { router } from 'expo-router';
 import { Check, CircleAlert, Copy, LoaderCircle, MapPin, MessageSquare, Phone, Share2, X } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import { Linking, Pressable, Share, StyleSheet, View } from 'react-native';
 import Animated, { Easing, FadeIn, FadeInDown, useAnimatedStyle, useSharedValue, withRepeat, withTiming, ZoomIn } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { LinearGradient } from 'expo-linear-gradient';
+import { StatusBar } from 'expo-status-bar';
 
 import { Button } from '@/components/Button';
-import { Glass } from '@/components/Glass';
+import { Card } from '@/components/Card';
 import { HoldToSend } from '@/components/HoldToSend';
 import { T } from '@/components/Text';
 import { api } from '@/lib/api';
+import { Fix, getFix } from '@/lib/location';
 import { useMe } from '@/lib/queries';
 import { status } from '@/lib/theme';
 
 type Phase = 'idle' | 'locating' | 'sending' | 'sent' | 'failed';
-type Fix = { lat: number; lng: number; accuracy: number | null };
-
-const withTimeout = <T,>(p: Promise<T>, ms: number) => Promise.race([p, new Promise<never>((_, r) => setTimeout(() => r(new Error('timeout')), ms))]);
-
-// Last known position first (instant), then a fresh fix if it arrives within 8 s.
-async function getFix(): Promise<Fix | null> {
-  const { granted } = await Location.requestForegroundPermissionsAsync();
-  if (!granted) return null;
-  const last = await Location.getLastKnownPositionAsync({ maxAge: 120000 }).catch(() => null);
-  try {
-    const fresh = await withTimeout(Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High }), 8000);
-    return { lat: fresh.coords.latitude, lng: fresh.coords.longitude, accuracy: fresh.coords.accuracy };
-  } catch {
-    return last ? { lat: last.coords.latitude, lng: last.coords.longitude, accuracy: last.coords.accuracy } : null;
-  }
-}
-
 function Spinner({ color }: { color: string }) {
   const r = useSharedValue(0);
   useEffect(() => {
@@ -95,8 +78,8 @@ export default function Sos() {
   const done = phase === 'sent' || phase === 'failed';
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#1a0508' }}>
-      <LinearGradient colors={['#5c0a16', '#2a060c', '#120306']} style={StyleSheet.absoluteFill} />
+    <View style={{ flex: 1, backgroundColor: '#2a070c' }}>
+      <StatusBar style="light" />
       <View style={[styles.body, { paddingTop: insets.top + 10, paddingBottom: insets.bottom + 20 }]}>
         <View style={styles.head}>
           <View>
@@ -134,7 +117,7 @@ export default function Sos() {
                 : `The alert could not be sent (${error}). Call or text instead; these work without SheShield.`}
             </T>
             {fix ? (
-              <Glass radius={18} style={styles.coords} tint={['rgba(255,255,255,0.12)', 'rgba(255,255,255,0.04)']}>
+              <Card radius={18} style={styles.coords} fill="rgba(255,255,255,0.12)">
                 <MapPin size={16} color="#fff" />
                 <T variant="mono" color="#fff" style={{ flex: 1 }}>
                   {fix.lat.toFixed(5)}, {fix.lng.toFixed(5)}
@@ -149,7 +132,7 @@ export default function Sos() {
                   accessibilityLabel="Copy location link">
                   <Copy size={16} color="#fff" />
                 </Pressable>
-              </Glass>
+              </Card>
             ) : (
               <T variant="small" color="rgba(255,255,255,0.7)">
                 Location was not available. Turn on location for future alerts.
@@ -164,7 +147,7 @@ export default function Sos() {
             {contact ? (
               <Button
                 label={`Call ${me?.user.emergency_contact_name || 'contact'}`}
-                variant="ghost"
+                variant="onDark"
                 style={{ flex: 1 }}
                 icon={<Phone size={16} color="#fff" />}
                 onPress={() => Linking.openURL(`tel:${contact}`)}
@@ -172,7 +155,7 @@ export default function Sos() {
             ) : null}
             <Button
               label={contact ? 'Text them' : 'Share location'}
-              variant="ghost"
+              variant="onDark"
               style={{ flex: 1 }}
               icon={contact ? <MessageSquare size={16} color="#fff" /> : <Share2 size={16} color="#fff" />}
               onPress={() =>
@@ -180,7 +163,7 @@ export default function Sos() {
               }
             />
           </View>
-          {contact ? <Button label="Share location with anyone" variant="ghost" icon={<Share2 size={16} color="#fff" />} onPress={() => Share.share({ message })} /> : null}
+          {contact ? <Button label="Share location with anyone" variant="onDark" icon={<Share2 size={16} color="#fff" />} onPress={() => Share.share({ message })} /> : null}
         </View>
       </View>
     </View>

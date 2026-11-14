@@ -78,7 +78,7 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: theme.base }}>
       <SafeAreaProvider>
         <QueryClientProvider client={queryClient}>
-          <StatusBar style="light" />
+          <StatusBar style={theme.mode === "light" ? "dark" : "light"} />
           <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: theme.base }, animation: 'fade_from_bottom' }}>
             <Stack.Protected guard={!token} redirectTo="/">
               <Stack.Screen name="welcome" />
@@ -91,6 +91,7 @@ export default function RootLayout() {
               <Stack.Screen name="report" options={{ presentation: 'modal', animation: 'slide_from_bottom' }} />
               <Stack.Screen name="reports" options={{ animation: 'slide_from_right' }} />
               <Stack.Screen name="volunteer" options={{ presentation: 'modal', animation: 'slide_from_bottom' }} />
+              <Stack.Screen name="fake-call" options={{ presentation: 'fullScreenModal', animation: 'fade', gestureEnabled: false }} />
             </Stack.Protected>
           </Stack>
           <ToastHost />

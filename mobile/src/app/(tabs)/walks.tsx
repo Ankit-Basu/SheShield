@@ -7,7 +7,7 @@ import Animated, { FadeInDown, LinearTransition } from 'react-native-reanimated'
 
 import { Badge, Chip, Empty, IconTile, SectionHeader } from '@/components/bits';
 import { Button } from '@/components/Button';
-import { Glass } from '@/components/Glass';
+import { Card } from '@/components/Card';
 import { Screen } from '@/components/Screen';
 import { SourceBanner } from '@/components/SourceBanner';
 import { T } from '@/components/Text';
@@ -37,7 +37,7 @@ function WalkerCard() {
   const label = state === 'verified' ? 'Verified walker' : state === 'rejected' ? 'Not approved' : 'Waiting for verification';
   const color = state === 'verified' ? status.good : state === 'rejected' ? '#ff6b6b' : status.warn;
   return (
-    <Glass radius={22} onPress={() => router.push('/volunteer')} style={styles.walkerCard} accessibilityLabel={profile ? 'Edit your walker profile' : 'Volunteer as a walker'}>
+    <Card radius={22} onPress={() => router.push('/volunteer')} style={styles.walkerCard} accessibilityLabel={profile ? 'Edit your walker profile' : 'Volunteer as a walker'}>
       <View style={[styles.walkerIcon, { backgroundColor: (profile ? color : theme.primary) + '22' }]}>
         <HeartHandshake size={20} color={profile ? color : theme.primary} />
       </View>
@@ -50,7 +50,7 @@ function WalkerCard() {
         </T>
       </View>
       <ChevronRight size={18} color={theme.muted} />
-    </Glass>
+    </Card>
   );
 }
 
@@ -108,7 +108,7 @@ export default function Walks() {
       </Animated.View>
 
       <Animated.View entering={FadeInDown.delay(80).springify().damping(18)}>
-        <Glass radius={28} strong style={{ padding: 16, gap: 14 }}>
+        <Card radius={28} strong style={{ padding: 16, gap: 14 }}>
           {/* Route: tap an end to edit it, pick a place below, swap with one tap. */}
           <View style={styles.route}>
             <View style={styles.routeLine}>
@@ -127,7 +127,7 @@ export default function Walks() {
                       Haptics.selectionAsync();
                       setEditing(end);
                     }}
-                    style={[styles.routeEnd, on && { borderColor: theme.primary, backgroundColor: theme.primary + '1c' }]}
+                    style={[styles.routeEnd, on && { borderColor: theme.primary, backgroundColor: theme.soft }]}
                     accessibilityRole="button"
                     accessibilityLabel={`${end === 'from' ? 'Pickup' : 'Destination'}: ${value ?? 'not chosen'}`}>
                     <T variant="eyebrow" style={{ fontSize: 9.5 }}>
@@ -191,18 +191,18 @@ export default function Walks() {
           </View>
 
           <Button label="Request a walker" size="lg" icon={<Footprints size={18} color={theme.primaryForeground} />} loading={request.isPending} onPress={submit} />
-        </Glass>
+        </Card>
       </Animated.View>
 
       <SectionHeader title="Your walks" />
       {active.length === 0 && past.length === 0 ? (
-        <Glass radius={24} style={{ padding: 8 }}>
+        <Card radius={24} style={{ padding: 8 }}>
           <Empty icon={<Route size={26} color={theme.muted} />} text={isLoading ? 'Loading…' : 'No walks yet. Request one above.'} />
-        </Glass>
+        </Card>
       ) : (
         [...active, ...past].map((w, i) => (
           <Animated.View key={w.walk_id} entering={FadeInDown.delay(40 * i)} layout={LinearTransition.springify().damping(18)}>
-            <Glass radius={22} style={{ padding: 15, gap: 10 }}>
+            <Card radius={22} style={{ padding: 15, gap: 10 }}>
               <View style={styles.walkTop}>
                 <IconTile size={38}>
                   <Footprints size={17} color={theme.primary} />
@@ -235,7 +235,7 @@ export default function Walks() {
               {(w.status === 'pending' || w.status === 'accepted') && (
                 <Button label="Cancel walk" variant="ghost" loading={cancel.isPending && cancel.variables === w.walk_id} onPress={() => cancel.mutate(w.walk_id, { onError: (e) => toast(e.message, 'error') })} />
               )}
-            </Glass>
+            </Card>
           </Animated.View>
         ))
       )}
@@ -253,10 +253,10 @@ const styles = StyleSheet.create({
   route: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   routeLine: { alignItems: 'center', paddingVertical: 16 },
   routeDot: { width: 11, height: 11, borderRadius: 6 },
-  routeDash: { width: 2, flex: 1, minHeight: 34, marginVertical: 4, backgroundColor: 'rgba(255,255,255,0.18)', borderRadius: 1 },
-  routeEnd: { paddingHorizontal: 14, paddingVertical: 9, borderRadius: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.12)', backgroundColor: 'rgba(0,0,0,0.2)', gap: 2 },
-  swap: { width: 42, height: 42, borderRadius: 21, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.08)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.12)' },
+  routeDash: { width: 2, flex: 1, minHeight: 34, marginVertical: 4, backgroundColor: 'rgba(127,127,127,0.22)', borderRadius: 1 },
+  routeEnd: { paddingHorizontal: 14, paddingVertical: 9, borderRadius: 16, borderWidth: 1, borderColor: 'rgba(127,127,127,0.22)', backgroundColor: 'rgba(127,127,127,0.1)', gap: 2 },
+  swap: { width: 42, height: 42, borderRadius: 21, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(127,127,127,0.1)', borderWidth: 1, borderColor: 'rgba(127,127,127,0.22)' },
   walkTop: { flexDirection: 'row', alignItems: 'center', gap: 11 },
-  walker: { flexDirection: 'row', alignItems: 'center', padding: 10, borderRadius: 12, backgroundColor: 'rgba(0,0,0,0.2)' },
+  walker: { flexDirection: 'row', alignItems: 'center', padding: 10, borderRadius: 12, backgroundColor: 'rgba(127,127,127,0.1)' },
   call: { flexDirection: 'row', alignItems: 'center', gap: 5 },
 });

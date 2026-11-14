@@ -8,7 +8,7 @@ import Animated, { FadeInDown, FadeOutUp, useAnimatedStyle, useSharedValue, with
 import { useDataSource } from '@/lib/fallback';
 import { status, useTheme } from '@/lib/theme';
 
-import { Glass } from './Glass';
+import { Card } from './Card';
 import { T } from './Text';
 
 const queryKeyFor: Record<string, string> = { me: 'me', reports: 'reports', walks: 'walks', 'safe-spaces': 'safe-spaces' };
@@ -31,7 +31,7 @@ export function SourceBanner({ keys }: { keys: string[] }) {
   if (!sample && !saved) return null;
   return (
     <Animated.View entering={FadeInDown.springify().damping(18)} exiting={FadeOutUp}>
-      <Glass radius={18} flat style={styles.banner} tint={[status.warn + '2a', 'rgba(255,255,255,0.03)']}>
+      <Card radius={18} flat style={styles.banner} fill={status.warn + '1f'}>
         <CloudOff size={18} color={status.warn} />
         <View style={{ flex: 1, gap: 1 }}>
           <T variant="label" style={{ fontSize: 13.5 }}>
@@ -58,7 +58,7 @@ export function SourceBanner({ keys }: { keys: string[] }) {
             Retry
           </T>
         </Pressable>
-      </Glass>
+      </Card>
     </Animated.View>
   );
 }
