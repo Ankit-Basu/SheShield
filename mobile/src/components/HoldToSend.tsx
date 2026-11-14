@@ -24,6 +24,7 @@ const STROKE = 10;
 const R = (SIZE - STROKE) / 2;
 const C = 2 * Math.PI * R;
 const HOLD_MS = 1600;
+const GLOW = SIZE + 44;
 
 // Press and hold to send: the ring fills over 1.6 s with rising haptic ticks,
 // so an alert is never sent by a pocket tap, but is quick when you mean it.
@@ -116,8 +117,10 @@ export function HoldToSend({ onComplete, disabled, label }: { onComplete: () => 
 }
 
 const styles = StyleSheet.create({
-  wrap: { width: SIZE, height: SIZE, alignItems: 'center', justifyContent: 'center' },
-  glow: { position: 'absolute', width: SIZE + 60, height: SIZE + 60, borderRadius: (SIZE + 60) / 2, backgroundColor: '#ff2d45' },
+  // The glow pulses up to 1.14x, so it reaches GLOW * 1.14 / 2 - SIZE / 2 (about 41) past the ring.
+  // The vertical margin keeps that clear of whatever sits above and below the button.
+  wrap: { width: SIZE, height: SIZE, marginVertical: 20, alignItems: 'center', justifyContent: 'center' },
+  glow: { position: 'absolute', width: GLOW, height: GLOW, borderRadius: GLOW / 2, backgroundColor: '#ff2d45' },
   press: { width: SIZE - 34, height: SIZE - 34, borderRadius: (SIZE - 34) / 2 },
   core: { flex: 1, borderRadius: (SIZE - 34) / 2, overflow: 'hidden', borderWidth: 3, borderColor: 'rgba(255,255,255,0.25)' },
   coreFill: { flex: 1, alignItems: 'center', justifyContent: 'center' },
