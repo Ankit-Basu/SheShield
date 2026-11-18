@@ -8,7 +8,8 @@ pipeline {
         DOCKER_IMAGE    = 'sheshield'
         DOCKER_TAG      = "${BUILD_NUMBER}"
         SONAR_HOST_URL  = 'http://host.docker.internal:9000'
-        SONAR_TOKEN     = 'sqa_e15d16db175fedd0ec8dc6c7fdcda2b6ff512c8a'
+        // A Jenkins "Secret text" credential with this ID; Jenkins masks it in logs.
+        SONAR_TOKEN     = credentials('sonarqube-token')
         NEXUS_URL       = '127.0.0.1:8082'
         KUBE_NAMESPACE  = 'sheshield'
     }

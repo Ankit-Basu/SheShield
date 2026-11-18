@@ -32,7 +32,7 @@ kubectl get pods -n sheshield
 | 7 | **Prometheus Targets** | http://localhost:9090/targets |
 | 8 | **GitHub Repo** | https://github.com/Ankit-Basu/SheShield |
 | 9 | **GitHub Actions** | https://github.com/Ankit-Basu/SheShield/actions |
-| 10 | **AWS Console** | https://891924441743.signin.aws.amazon.com/console |
+| 10 | **AWS Console** | `https://<account-id>.signin.aws.amazon.com/console` |
 
 ### Terminal Windows to Open
 
@@ -285,9 +285,9 @@ terraform state list  # (only works after apply)
 
 | AWS Console Login |  |
 |---|---|
-| **URL** | https://891924441743.signin.aws.amazon.com/console |
+| **URL** | `https://<account-id>.signin.aws.amazon.com/console` |
 | **Username** | sheshield-deployer |
-| **Password** | SheShield@2026 |
+| **Password** | Kept in a password manager, never in the repo |
 
 ---
 
