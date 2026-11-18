@@ -9,7 +9,8 @@ param(
     [string]$ProjectName = "sheshield",
     [string]$IAMUserName = "sheshield-deployer",
     [string]$KeyPairName = "sheshield-key",
-    [string]$DBPassword = "SheShield@2026"
+    # No default: pass it when you run the script, so it never lives in the repo.
+    [Parameter(Mandatory = $true)][string]$DBPassword
 )
 
 $ErrorActionPreference = "Stop"
