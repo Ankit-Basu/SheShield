@@ -1,14 +1,19 @@
-// LPU landmarks (same list as the website) and helplines.
+// LPU landmarks, shared with the website (public/js/locations.js).
+// Main Gate, Sports Complex and Parking Zone are from OpenStreetMap: the covered gate on
+// the driveway in from NH44, the cluster of courts and the cricket ground, and the large
+// surface car park. The rest are placed on the matching buildings in Esri satellite
+// imagery (the academic row south of the central plaza, the large building north of it,
+// the residential towers) and are approximate: worth checking on campus.
 export const landmarks = [
-  { name: 'Main Gate', lat: 31.255, lng: 75.703, type: 'entrance' },
-  { name: 'Block 32', lat: 31.2533, lng: 75.705, type: 'academic' },
-  { name: 'Block 34', lat: 31.2528, lng: 75.7045, type: 'academic' },
-  { name: 'Library', lat: 31.2535, lng: 75.7048, type: 'academic' },
-  { name: 'Uni Mall', lat: 31.2538, lng: 75.7042, type: 'commercial' },
-  { name: 'Girls Hostel', lat: 31.2545, lng: 75.7035, type: 'residential' },
-  { name: 'Boys Hostel', lat: 31.252, lng: 75.706, type: 'residential' },
-  { name: 'Sports Complex', lat: 31.2515, lng: 75.7055, type: 'recreational' },
-  { name: 'Parking Zone', lat: 31.2525, lng: 75.7058, type: 'commercial' },
+  { name: 'Main Gate', lat: 31.2606, lng: 75.7068, type: 'entrance' },
+  { name: 'Block 32', lat: 31.2526, lng: 75.7027, type: 'academic' },
+  { name: 'Block 34', lat: 31.2524, lng: 75.7046, type: 'academic' },
+  { name: 'Library', lat: 31.2527, lng: 75.7037, type: 'academic' },
+  { name: 'Uni Mall', lat: 31.2549, lng: 75.7046, type: 'commercial' },
+  { name: 'Girls Hostel', lat: 31.257, lng: 75.705, type: 'residential' },
+  { name: 'Boys Hostel', lat: 31.2492, lng: 75.7, type: 'residential' },
+  { name: 'Sports Complex', lat: 31.2482, lng: 75.7018, type: 'recreational' },
+  { name: 'Parking Zone', lat: 31.253, lng: 75.7057, type: 'commercial' },
 ] as const;
 
 export const LPU_CENTER = { lat: 31.2536, lng: 75.7037 };

@@ -41,13 +41,13 @@ export default function Reports() {
         ListHeaderComponent={
           <View style={{ gap: 16, marginBottom: 6 }}>
             <View style={styles.head}>
-              <Pressable onPress={() => router.back()} hitSlop={12} style={styles.icon} accessibilityLabel="Back">
+              <Pressable accessibilityRole="button" onPress={() => router.back()} hitSlop={12} style={styles.icon} accessibilityLabel="Back">
                 <ArrowLeft size={21} color={theme.foreground} />
               </Pressable>
               <T variant="title" style={{ flex: 1 }}>
                 My reports
               </T>
-              <Pressable onPress={() => router.push('/report')} hitSlop={12} style={[styles.icon, { backgroundColor: theme.primary }]} accessibilityLabel="New report">
+              <Pressable accessibilityRole="button" onPress={() => router.push('/report')} hitSlop={12} style={[styles.icon, { backgroundColor: theme.primary }]} accessibilityLabel="New report">
                 <Plus size={21} color={theme.primaryForeground} />
               </Pressable>
             </View>

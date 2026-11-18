@@ -14,7 +14,7 @@ export function Sheet({ open, onClose, title, subtitle, icon, children }: Props)
   const theme = useTheme();
   return (
     <Modal visible={open} transparent animationType="slide" onRequestClose={onClose} statusBarTranslucent navigationBarTranslucent>
-      <Pressable style={styles.backdrop} onPress={onClose} accessibilityLabel="Close" />
+      <Pressable accessibilityRole="button" style={styles.backdrop} onPress={onClose} accessibilityLabel="Close" />
       <View style={[styles.panel, { paddingBottom: insets.bottom + 18, backgroundColor: theme.surface, borderColor: theme.line }]}>
         <View style={[styles.handle, { backgroundColor: theme.line }]} />
         <View style={styles.head}>

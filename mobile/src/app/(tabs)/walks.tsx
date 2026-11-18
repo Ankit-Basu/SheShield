@@ -232,7 +232,7 @@ export default function Walks() {
                     Walker: <T variant="small" color={theme.primary}>{w.walker_name}</T>
                   </T>
                   {w.walker_phone ? (
-                    <Pressable onPress={() => Linking.openURL(`tel:${w.walker_phone}`)} hitSlop={8} style={styles.call} accessibilityLabel={`Call ${w.walker_name}`}>
+                    <Pressable accessibilityRole="button" onPress={() => Linking.openURL(`tel:${w.walker_phone}`)} hitSlop={8} style={styles.call} accessibilityLabel={`Call ${w.walker_name}`}>
                       <Phone size={14} color={theme.primary} />
                       <T variant="small" color={theme.primary}>
                         Call

@@ -90,7 +90,7 @@ export default function Volunteer() {
                 Walk with students who don&apos;t want to go alone. Verified by an admin before your first walk.
               </T>
             </View>
-            <Pressable onPress={() => router.back()} hitSlop={12} style={styles.close} accessibilityLabel="Close">
+            <Pressable accessibilityRole="button" onPress={() => router.back()} hitSlop={12} style={styles.close} accessibilityLabel="Close">
               <X size={20} color={theme.foreground} />
             </Pressable>
           </View>

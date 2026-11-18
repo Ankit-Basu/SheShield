@@ -88,7 +88,7 @@ export default function Home() {
     <Screen refreshing={isRefetching} onRefresh={refetch}>
       {/* Header: you, today, and SOS readiness at a glance. */}
       <Animated.View entering={reveal(0)} style={styles.header}>
-        <Pressable onPress={() => router.navigate('/profile')} accessibilityLabel="Your profile" hitSlop={6}>
+        <Pressable accessibilityRole="button" onPress={() => router.navigate('/profile')} accessibilityLabel="Your profile" hitSlop={6}>
           {data ? <Avatar uri={absoluteUrl(data.user.photo)} name={`${data.user.first_name} ${data.user.last_name}`} size={50} /> : <Skeleton width={50} height={50} radius={25} />}
         </Pressable>
         <View style={{ flex: 1 }}>
