@@ -53,7 +53,8 @@ export default function Report() {
   const [photos, setPhotos] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
   const [locating, setLocating] = useState(false);
-  const [doneId, setDoneId] = useState<string | null>(null);
+  // The reference the server gives a new report, shown on the success screen when present.
+  const [done, setDone] = useState<{ id?: string } | null>(null);
 
   const pick = async (camera: boolean) => {
     const perm = camera ? await ImagePicker.requestCameraPermissionsAsync() : await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -102,7 +103,7 @@ export default function Report() {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       qc.invalidateQueries({ queryKey: keys.me });
       qc.invalidateQueries({ queryKey: keys.reports });
-      setDoneId(res.report_id ?? 'sent');
+      setDone({ id: res.report_id });
     } catch (e) {
       if (e instanceof ApiError && e.offline) {
         await addToQueue(draft);
@@ -118,7 +119,7 @@ export default function Report() {
     }
   };
 
-  if (doneId) {
+  if (done) {
     return (
       <Scene>
         <View style={[styles.done, { paddingBottom: insets.bottom + 24 }]}>
@@ -127,9 +128,11 @@ export default function Report() {
           </Animated.View>
           <Animated.View entering={FadeInDown.delay(120)} style={{ alignItems: 'center', gap: 8 }}>
             <T variant="title">Report received.</T>
-            <T variant="mono" color={theme.primary}>
-              {doneId}
-            </T>
+            {done.id ? (
+              <T variant="mono" color={theme.primary}>
+                {done.id}
+              </T>
+            ) : null}
             <T muted style={{ textAlign: 'center' }}>
               {anonymous ? 'It is not linked to your account, so it will not appear in your list.' : 'You can follow its status under My reports.'}
             </T>

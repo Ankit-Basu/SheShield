@@ -109,7 +109,7 @@ export default function Profile() {
             </View>
           </Pressable>
           <View style={{ flex: 1, gap: 4 }}>
-            <T variant="title" numberOfLines={1}>
+            <T variant="title" numberOfLines={2} style={{ fontSize: 26, lineHeight: 30 }}>
               {fullName || '…'}
             </T>
             <T variant="small" muted numberOfLines={1}>
@@ -174,7 +174,7 @@ export default function Profile() {
         <View style={styles.aboutRow}>
           <Server size={17} color={theme.muted} />
           <T variant="small" muted style={{ flex: 1 }} numberOfLines={1}>
-            {API_URL.replace(/^https?:\/\//, '')}
+            {API_URL.replace(/^https?:\/\//, '').replace(/\/$/, '')}
           </T>
         </View>
         <View style={styles.aboutRow}>

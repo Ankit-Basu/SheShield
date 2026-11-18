@@ -1,5 +1,5 @@
 import { ReactNode, useState } from 'react';
-import { StyleSheet, TextInput, TextInputProps, View } from 'react-native';
+import { Platform, StyleSheet, TextInput, TextInputProps, View } from 'react-native';
 
 import { fonts, useTheme } from '@/lib/theme';
 
@@ -33,7 +33,7 @@ export function Field({ label, icon, right, error, style, multiline, ...rest }: 
             setFocused(false);
             rest.onBlur?.(e);
           }}
-          style={[styles.input, { color: theme.foreground }, multiline && { textAlignVertical: 'top', minHeight: 100 }, style]}
+          style={[styles.input, { color: theme.foreground }, multiline && { textAlignVertical: 'top', minHeight: 100 }, Platform.OS === 'web' && { outlineWidth: 0 }, style]}
         />
         {right}
       </View>

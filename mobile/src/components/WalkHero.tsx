@@ -1,8 +1,8 @@
 import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 import { ArrowRight, Footprints, Moon, Sun } from 'lucide-react-native';
-import { useEffect, useState } from 'react';
-import { LayoutChangeEvent, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { useEffect } from 'react';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import Animated, { Easing, useAnimatedStyle, useReducedMotion, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
 
 import type { Me } from '@/lib/queries';
@@ -21,22 +21,25 @@ type Props = {
   isDay: boolean;
 };
 
-// A dot that travels the route from pickup to destination while a walk is on.
+// A dot that travels down the route from pickup to destination while a walk is on.
+// Drawn vertically between the two stops, so long place names never get cut off.
+const TRACK = 26;
 function RouteLine({ color, track }: { color: string; track: string }) {
-  const [w, setW] = useState(0);
   const t = useSharedValue(0);
   const reduced = useReducedMotion();
   useEffect(() => {
-    if (!reduced) t.set(withRepeat(withTiming(1, { duration: 2600, easing: Easing.inOut(Easing.cubic) }), -1));
+    if (!reduced) t.set(withRepeat(withTiming(1, { duration: 2200, easing: Easing.inOut(Easing.cubic) }), -1));
   }, [reduced, t]);
   const dot = useAnimatedStyle(() => ({
-    transform: [{ translateX: (w - 12) * t.value }],
+    transform: [{ translateY: (TRACK - 8) * t.value }],
     opacity: 1 - 0.6 * t.value * t.value,
   }));
   return (
-    <View style={styles.routeTrack} onLayout={(e: LayoutChangeEvent) => setW(e.nativeEvent.layout.width)}>
-      <View style={[styles.routeDash, { borderColor: track }]} />
-      {w ? <Animated.View style={[styles.routeDot, { backgroundColor: color }, dot]} /> : null}
+    <View style={styles.routeTrack}>
+      {[0, 1, 2].map((i) => (
+        <View key={i} style={[styles.routeDash, { backgroundColor: track }]} />
+      ))}
+      <Animated.View style={[styles.routeDot, { backgroundColor: color }, dot]} />
     </View>
   );
 }
@@ -59,14 +62,20 @@ export function WalkHero({ walk, walkers, isDay }: Props) {
             <Badge value={walk.status} live />
           </View>
         </View>
-        <View style={styles.routeRow}>
-          <T variant="heading" color={on} numberOfLines={1} style={{ flexShrink: 1, fontSize: 18 }}>
-            {walk.pickup_location}
-          </T>
+        <View>
+          <View style={styles.stop}>
+            <View style={[styles.pin, { borderColor: on }]} />
+            <T variant="heading" color={on} numberOfLines={1} style={styles.place}>
+              {walk.pickup_location}
+            </T>
+          </View>
           <RouteLine color={on} track={on + '55'} />
-          <T variant="heading" color={on} numberOfLines={1} style={{ flexShrink: 1, fontSize: 18 }}>
-            {walk.destination}
-          </T>
+          <View style={styles.stop}>
+            <View style={[styles.pin, { borderColor: on, backgroundColor: on }]} />
+            <T variant="heading" color={on} numberOfLines={1} style={styles.place}>
+              {walk.destination}
+            </T>
+          </View>
         </View>
         <T variant="small" color={on} style={{ opacity: 0.85 }}>
           {walk.walker_name ? `${walk.walker_name} is walking with you` : 'Finding a verified walker near you…'}
@@ -174,14 +183,11 @@ const styles = StyleSheet.create({
     opacity: 0.1,
     transform: [{ rotate: '-18deg' }],
   },
-  routeRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  routeTrack: { flex: 1, minWidth: 40, height: 12, justifyContent: 'center' },
-  routeDash: { borderTopWidth: 2, borderStyle: 'dashed' },
-  routeDot: {
-    position: 'absolute',
-    left: 0,
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-  },
+  stop: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  pin: { width: 12, height: 12, borderRadius: 6, borderWidth: 2 },
+  place: { flex: 1, fontSize: 18 },
+  // Sits under the pins: 12 wide, centred on them.
+  routeTrack: { width: 12, height: TRACK, alignItems: 'center', justifyContent: 'space-evenly' },
+  routeDash: { width: 2, height: 4, borderRadius: 1 },
+  routeDot: { position: 'absolute', top: 0, left: 2, width: 8, height: 8, borderRadius: 4 },
 });
