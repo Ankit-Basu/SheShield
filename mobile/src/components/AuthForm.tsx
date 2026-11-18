@@ -115,7 +115,7 @@ export function AuthForm({ mode }: { mode: 'login' | 'signup' }) {
               />
               {error ? (
                 <View style={[styles.error, { borderColor: theme.destructive + '66', backgroundColor: theme.destructive + '1f' }]}>
-                  <T variant="small" color="#ffb3b8">
+                  <T variant="small" color={theme.destructive}>
                     {error}
                   </T>
                 </View>

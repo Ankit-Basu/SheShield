@@ -217,7 +217,7 @@ export default function Walks() {
                   <Footprints size={17} color={theme.primary} />
                 </IconTile>
                 <View style={{ flex: 1 }}>
-                  <T variant="label" numberOfLines={1}>
+                  <T variant="label" numberOfLines={2}>
                     {w.pickup_location} → {w.destination}
                   </T>
                   <T variant="small" muted>

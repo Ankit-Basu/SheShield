@@ -79,7 +79,7 @@ export default function Home() {
   const subtitle = error
     ? { text: 'Could not reach SheShield. Pull down to try again.' }
     : data && data.stats.pending > 0
-      ? { text: `${data.stats.pending} of your report${data.stats.pending === 1 ? ' is' : 's are'} waiting on review` }
+      ? { text: data.stats.pending === 1 ? '1 report is waiting on review' : `${data.stats.pending} reports are waiting on review` }
       : readiness.known && stepsLeft > 0
         ? { text: `${stepsLeft} step${stepsLeft === 1 ? '' : 's'} left to be SOS-ready`, link: true }
         : { text: "You're SOS-ready. Stay safe out there." };
@@ -106,7 +106,10 @@ export default function Home() {
         <ReadinessBadge readiness={readiness} onPress={() => setChecklist(true)} />
       </Animated.View>
 
-      {isLoading && !name ? null : (
+      {/* While loading, a placeholder holds the status line's place so nothing jumps when data arrives. */}
+      {isLoading && !name ? (
+        <Skeleton width="100%" height={42} radius={14} style={{ marginTop: -4 }} />
+      ) : (
         <Animated.View entering={reveal(1)}>
           {'link' in subtitle ? (
             <Pressable onPress={() => setChecklist(true)} style={[styles.status, { backgroundColor: status.warn + '1f' }]} accessibilityRole="button">

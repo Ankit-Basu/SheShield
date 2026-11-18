@@ -132,5 +132,5 @@ const styles = StyleSheet.create({
   tile: { alignItems: 'center', justifyContent: 'center', borderWidth: 1 },
   avatar: { overflow: 'hidden', alignItems: 'center', justifyContent: 'center', borderWidth: 2 },
   section: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 6, marginBottom: -6, paddingHorizontal: 4 },
-  empty: { alignItems: 'center', gap: 10, paddingVertical: 26 },
+  empty: { alignItems: 'center', gap: 10, paddingVertical: 26, paddingHorizontal: 20 },
 });

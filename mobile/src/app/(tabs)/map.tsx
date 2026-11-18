@@ -105,7 +105,7 @@ export default function MapScreen() {
             <View style={styles.legendItem}>
               <View style={[styles.dot, { backgroundColor: status.good }]} />
               <T variant="small" muted>
-                {safe ? `${safe.length} safe spaces` : 'Safe spaces'}
+                {safe ? `${safe.length} safe space${safe.length === 1 ? '' : 's'}` : 'Safe spaces'}
               </T>
             </View>
           </View>
@@ -159,11 +159,11 @@ export default function MapScreen() {
               <Button
                 label="Walk from here"
                 icon={<Footprints size={16} color={theme.primaryForeground} />}
-                style={{ flex: 1 }}
+                style={{ flex: 1.5 }}
                 onPress={() => router.navigate({ pathname: '/walks', params: { from: place.name } })}
               />
               <Button
-                label="Report here"
+                label="Report"
                 variant="ghost"
                 icon={<ShieldCheck size={16} color={theme.foreground} />}
                 style={{ flex: 1 }}

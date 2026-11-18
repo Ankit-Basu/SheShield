@@ -114,8 +114,13 @@ export default function Sos() {
             <T color="#fff" style={{ textAlign: 'center', fontSize: 16 }}>
               {phase === 'sent'
                 ? 'Your alert and location reached SheShield. Call 112 too if you are in danger.'
-                : `The alert could not be sent (${error}). Call or text instead; these work without SheShield.`}
+                : "The alert didn't reach SheShield. Call or text instead: these work without the app."}
             </T>
+            {phase === 'failed' && error ? (
+              <T variant="small" color="rgba(255,255,255,0.6)" style={{ textAlign: 'center', marginTop: -10 }}>
+                {error}
+              </T>
+            ) : null}
             {fix ? (
               <Card radius={18} style={styles.coords} fill="rgba(255,255,255,0.12)">
                 <MapPin size={16} color="#fff" />
