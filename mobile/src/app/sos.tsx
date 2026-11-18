@@ -90,7 +90,7 @@ export default function Sos() {
               {phase === 'sent' ? 'Help is on the way.' : phase === 'failed' ? 'Use these now.' : 'Hold to alert.'}
             </T>
           </View>
-          <Pressable onPress={() => router.back()} hitSlop={12} style={styles.close} accessibilityLabel="Close SOS">
+          <Pressable accessibilityRole="button" onPress={() => router.back()} hitSlop={12} style={styles.close} accessibilityLabel="Close SOS">
             <X size={22} color="#fff" />
           </Pressable>
         </View>

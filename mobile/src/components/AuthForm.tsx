@@ -108,7 +108,7 @@ export function AuthForm({ mode }: { mode: 'login' | 'signup' }) {
                 onSubmitEditing={submit}
                 icon={<Lock size={17} color={theme.muted} />}
                 right={
-                  <Pressable onPress={() => setShow((s) => !s)} hitSlop={10} accessibilityLabel={show ? 'Hide password' : 'Show password'}>
+                  <Pressable accessibilityRole="button" onPress={() => setShow((s) => !s)} hitSlop={10} accessibilityLabel={show ? 'Hide password' : 'Show password'}>
                     {show ? <EyeOff size={18} color={theme.muted} /> : <Eye size={18} color={theme.muted} />}
                   </Pressable>
                 }

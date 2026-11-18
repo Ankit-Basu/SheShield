@@ -151,7 +151,7 @@ export default function MapScreen() {
                   {place.name}
                 </T>
               </View>
-              <Pressable onPress={() => setSelected(null)} hitSlop={12} style={[styles.close, { backgroundColor: theme.surfaceAlt }]} accessibilityLabel="Close">
+              <Pressable accessibilityRole="button" onPress={() => setSelected(null)} hitSlop={12} style={[styles.close, { backgroundColor: theme.surfaceAlt }]} accessibilityLabel="Close">
                 <X size={18} color={theme.foreground} />
               </Pressable>
             </View>

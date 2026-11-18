@@ -152,7 +152,7 @@ export default function Report() {
               <T variant="eyebrow">Confidential</T>
               <T variant="title">Report an incident</T>
             </View>
-            <Pressable onPress={() => router.back()} hitSlop={12} style={styles.close} accessibilityLabel="Close">
+            <Pressable accessibilityRole="button" onPress={() => router.back()} hitSlop={12} style={styles.close} accessibilityLabel="Close">
               <X size={20} color={theme.foreground} />
             </Pressable>
           </View>
@@ -218,17 +218,17 @@ export default function Report() {
               {photos.map((uri) => (
                 <View key={uri} style={styles.thumb}>
                   <Image source={{ uri }} style={StyleSheet.absoluteFill} contentFit="cover" />
-                  <Pressable onPress={() => setPhotos((p) => p.filter((x) => x !== uri))} style={styles.remove} hitSlop={8} accessibilityLabel="Remove photo">
+                  <Pressable accessibilityRole="button" onPress={() => setPhotos((p) => p.filter((x) => x !== uri))} style={styles.remove} hitSlop={8} accessibilityLabel="Remove photo">
                     <X size={13} color="#fff" />
                   </Pressable>
                 </View>
               ))}
               {photos.length < 3 && (
                 <>
-                  <Pressable onPress={() => pick(true)} style={styles.add} accessibilityLabel="Take a photo">
+                  <Pressable accessibilityRole="button" onPress={() => pick(true)} style={styles.add} accessibilityLabel="Take a photo">
                     <Camera size={20} color={theme.muted} />
                   </Pressable>
-                  <Pressable onPress={() => pick(false)} style={styles.add} accessibilityLabel="Choose photos">
+                  <Pressable accessibilityRole="button" onPress={() => pick(false)} style={styles.add} accessibilityLabel="Choose photos">
                     <ImagePlus size={20} color={theme.muted} />
                   </Pressable>
                 </>
