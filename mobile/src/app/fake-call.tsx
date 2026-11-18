@@ -3,7 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Grid3x3, MicOff, Pause, Phone, PhoneOff, Plus, Video, Volume2 } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
-import { Pressable, StyleSheet, Vibration, View } from 'react-native';
+import { BackHandler, Pressable, StyleSheet, Vibration, View } from 'react-native';
 import Animated, { FadeIn, useAnimatedStyle, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -50,6 +50,14 @@ export default function FakeCall() {
     Vibration.vibrate([0, 900, 700], true);
     return () => Vibration.cancel();
   }, [answeredAt]);
+
+  // Like the phone's own call screen, Back doesn't dismiss the call: a stray Back press
+  // must not drop you into SheShield in front of whoever you're stepping away from.
+  // Only Decline or End leaves.
+  useEffect(() => {
+    const sub = BackHandler.addEventListener('hardwareBackPress', () => true);
+    return () => sub.remove();
+  }, []);
 
   useEffect(() => {
     if (!answeredAt) return;
