@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
+import { KeyboardAvoidingView, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useTheme } from '@/lib/theme';
@@ -25,17 +25,21 @@ export function Screen({ children, scroll = true, refreshing, onRefresh, tabs = 
   return (
     <Scene>
       {scroll ? (
-        <ScrollView
-          contentContainerStyle={[pad, { gap: 16 }]}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-          refreshControl={
-            onRefresh ? (
-              <RefreshControl refreshing={!!refreshing} onRefresh={onRefresh} tintColor={theme.primary} colors={[theme.primary]} progressBackgroundColor={theme.surface} progressViewOffset={insets.top} />
-            ) : undefined
-          }>
-          {children}
-        </ScrollView>
+        // The app draws edge to edge, so on Android the window doesn't shrink for the keyboard.
+        // Padding shrinks the scroll view instead, and Android then scrolls the focused field into view.
+        <KeyboardAvoidingView behavior="padding" style={styles.fill}>
+          <ScrollView
+            contentContainerStyle={[pad, { gap: 16 }]}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+            refreshControl={
+              onRefresh ? (
+                <RefreshControl refreshing={!!refreshing} onRefresh={onRefresh} tintColor={theme.primary} colors={[theme.primary]} progressBackgroundColor={theme.surface} progressViewOffset={insets.top} />
+              ) : undefined
+            }>
+            {children}
+          </ScrollView>
+        </KeyboardAvoidingView>
       ) : (
         <View style={[styles.fill, pad]}>{children}</View>
       )}
