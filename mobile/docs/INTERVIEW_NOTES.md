@@ -6,7 +6,7 @@ Read this alongside the code. Every answer below points at the file that does it
 
 ## 1. The 30-second pitch
 
-> "SheShield is a campus-safety app for women at LPU. I built the web version in PHP and MySQL, then a React Native app with Expo on the same backend. The headline feature is a hold-to-send SOS: it grabs the GPS fix, alerts the backend, and offers to call 112 or your emergency contact. If the network fails, the call and SMS fallbacks still work. It also does escorted walk requests, incident reports with photos that queue offline, and a satellite map of campus. It's TypeScript, Expo Router, TanStack Query for server state and Zustand for client state, with Reanimated for animations. I build the APK in the cloud with EAS."
+> "SheShield is a campus-safety app for women at LPU. I built the web version in PHP and MySQL, then a React Native app with Expo on the same backend. The headline feature is a hold-to-send SOS: it grabs the GPS fix, alerts the backend, and offers to call 112 or your emergency contact. If the network fails, the call and SMS fallbacks still work. It also does escorted walk requests, incident reports with photos that queue offline, and a satellite map of campus. It's TypeScript, Expo Router, TanStack Query for server state and Zustand for client state, with Reanimated for animations. A GitHub Actions workflow builds the APK on every change (Expo prebuild, then Gradle) and publishes it as a release."
 
 ---
 
@@ -28,7 +28,7 @@ You already know React. Most of it carries over; this is what changes.
 | React Router | Expo Router (file-based, like Next.js) | `src/app/` |
 | `localStorage` | AsyncStorage (plain) / SecureStore (encrypted) | `lib/theme.ts`, `lib/auth.ts` |
 | `fetch` | same `fetch` | `lib/api.ts` |
-| CSS animations | Reanimated (runs on the UI thread) | `HoldToSend.tsx`, `TabBar.tsx`, `HeroCarousel.tsx` |
+| CSS animations | Reanimated (runs on the UI thread) | `HoldToSend.tsx`, `TabBar.tsx`, `WalkHero.tsx` |
 
 **Platform files:** `CampusMap.tsx` is the native version, and `CampusMap.web.tsx` is picked automatically for the web build. The bundler chooses by file extension.
 
@@ -158,7 +158,7 @@ lib/api.ts  ── fetch + Bearer token ──►  PHP API on Render (via Vercel
    - **SOS reliability:** fast location without hanging, and useful fallbacks when the network fails.
    - **Auth:** making the existing cookie-based PHP backend support token auth without breaking the website.
 10. **Android vs iOS differences you handled:**
-    - **Blur:** BlurView only on iOS; Android gets a translucent fill, because Android blur needs a target view and is costly before Android 12.
+    - **Back button:** Android's hardware Back is handled per screen. During a fake call a `BackHandler` swallows it, so a stray press can't drop you into SheShield in front of someone.
     - **Keyboard:** `KeyboardAvoidingView` behaviour differs between the two.
     - **Elevation vs shadow:** Android uses `elevation`; iOS uses the `shadow*` props.
 
@@ -170,4 +170,4 @@ lib/api.ts  ── fetch + Bearer token ──►  PHP API on Render (via Vercel
 - **Live location sharing** during a walk, using background location (needs Play Store justification).
 - **Unit and end-to-end tests:** Jest, React Native Testing Library and Maestro.
 - **Google sign-in** in the app (the website already has it).
-- **Accessibility pass** with a screen reader. Labels and roles are already set on the main controls.
+- **Accessibility pass** with TalkBack. Every control already has a label and a role, including icon-only buttons; next is checking focus order and font scaling.
