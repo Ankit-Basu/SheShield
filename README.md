@@ -472,7 +472,7 @@ The app reads `DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASS` and `DB_PORT` from the 
 
 ### Deploy for free (Render + Vercel)
 
-`render.yaml` and `vercel.json` deploy the PHP app on Render's free plan, a free Aiven MySQL database, and the public pages on Vercel. Follow the step-by-step guide: **[docs/DEPLOY_RENDER_VERCEL.md](docs/DEPLOY_RENDER_VERCEL.md)**.
+`render.yaml` and `vercel.json` deploy the PHP app on Render's free plan, a free MySQL-compatible TiDB Cloud database, and the public pages on Vercel. Follow the step-by-step guide: **[docs/DEPLOY_RENDER_VERCEL.md](docs/DEPLOY_RENDER_VERCEL.md)**.
 
 To make someone an admin, add their user id to the `admins` table, then have them sign in again:
 
@@ -585,7 +585,8 @@ Slower devices lower the aurora frame rate and turn off blur automatically.
 - [x] Kubernetes, Helm, Terraform, Ansible, Prometheus and Grafana
 - [x] Husky and Commitlint git hooks
 - [x] React Native Android app with offline reports, Safety tools and a flat theme system
-- [x] Free hosting on Render, Vercel and Aiven, kept awake by a scheduled job
+- [x] Free hosting on Render, Vercel and TiDB Cloud, kept awake by a scheduled job
+- [x] Database moved from Aiven to TiDB Cloud ahead of Aiven's free plan ending, verified row by row
 - [x] Token sign-in for the app, with saved data when the server is asleep
 - [ ] Automatic SOS alerts to emergency contacts
 - [ ] Verified building positions on the campus map

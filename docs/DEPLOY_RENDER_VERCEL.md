@@ -1,4 +1,4 @@
-# Deploy SheShield for free: Render + Aiven + Vercel
+# Deploy SheShield for free: Render + TiDB Cloud + Vercel
 
 This is how the pieces fit together:
 
@@ -9,7 +9,7 @@ Visitor ──> Vercel (free)            serves pro/ and public/: landing, sign-
             Render (free)            runs the PHP app from infrastructure/docker/Dockerfile
               │  encrypted MySQL connection (DB_SSL=true)
               ▼
-            Aiven for MySQL (free)   the database; the app creates its tables on first use
+            TiDB Cloud Starter (free) MySQL-compatible database; the app creates its tables on first use
 
             Brevo (free, optional)   sends confirmation emails over HTTPS
 ```
@@ -23,23 +23,31 @@ Visitors only ever see the Vercel address, so sign-in cookies work without any c
 | Render sleeps after 15 minutes idle | The next request takes up to a minute | The keep-awake workflow (below), or a Render Starter instance (about $7/month) |
 | Render's disk is wiped on every deploy or restart | Uploaded evidence and profile photos disappear, and everyone is signed out | Paid instance plus a persistent disk mounted at `/var/www/html/uploads` |
 | Render's free plan blocks SMTP (ports 25, 465, 587) | Gmail/SMTP email can't send | Use Brevo (below), which sends over HTTPS |
-| Aiven free MySQL: 1 GB storage | Plenty for a demo | Paid Aiven plan |
+| TiDB Cloud Starter: 5 GiB storage and 50 million request units a month | Plenty for a demo. With the spending limit at $0 it slows down at the limit instead of charging | Raise the monthly spending limit |
 | Vercel Hobby is for personal, non-commercial use | Fine for a student project | Vercel Pro |
 
 ---
 
-## 1. Create the database (Aiven)
+## 1. Create the database (TiDB Cloud)
 
-1. Sign up at https://console.aiven.io (no card needed for the free plan).
-2. **Create service** → **MySQL** → choose the **Free** plan → pick the region closest to you → **Create**.
-3. Wait until the service shows **Running**, then open its **Overview** page and keep it open. You need these values from **Connection information**:
-   - **Host**, for example `mysql-sheshield-yourname.l.aivencloud.com`
-   - **Port**, a five-digit number, not 3306
-   - **User**: `avnadmin`
-   - **Password**: click to reveal
-   - **Database name**: `defaultdb`
+TiDB Cloud Starter speaks the MySQL protocol, so the app connects to it with no code changes.
 
-Aiven only accepts encrypted connections. `render.yaml` already sets `DB_SSL=true`, which the app needs to connect.
+1. Sign up at https://tidbcloud.com (no card needed).
+2. **Create Resource** → **TiDB** → **Starter**, compatibility **MySQL**, cloud **AWS**, region **Singapore (ap-southeast-1)**, the same region as Render in `render.yaml`. Leave the **monthly spending limit at $0** so it can never charge you, then **Create**.
+3. When it shows **Active**, open it → **Connect** → **Connect With: General** → **Generate Password**. You need:
+   - **Host**, for example `gateway01.ap-southeast-1.prod.aws.tidbcloud.com`
+   - **Port**: `4000`
+   - **Username**, which looks like `abc123XYZ.root`
+   - **Password**: shown once, so keep it in a password manager
+4. Create the database the app uses, `defaultdb`, with any MySQL client (XAMPP's works):
+
+   ```bash
+   D:\xampp\mysql\bin\mysql.exe --ssl -h <tidb host> -P 4000 -u <tidb user> -p -e "CREATE DATABASE defaultdb"
+   ```
+
+TiDB Cloud only accepts encrypted connections. `render.yaml` already sets `DB_SSL=true`, which the app needs to connect. On a fresh TiDB database, new rows can get ids in large steps (a report numbered `SS-2026-30001`, say); that is normal and harmless.
+
+> **Moved from Aiven:** Aiven's free MySQL plan ends on 21 December 2026. The live site's data was copied to TiDB Cloud table by table and compared row by row (a SHA-256 of every table on both sides) before Render was switched over. Tables copied that way keep MySQL-style sequential ids (`AUTO_ID_CACHE=1`).
 
 ## 2. (Optional) Set up email (Brevo)
 
@@ -57,10 +65,10 @@ Skip this if you don't need confirmation emails. Everything else works without i
 
    | Variable | Value |
    |---|---|
-   | `DB_HOST` | Aiven host |
-   | `DB_PORT` | Aiven port |
-   | `DB_USER` | `avnadmin` |
-   | `DB_PASS` | Aiven password |
+   | `DB_HOST` | TiDB host |
+   | `DB_PORT` | `4000` |
+   | `DB_USER` | TiDB username (`xxxx.root`) |
+   | `DB_PASS` | TiDB password |
    | `APP_URL` | Leave empty for now (set in part 5) |
    | `BREVO_API_KEY` | Brevo key, or leave empty |
    | `MAIL_FROM_EMAIL` | The sender you confirmed in Brevo, or leave empty |
@@ -85,12 +93,12 @@ Vercel only receives the static pages and assets (`scripts/vercel-build.js` copi
 3. **Make yourself an admin:** sign up on the live site, then run this from a terminal (XAMPP's MySQL client works) and sign in again:
 
    ```bash
-   D:\xampp\mysql\bin\mysql.exe --ssl -h <aiven host> -P <aiven port> -u avnadmin -p defaultdb -e "INSERT INTO admins (user_id) SELECT id FROM users WHERE email='you@example.com'"
+   D:\xampp\mysql\bin\mysql.exe --ssl -h <tidb host> -P 4000 -u <tidb user> -p defaultdb -e "INSERT INTO admins (user_id) SELECT id FROM users WHERE email='you@example.com'"
    ```
 
 ## Keeping the app awake
 
-`.github/workflows/keep-awake.yml` calls `/api/public_stats.php` every 10 minutes, so Render never reaches its 15-minute sleep timer and the Aiven database sees regular use. GitHub throttles scheduled jobs on quiet repositories, so each run stays alive for 5 h 40 min and pings in a loop, with runs queued back to back. It is free for public repositories.
+`.github/workflows/keep-awake.yml` calls `/api/public_stats.php` every 10 minutes, so Render never reaches its 15-minute sleep timer. Each ping also runs a few small queries, well inside TiDB's free monthly allowance. GitHub throttles scheduled jobs on quiet repositories, so each run stays alive for 5 h 40 min and pings in a loop, with runs queued back to back. It is free for public repositories.
 
 - One always-on free service uses about 744 of Render's 750 free hours a month, so keep only one free service running in the workspace.
 - GitHub sometimes delays scheduled runs at busy times, so an occasional cold start can still happen. For a stricter check, also add a free monitor at https://uptimerobot.com pointing at the same URL every 5 minutes.
@@ -99,7 +107,7 @@ Vercel only receives the static pages and assets (`scripts/vercel-build.js` copi
 
 ## Optional: verify the database certificate
 
-`DB_SSL=true` encrypts the connection. To also check that you are talking to your Aiven server, download the **CA certificate** from Aiven's Overview page, then on Render go to **Environment** → **Secret Files**, add it as `ca.pem`, and set `DB_SSL_CA=/etc/secrets/ca.pem`.
+`DB_SSL=true` encrypts the connection. To also check that you are talking to the real TiDB server, set `DB_SSL_CA` to a file of trusted certificates. TiDB Cloud uses a publicly trusted certificate, so the system bundle in the Docker image should work: set `DB_SSL_CA=/etc/ssl/certs/ca-certificates.crt` on Render, save, and check **Logs** after it redeploys. A database that signs with its own CA instead needs that CA uploaded under **Environment** → **Secret Files** as `ca.pem`, with `DB_SSL_CA=/etc/secrets/ca.pem`.
 
 ## Troubleshooting
 

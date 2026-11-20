@@ -157,6 +157,7 @@ lib/api.ts  ── fetch + Bearer token ──►  PHP API on Render (via Vercel
 9. **What was hardest?**
    - **SOS reliability:** fast location without hanging, and useful fallbacks when the network fails.
    - **Auth:** making the existing cookie-based PHP backend support token auth without breaking the website.
+   - **Moving the live database:** Aiven ended its free MySQL plan, so I moved production to TiDB Cloud (MySQL-compatible). A small Node script copied each table, then compared a SHA-256 of every table's rows on both sides before Render was switched over. Two catches: Aiven runs in ANSI SQL mode, which changes how table definitions are written out, and TiDB hands out ids in large steps unless a table sets `AUTO_ID_CACHE=1`, which would have turned report numbers into `SS-2026-30001`.
 10. **Android vs iOS differences you handled:**
     - **Back button:** Android's hardware Back is handled per screen. During a fake call a `BackHandler` swallows it, so a stray press can't drop you into SheShield in front of someone.
     - **Keyboard:** `KeyboardAvoidingView` behaviour differs between the two.

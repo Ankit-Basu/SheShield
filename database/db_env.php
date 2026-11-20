@@ -2,7 +2,7 @@
 // Database settings, shared by the PDO and mysqli layers.
 // Docker Compose, Kubernetes, Helm and Render set these. XAMPP uses the defaults.
 //
-// Hosted MySQL (Aiven, TiDB, and most others) only accepts encrypted connections:
+// Hosted MySQL (TiDB Cloud, Aiven, and most others) only accepts encrypted connections:
 //   DB_SSL=true                    encrypt the connection
 //   DB_SSL_CA=/etc/secrets/ca.pem  optional: also verify the server against this CA file
 function ss_db_env() {
