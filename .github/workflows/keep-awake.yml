@@ -1,8 +1,8 @@
 name: Keep Render awake
 
 # Render's free plan sleeps after 15 minutes without requests; the next visitor (or
-# the mobile app) then waits up to a minute. The stats endpoint also queries MySQL,
-# so pinging it keeps the Aiven database active too.
+# the mobile app) then waits up to a minute. The stats endpoint also queries the
+# database (TiDB Cloud), so each ping checks the whole stack is up.
 #
 # GitHub throttles scheduled workflows on quiet repositories (a "*/10" schedule ran
 # only every few hours), so each run stays alive and pings every 10 minutes for

@@ -19,7 +19,7 @@ services:
       - key: PORT
         value: "80"
 
-      # MySQL, for example a free Aiven for MySQL service
+      # MySQL-compatible database: a free TiDB Cloud Starter instance (docs/DEPLOY_RENDER_VERCEL.md)
       - key: DB_HOST
         sync: false
       - key: DB_PORT
